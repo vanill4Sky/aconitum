@@ -16,6 +16,12 @@
     <Filter Include="Pliki źródłowe\imgui">
       <UniqueIdentifier>{9e5bd1e7-e539-45bc-a027-dc4791f5e155}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki źródłowe\core">
+      <UniqueIdentifier>{f4faf2c9-76c8-4017-95c5-e13f690ac5dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\core">
+      <UniqueIdentifier>{bcfbc5ee-1e80-40e7-8691-692e99d9c50f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -36,5 +42,19 @@
     <ClCompile Include="deps\src\imgui\imgui-SFML.cpp">
       <Filter>Pliki źródłowe\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\tilemap.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\grid.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\tilemap.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\grid.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
