@@ -13,12 +13,13 @@ public:
 	void resize(sf::Vector2f screen_size);
 
 private:
-	void generate_vertex_array(sf::Vector2f screen_size);
+	void fill_vertex_arrays(sf::Vector2f screen_size);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	sf::Vector2f m_tile_size;
 	sf::Color m_color;
-	sf::VertexArray m_vertices;
+	sf::VertexArray m_vertical_lines;
+	sf::VertexArray m_horizontal_lines;
 };
 
 }

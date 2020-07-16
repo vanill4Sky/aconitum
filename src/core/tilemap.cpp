@@ -1,13 +1,13 @@
 #include "tilemap.hpp"
 
-aco::tilemap::tilemap(const sf::Texture& tileset, sf::Vector2u tile_size, 
+aco::tilemap::tilemap(const sf::Texture& tileset, sf::Vector2f tile_size, 
 	const std::vector<aco::tile>& world_map, size_t width, size_t height)
 	: m_tileset{ tileset }
 {
 	generate_vertex_array(tile_size, world_map, width, height);
 }
 
-void aco::tilemap::generate_vertex_array(sf::Vector2u tile_size, 
+void aco::tilemap::generate_vertex_array(sf::Vector2f tile_size, 
 	const std::vector<aco::tile>& world_map, size_t width, size_t height)
 {
 	m_vertices.setPrimitiveType(sf::Quads);
