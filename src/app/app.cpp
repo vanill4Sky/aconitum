@@ -1,0 +1,46 @@
+#include "app.hpp"
+
+#include <algorithm>
+#include <SFML/System/Clock.hpp>
+
+aco::app::app(std::string_view window_title)
+	: m_app_data{ aco::app_data::get_instance() }
+{
+	m_app_data.window.create(sf::VideoMode{ 1500, 1000 }, window_title.data());
+	m_app_data.window.setFramerateLimit(60);
+	//m_app_data.state_manager.push_state();
+
+	run();
+}
+
+void aco::app::run() const
+{
+	constexpr float dt{ 1.0f / 60.0f };
+
+	sf::Clock clock;
+	float new_time;
+	float frame_time;
+	float current_time{ clock.getElapsedTime().asSeconds() };
+	float accumulator{ 0.0f };
+
+	while (m_app_data.window.isOpen())
+	{
+		m_app_data.state_manager.process_state_transition();
+
+		new_time = clock.getElapsedTime().asSeconds();
+		frame_time = new_time - current_time;
+		frame_time = std::min(frame_time, 0.2f);
+		current_time = new_time;
+
+		accumulator += frame_time;
+
+		while (accumulator >= dt)
+		{
+			m_app_data.state_manager.get_active_state()->handle_input();
+			m_app_data.state_manager.get_active_state()->update(dt);
+			accumulator -= dt;
+		}
+
+		m_app_data.state_manager.get_active_state()->draw();
+	}
+}
