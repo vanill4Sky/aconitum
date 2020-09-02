@@ -22,7 +22,7 @@ int main()
 	lua.open_libraries(sol::lib::base);
 	lua.script_file("assets/scripts/test.lua");
 
-	sf::RenderWindow window(sf::VideoMode(1500, 1000), "aconitum_wp");
+	sf::RenderWindow window(sf::VideoMode(1500, 1000), "aconitum_wip");
 	window.setPosition(sf::Vector2i(1920 + (1920 - window.getSize().x) / 2, 0));
 	window.setFramerateLimit(60);
 	ImGui::SFML::Init(window);
@@ -178,7 +178,9 @@ int main()
 			{
 				int idx{ i + j * tiles_horizontally };
 				ImGui::PushID(idx);
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
 				ImGui::ImageButton(tile_picker[idx], 1);
+				ImGui::PopStyleVar();
 
 				ImGui::PopID();
 				ImGui::SameLine(0.0f, 1.0f);
