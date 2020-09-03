@@ -1,5 +1,7 @@
 #include "state_manager.hpp"
 
+#include <cassert>
+
 void aco::state_manager::replace_state(aco::state_ref new_state)
 {
 	m_new_state = std::move(new_state);
@@ -33,6 +35,11 @@ void aco::state_manager::process_state_transition()
 
 	if (m_is_adding)
 	{
+		if (!m_states.empty())
+		{
+			m_states.top()->pause();
+		}
+
 		m_states.push(std::move(m_new_state));
 		m_states.top()->init();
 		m_is_adding = false;
@@ -41,5 +48,7 @@ void aco::state_manager::process_state_transition()
 
 aco::state_ref& aco::state_manager::get_active_state()
 {
+	assert(!m_states.empty());
+
 	return m_states.top();
 }

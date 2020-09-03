@@ -12,8 +12,11 @@
 
 #include "core/grid.hpp"
 
+#include "app/app.hpp"
+
 int main()
 {
+	/*
 	spdlog::set_level(spdlog::level::debug);
 
 	entt::registry registry;
@@ -48,7 +51,6 @@ int main()
 	aco::grid grid{ sf::Vector2f(tile_size, tile_size), static_cast<sf::Vector2f>(window.getSize()), sf::Color::Red };
 
 	sf::RenderStates word_render_states;
-	sf::RenderStates grid_render_states;
 
 	bool is_left_mouse_button_pressed{ false };
 	sf::Vector2i mouse_click_origin;
@@ -191,12 +193,15 @@ int main()
 
 		window.clear();
 		window.draw(tile, word_render_states);
-		window.draw(grid, grid_render_states);
+		window.draw(grid);
 		ImGui::SFML::Render(window);
 		window.display();
 	}
 
 	ImGui::SFML::Shutdown();
+	*/
+
+	aco::app{ "aconitum_wip" };
 
 	return 0;
 }

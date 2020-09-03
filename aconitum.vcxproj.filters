@@ -22,6 +22,12 @@
     <Filter Include="Pliki nagłówkowe\core">
       <UniqueIdentifier>{bcfbc5ee-1e80-40e7-8691-692e99d9c50f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki źródłowe\app">
+      <UniqueIdentifier>{65bd18e1-d472-42bc-b011-bb070663b36f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\app">
+      <UniqueIdentifier>{0825d623-1863-498e-a7e1-3beb2a6b4e19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -48,6 +54,18 @@
     <ClCompile Include="src\core\grid.cpp">
       <Filter>Pliki źródłowe\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\state_manager.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\app.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\app_data.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\editor_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -55,6 +73,21 @@
     </ClInclude>
     <ClInclude Include="src\core\grid.hpp">
       <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\state.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\state_manager.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\app.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\app_data.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\editor_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

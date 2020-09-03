@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <SFML/System/Clock.hpp>
 
+#include "editor_state.hpp"
+
 aco::app::app(std::string_view window_title)
 	: m_app_data{ aco::app_data::get_instance() }
 {
 	m_app_data.window.create(sf::VideoMode{ 1500, 1000 }, window_title.data());
 	m_app_data.window.setFramerateLimit(60);
-	//m_app_data.state_manager.push_state();
+	m_app_data.state_manager.push_state(std::make_unique<aco::editor_state>(m_app_data));
 
 	run();
 }
@@ -21,7 +23,7 @@ void aco::app::run() const
 	float new_time;
 	float frame_time;
 	float current_time{ clock.getElapsedTime().asSeconds() };
-	float accumulator{ 0.0f };
+	float accumulator{ dt };
 
 	while (m_app_data.window.isOpen())
 	{

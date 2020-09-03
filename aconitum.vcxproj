@@ -153,12 +153,21 @@
     <ClCompile Include="deps\src\imgui\imgui_demo.cpp" />
     <ClCompile Include="deps\src\imgui\imgui_draw.cpp" />
     <ClCompile Include="deps\src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\app\app.cpp" />
+    <ClCompile Include="src\app\app_data.cpp" />
+    <ClCompile Include="src\app\editor_state.cpp" />
     <ClCompile Include="src\core\grid.cpp" />
+    <ClCompile Include="src\core\state_manager.cpp" />
     <ClCompile Include="src\core\tilemap.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\app\app.hpp" />
+    <ClInclude Include="src\app\app_data.hpp" />
+    <ClInclude Include="src\app\editor_state.hpp" />
     <ClInclude Include="src\core\grid.hpp" />
+    <ClInclude Include="src\core\state.hpp" />
+    <ClInclude Include="src\core\state_manager.hpp" />
     <ClInclude Include="src\core\tilemap.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

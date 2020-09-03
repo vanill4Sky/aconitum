@@ -10,7 +10,7 @@ namespace aco
 class app_data
 {
 public:
-	static aco::app_data& get_instance();
+	static app_data& get_instance();
 
 	app_data(const aco::app_data&) = delete;
 	void operator=(const aco::app_data&) = delete;
@@ -19,7 +19,7 @@ public:
 	aco::state_manager state_manager;
 
 private:
-	app_data();
+	app_data() {};
 };
 
 }
