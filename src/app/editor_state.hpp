@@ -35,6 +35,8 @@ private:
 	std::vector<sf::Sprite> tile_picker;
 	int tiles_vertically;
 	int tiles_horizontally;
+	sf::RectangleShape debug_pointer;
+	sf::RectangleShape debug_follower;
 };
 
 }

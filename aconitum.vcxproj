@@ -144,7 +144,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\deps\lib\SFML;$(SolutionDir)\deps\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>lua_static.lib;openal32.lib;winmm.lib;flac.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisfile.lib;vorbisenc.lib;sfml-audio-s.lib;sfml-graphics-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>lua_static.lib;opengl32.lib;openal32.lib;winmm.lib;flac.lib;freetype.lib;ogg.lib;vorbis.lib;vorbisfile.lib;vorbisenc.lib;sfml-audio-s.lib;sfml-graphics-s.lib;sfml-network-s.lib;sfml-system-s.lib;sfml-window-s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

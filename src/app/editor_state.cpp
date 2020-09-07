@@ -11,6 +11,8 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
 	, tile_size{ 32 }
 	, m_grid{ sf::Vector2f(32, 32), static_cast<sf::Vector2f>(m_app_data.window.getSize()), sf::Color::Red }
+	, debug_pointer{ sf::Vector2f(tile_size, tile_size) }
+	, debug_follower{ sf::Vector2f(tile_size, tile_size) }
 {
 	ImGui::SFML::Init(app_data.window);
 
@@ -26,6 +28,9 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 			tile_picker.emplace_back(tileset, sf::IntRect{ i * tile_size , j * tile_size , tile_size , tile_size });
 		}
 	}
+
+	debug_pointer.setFillColor(sf::Color::Red);
+	debug_follower.setFillColor(sf::Color(0, 255, 0, 63));
 }
 
 aco::editor_state::~editor_state()
@@ -40,6 +45,11 @@ void aco::editor_state::init()
 
 void aco::editor_state::handle_input()
 {
+	const auto integer_round = [](int& num, int step) {
+		int sgn = (num >= 0) ? 1 : -1;
+		num = (num + sgn * step / 2) / step;
+	};
+
 	sf::Event event;
 	while (m_app_data.window.pollEvent(event))
 	{
@@ -57,27 +67,7 @@ void aco::editor_state::handle_input()
 
 			m_grid.resize(static_cast<sf::Vector2f>(m_app_data.window.getSize()));
 		}
-		else if (event.type == sf::Event::KeyPressed)
-		{
-			const auto speed{ static_cast<float>(tile_size) };
-
-			switch (event.key.code)
-			{
-			case sf::Keyboard::Up:
-				word_render_states.transform.translate({ 0.0f, -speed });
-				break;
-			case sf::Keyboard::Down:
-				word_render_states.transform.translate({ 0.0f, speed });
-				break;
-			case sf::Keyboard::Right:
-				word_render_states.transform.translate({ speed, 0.0f });
-				break;
-			case sf::Keyboard::Left:
-				word_render_states.transform.translate({ -speed, 0.0f });
-				break;
-			}
-		}
-		else if (event.type == sf::Event::MouseWheelScrolled)
+		else if (event.type == sf::Event::MouseWheelScrolled && !ImGui::IsAnyWindowHovered())
 		{
 			auto view{ m_app_data.window.getView() };
 			const auto zoom_factor{ 1.1 };
@@ -107,6 +97,17 @@ void aco::editor_state::handle_input()
 				is_left_mouse_button_pressed = true;
 				mouse_click_origin = sf::Vector2i{ event.mouseButton.x, event.mouseButton.y };
 			}
+			else if (event.mouseButton.button == sf::Mouse::Right)
+			{
+				sf::Vector2i mouse_pixel_pos{ sf::Mouse::getPosition(m_app_data.window) };
+				spdlog::debug("action key click pixel (x, y): ({}, {})", mouse_pixel_pos.x, mouse_pixel_pos.y);
+				sf::Vector2f mouse_world_pos{ m_app_data.window.mapPixelToCoords(mouse_pixel_pos) };
+				spdlog::debug("action key click world (x, y): ({}, {})", mouse_world_pos.x, mouse_world_pos.y);
+				sf::Vector2f tile_coords{ std::floor(mouse_world_pos.x / tile_size), std::floor(mouse_world_pos.y / tile_size) };
+				spdlog::debug("tile_cords (x, y): ({}, {})", tile_coords.x, tile_coords.y);
+
+				debug_pointer.setPosition(tile_coords * static_cast<float>(tile_size));
+			}
 		}
 		else if (event.type == sf::Event::MouseButtonReleased)
 		{
@@ -119,11 +120,6 @@ void aco::editor_state::handle_input()
 		{
 			if (is_left_mouse_button_pressed && !ImGui::IsAnyItemActive())
 			{
-				const auto integer_round = [](int& num, int step) {
-					int sgn = (num >= 0) ? 1 : -1;
-					num = (num + sgn * step / 2) / step;
-				};
-
 				const sf::Vector2i current_mouse_position{ event.mouseMove.x, event.mouseMove.y };
 				sf::Vector2i mouse_position_delta{ current_mouse_position - mouse_click_origin };
 				const auto relative_tile_size{ static_cast<int>(tile_size * current_zoom) };
@@ -135,14 +131,26 @@ void aco::editor_state::handle_input()
 				{
 					word_render_states.transform.translate({ speed * mouse_position_delta.x, 0.0f });
 					mouse_click_origin.x += relative_tile_size * mouse_position_delta.x;
+
+					auto matrix{ word_render_states.transform.getMatrix() };
+					spdlog::debug("tx: {} ty: {}", matrix[12], matrix[13]);
 				}
 
 				if (mouse_position_delta.y != 0)
 				{
 					word_render_states.transform.translate({ 0.0f, speed * mouse_position_delta.y });
 					mouse_click_origin.y += relative_tile_size * mouse_position_delta.y;
+
+					auto matrix{ word_render_states.transform.getMatrix() };
+					spdlog::debug("tx: {} ty: {}", matrix[12], matrix[13]);
 				}
 			}
+
+			sf::Vector2i mouse_pixel_pos{ sf::Mouse::getPosition(m_app_data.window) };
+			sf::Vector2f mouse_world_pos{ m_app_data.window.mapPixelToCoords(mouse_pixel_pos) };
+			sf::Vector2f tile_coords{ std::floor(mouse_world_pos.x / tile_size), std::floor(mouse_world_pos.y / tile_size) };
+
+			debug_follower.setPosition(tile_coords * static_cast<float>(tile_size));
 		}
 	}
 
@@ -182,6 +190,8 @@ void aco::editor_state::draw()
 	m_app_data.window.clear();
 	m_app_data.window.draw(tile, word_render_states);
 	m_app_data.window.draw(m_grid);
+	m_app_data.window.draw(debug_pointer);
+	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
 	m_app_data.window.display();
 }
