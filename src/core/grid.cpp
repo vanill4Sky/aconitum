@@ -5,6 +5,7 @@
 aco::grid::grid(sf::Vector2f tile_size, sf::Vector2f screen_size, sf::Color color)
 	: m_tile_size{ tile_size }
 	, m_color{ color }
+	, m_is_visible{ true }
 {
 	fill_vertex_arrays(screen_size);
 }
@@ -15,6 +16,11 @@ void aco::grid::resize(sf::Vector2f screen_size)
 	spdlog::info("lines vertically: {}, lines horizontally: {}",
 		m_vertical_lines.getVertexCount() / 2,
 		m_horizontal_lines.getVertexCount() / 2);
+}
+
+void aco::grid::set_visible(bool is_visible)
+{
+	m_is_visible = is_visible;
 }
 
 void aco::grid::fill_vertex_arrays(sf::Vector2f screen_size)
@@ -50,7 +56,10 @@ void aco::grid::fill_vertex_arrays(sf::Vector2f screen_size)
 
 void aco::grid::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	states.transform *= getTransform();
-	target.draw(m_vertical_lines, states);
-	target.draw(m_horizontal_lines, states);
+	if (m_is_visible)
+	{
+		states.transform *= getTransform();
+		target.draw(m_vertical_lines, states);
+		target.draw(m_horizontal_lines, states);
+	}
 }
