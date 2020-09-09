@@ -67,10 +67,11 @@ private:
 
 	int m_current_zoom;
 	std::unordered_map<sf::Mouse::Button, bool> m_mouse_state;
-	sf::Vector2i m_mouse_click_origin;
+	sf::Vector2f m_origin_tile_coords;
 	sf::Vector2f m_render_translation;
 	sf::Vector2f m_mouse_world_position;
 	sf::Vector2f m_hovered_tile_coords;
+	sf::Vector2f m_prev_tile_delta;
 	bool m_is_grid_visible{ true };
 
 	int tile_size;
