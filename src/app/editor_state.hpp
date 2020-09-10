@@ -10,35 +10,12 @@
 #include "../core/tilemap.hpp"
 #include "app_data.hpp"
 #include "level.hpp"
+#include "tile_picker.hpp"
 
 namespace aco
 {
 
 void integer_round(int& num, int step);
-
-class tile_picker
-{
-public:
-	tile_picker(const sf::Texture& tileset, sf::Vector2f tile_size);
-	tile_picker(const sf::Texture& tileset, float tile_size);
-
-	sf::Sprite at(size_t pos_x, size_t pos_y) const;
-	sf::Vector2<size_t> tile_count() const;
-	size_t width() const;
-	size_t height() const;
-
-	void set_active_tile(size_t pos_x, size_t pos_y);
-	void update_active_tile(int delta_x, int delta_y);
-	sf::Vector2<size_t> active_tile() const;
-
-private:
-	sf::Vector2<size_t> calc_tile_count(const sf::Texture& tileset, sf::Vector2f tile_size);
-	std::vector<sf::Sprite> split_tileset(const sf::Texture& tileset, sf::Vector2i tile_size);
-
-	sf::Vector2<size_t> m_tile_count;
-	std::vector<sf::Sprite> m_data;
-	sf::Vector2<size_t> m_active_tile;
-};
 
 class editor_state : public state
 {
@@ -56,35 +33,34 @@ private:
 	void handle_zoom_event(const sf::Event::MouseWheelScrollEvent& event);
 	void handle_mouse_click(const sf::Event::MouseButtonEvent& event);
 	void handle_mouse_move_event(const sf::Event::MouseMoveEvent& event);
-
+	void validate_bounds_input();
 	sf::View resize_current_view(sf::Vector2u new_size);
 	void zoom(int delta);
+	sf::Vector2f calc_tile_coordinates(sf::Vector2i mouse_position, float tile_size) const;
+	sf::Vector2i calc_tile_world_coordinates(sf::Vector2i mouse_position, float tile_size);
 
 	app_data& m_app_data;
 	grid m_grid;
 	std::unique_ptr<level> m_level;
 	std::unique_ptr<tile_picker> m_tile_picker;
+	sf::RenderStates m_world_render_states;
 
 	int m_current_zoom;
 	std::unordered_map<sf::Mouse::Button, bool> m_mouse_state;
 	sf::Vector2f m_origin_tile_coords;
-	sf::Vector2f m_render_translation;
-	sf::Vector2f m_mouse_world_position;
 	sf::Vector2f m_hovered_tile_coords;
 	sf::Vector2f m_prev_tile_delta;
+	sf::Vector2i m_render_tile_translation;
 	bool m_is_grid_visible{ true };
-
-	int tile_size;
-	sf::RenderStates word_render_states;
-	sf::Texture tileset;
-	bool is_left_mouse_button_pressed{ false };
-	sf::Sprite tile;
-	std::vector<sf::Sprite> tile_picker;
-	sf::RectangleShape debug_follower;
-	aco::tilemap m_tilemap;
+	int m_brush_mode;
+	int m_horizontal_bounds_input[2];
+	int m_vertical_bounds_input[2];
 
 	float zoom_factor{ 1.1f };
 	float speed{ 32.0f };
+
+	sf::Texture tileset;
+	sf::RectangleShape debug_follower;
 };
 
 }

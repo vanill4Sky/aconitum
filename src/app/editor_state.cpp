@@ -8,18 +8,20 @@
 
 aco::editor_state::editor_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
-	, m_grid{ sf::Vector2f(32, 32), static_cast<sf::Vector2f>(m_app_data.window.getSize()), sf::Color::Red }
+	, m_grid{ sf::Vector2f{ 32.0f, 32.0 }, static_cast<sf::Vector2f>(m_app_data.window.getSize()), sf::Color::Red }
 	, m_current_zoom{ 0 }
-	, m_render_translation{ 0.0f, 0.0f }
-	, tile_size{ 32 }
-	, debug_follower{ sf::Vector2f(tile_size, tile_size) }
+	, m_render_tile_translation{ 0, 0 }
+	, debug_follower{ sf::Vector2f{ 32.0f, 32.0 } }
+	, m_brush_mode{ aco::brush_mode::bidirectional }
 {
 	ImGui::SFML::Init(app_data.window);
 
 	tileset.loadFromFile("assets/textures/tileset_dungeon_01.png");
 	m_level = std::make_unique<aco::level>(tileset, 32.0f, 10, 10);
-	m_tilemap = m_level->get_tilemap();
+	m_level->update_tilemap();
 	m_tile_picker = std::make_unique<aco::tile_picker>(tileset, 32.0f);
+	m_horizontal_bounds_input[1] = m_tile_picker->width();
+	m_vertical_bounds_input[1] = m_tile_picker->height();
 
 	debug_follower.setFillColor(sf::Color(0, 255, 0, 63));
 }
@@ -111,27 +113,38 @@ void aco::editor_state::update(float dt)
 	}
 	ImGui::Separator();
 
+	ImGui::Text("Brush mode:");
+	ImGui::RadioButton("Bidirectional", &m_brush_mode, aco::brush_mode::bidirectional);
+	ImGui::RadioButton("Horizontal only", &m_brush_mode, aco::brush_mode::horizontal_only);
+	ImGui::RadioButton("Vertical only", &m_brush_mode, aco::brush_mode::vertical_only);
+	ImGui::RadioButton("Fixed", &m_brush_mode, aco::brush_mode::fixed);
+
+	ImGui::Spacing();
+	ImGui::Text("Tile wraping range:");
+	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker->width() - 1);
+	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker->height() - 1);
+	ImGui::Separator();
+
 	ImGui::Checkbox("Show grid", &m_is_grid_visible);
 	ImGui::Separator();
 
-	ImGui::Text("Mouse position (world): (%.1f, %.1f)", 
-		m_mouse_world_position.x, m_mouse_world_position.y);
 	ImGui::Text("Hovered tile coordinates: (%.0f, %.0f)", 
 		m_hovered_tile_coords.x, m_hovered_tile_coords.y);
-	ImGui::Text("Render translation (pixels): (%.0f, %.0f)",
-		m_render_translation.x, m_render_translation.y);
+	ImGui::Text("Render translation (tiles): (%i, %i)",
+		m_render_tile_translation.x, m_render_tile_translation.y);
 
 	ImGui::End();
 
 	ImGui::EndFrame();
 
 	m_grid.set_visible(m_is_grid_visible);
+	validate_bounds_input();
 }
 
 void aco::editor_state::draw()
 {
 	m_app_data.window.clear();
-	m_app_data.window.draw(m_tilemap, word_render_states);
+	m_app_data.window.draw(m_level->get_tilemap(), m_world_render_states);
 	m_app_data.window.draw(m_grid);
 	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
@@ -156,54 +169,60 @@ void aco::editor_state::handle_zoom_event(const sf::Event::MouseWheelScrollEvent
 
 void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& event)
 {
-	sf::Vector2i current_mouse_pixel_pos{ event.x, event.y };
-	m_mouse_world_position = m_app_data.window.mapPixelToCoords(current_mouse_pixel_pos);
-	m_origin_tile_coords = sf::Vector2f{ std::floor(m_mouse_world_position.x / tile_size), std::floor(m_mouse_world_position.y / tile_size) };
-	m_hovered_tile_coords = m_origin_tile_coords;
+	m_origin_tile_coords = calc_tile_coordinates({ event.x, event.y }, m_level->tile_size());
 	m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
 
 	if (event.button == sf::Mouse::Right)
 	{
-		sf::Vector2i selected_tile(
-			static_cast<sf::Vector2i>(m_hovered_tile_coords) - (static_cast<sf::Vector2i>(m_render_translation) / tile_size));
+		auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
 
 		auto active_tile_pos{ m_tile_picker->active_tile() };
 		m_level->at(selected_tile.x, selected_tile.y) = aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
-		m_tilemap = m_level->get_tilemap();
+		m_level->update_tilemap();
 	}
 	
 }
 
 void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent& event)
 {
-	sf::Vector2i current_mouse_pixel_pos{ event.x, event.y };
-	m_mouse_world_position = m_app_data.window.mapPixelToCoords(current_mouse_pixel_pos);
-	m_hovered_tile_coords = sf::Vector2f{ std::floor(m_mouse_world_position.x / tile_size), std::floor(m_mouse_world_position.y / tile_size) };
+	m_hovered_tile_coords = calc_tile_coordinates({ event.x, event.y }, m_level->tile_size());
 	sf::Vector2f new_tile_delta{ m_hovered_tile_coords - m_origin_tile_coords };
 
 	if (m_mouse_state[sf::Mouse::Button::Left] && new_tile_delta != m_prev_tile_delta)
 	{
-		word_render_states.transform.translate(-speed * m_prev_tile_delta);
-		word_render_states.transform.translate(speed * new_tile_delta);
-		auto matrix{ word_render_states.transform.getMatrix() };
-		m_render_translation = sf::Vector2f{ matrix[12], matrix[13] };
+		m_world_render_states.transform.translate(-speed * m_prev_tile_delta);
+		m_world_render_states.transform.translate(speed * new_tile_delta);
+		auto matrix{ m_world_render_states.transform.getMatrix() };
+		m_render_tile_translation = 
+			static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_level->tile_size()));
 	}
 	else if (m_mouse_state[sf::Mouse::Button::Right] && new_tile_delta != m_prev_tile_delta)
 	{
 		auto step = static_cast<sf::Vector2i>(new_tile_delta - m_prev_tile_delta);
-		m_tile_picker->update_active_tile(step.x, step.y);
+		m_tile_picker->update_active_tile(step.x, step.y, static_cast<aco::brush_mode>(m_brush_mode));
 
-		sf::Vector2i selected_tile(
-			static_cast<sf::Vector2i>(m_hovered_tile_coords) - (static_cast<sf::Vector2i>(m_render_translation) / tile_size));
+		auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
 
 		auto active_tile_pos{ m_tile_picker->active_tile() };
 		m_level->at(selected_tile.x, selected_tile.y) = aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
-		m_tilemap = m_level->get_tilemap();
+		m_level->update_tilemap();
 	}
 
 	m_prev_tile_delta = new_tile_delta;
 
-	debug_follower.setPosition(m_hovered_tile_coords * static_cast<float>(tile_size));
+	debug_follower.setPosition(m_hovered_tile_coords * static_cast<float>(m_level->tile_size()));
+}
+
+void aco::editor_state::validate_bounds_input()
+{
+	const auto validate_bound = [](auto& input, auto limit) {
+		limit = (limit > 0) ? limit - 1 : 0;
+		input[0] = std::min(input[0], static_cast<int>(limit));
+		input[1] = std::min(input[1], static_cast<int>(limit));
+		input[1] = std::max(input[0], input[1]);
+	};
+	validate_bound(m_horizontal_bounds_input, m_tile_picker->width());
+	validate_bound(m_vertical_bounds_input, m_tile_picker->height());
 }
 
 sf::View aco::editor_state::resize_current_view(sf::Vector2u new_size)
@@ -225,88 +244,23 @@ void aco::editor_state::zoom(int delta)
 	m_app_data.window.setView(view);
 }
 
-aco::tile_picker::tile_picker(const sf::Texture& tileset, sf::Vector2f tile_size)
-	: m_tile_count{ calc_tile_count(tileset, tile_size) }
-	, m_data{ std::move(split_tileset(tileset, static_cast<sf::Vector2i>(tile_size))) }
-	, m_active_tile{ 0, 0 }
+sf::Vector2f aco::editor_state::calc_tile_coordinates(sf::Vector2i mouse_position, float tile_size) const
 {
-}
+	auto mouse_world_position = m_app_data.window.mapPixelToCoords(mouse_position);
 
-aco::tile_picker::tile_picker(const sf::Texture& tileset, float tile_size)
-	: aco::tile_picker::tile_picker(tileset, { tile_size, tile_size })
-{
-}
-
-sf::Sprite aco::tile_picker::at(size_t pos_x, size_t pos_y) const
-{
-	assert(pos_x < m_tile_count.x);
-	assert(pos_y < m_tile_count.y);
-
-	return m_data[pos_y * m_tile_count.x + pos_x];
-}
-
-sf::Vector2<size_t> aco::tile_picker::tile_count() const
-{
-	return m_tile_count;
-}
-
-size_t aco::tile_picker::width() const
-{
-	return m_tile_count.x;
-}
-
-size_t aco::tile_picker::height() const
-{
-	return m_tile_count.y;
-}
-
-void aco::tile_picker::set_active_tile(size_t pos_x, size_t pos_y)
-{
-	m_active_tile = sf::Vector2<size_t>{ 
-		pos_x % m_tile_count.x, pos_y % m_tile_count.y 
+	return { 
+		std::floor(mouse_world_position.x / tile_size), 
+		std::floor(mouse_world_position.y / tile_size) 
 	};
 }
 
-void aco::tile_picker::update_active_tile(int delta_x, int delta_y)
+sf::Vector2i aco::editor_state::calc_tile_world_coordinates(sf::Vector2i mouse_position, float tile_size)
 {
-	m_active_tile = sf::Vector2<size_t>{ 
-		(m_active_tile.x + delta_x) % m_tile_count.x, 
-		(m_active_tile.y + delta_y) % m_tile_count.y
+	auto tile_coordinates{ 
+		static_cast<sf::Vector2i>(calc_tile_coordinates(mouse_position, tile_size)) 
 	};
-}
 
-sf::Vector2<size_t> aco::tile_picker::active_tile() const
-{
-	return m_active_tile;
-}
-
-sf::Vector2<size_t> aco::tile_picker::calc_tile_count(const sf::Texture& tileset, sf::Vector2f tile_size)
-{
-	return sf::Vector2<size_t>{
-		static_cast<size_t>(tileset.getSize().x / tile_size.x),
-		static_cast<size_t>(tileset.getSize().y / tile_size.y)
-	};
-}
-
-std::vector<sf::Sprite> aco::tile_picker::split_tileset(const sf::Texture& tileset, sf::Vector2i tile_size)
-{
-	std::vector<sf::Sprite> tile_picker;
-
-	for (size_t y = 0; y < m_tile_count.y; ++y)
-	{
-		for (size_t x = 0; x < m_tile_count.x; ++x)
-		{
-			tile_picker.emplace_back(
-				tileset,
-				sf::IntRect{ 
-					static_cast<int>(x * tile_size.x), static_cast<int>(y * tile_size.y), 
-					tile_size.x, tile_size.y 
-				}
-			);
-		}
-	}
-
-	return tile_picker;
+	return tile_coordinates - m_render_tile_translation;
 }
 
 void aco::integer_round(int& num, int step)

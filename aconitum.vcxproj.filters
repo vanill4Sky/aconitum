@@ -69,6 +69,9 @@
     <ClCompile Include="src\app\level.cpp">
       <Filter>Pliki źródłowe\app</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\tile_picker.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -93,6 +96,9 @@
       <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
     <ClInclude Include="src\app\level.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\tile_picker.hpp">
       <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
   </ItemGroup>

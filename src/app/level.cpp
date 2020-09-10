@@ -29,9 +29,19 @@ aco::tile& aco::level::at(size_t pos_x, size_t pos_y)
 	return m_data[pos_y * m_width + pos_x];
 }
 
-aco::tilemap aco::level::get_tilemap() const
+void aco::level::update_tilemap()
 {
-	return aco::tilemap(m_tileset, {m_tile_size, m_tile_size}, m_data, m_width, m_height);
+	m_tilemap = aco::tilemap(m_tileset, { m_tile_size, m_tile_size }, m_data, m_width, m_height);
+}
+
+const aco::tilemap& aco::level::get_tilemap() const
+{
+	return m_tilemap;
+}
+
+float aco::level::tile_size() const
+{
+	return m_tile_size;
 }
 
 void aco::level::resize(size_t new_width, size_t new_height)
