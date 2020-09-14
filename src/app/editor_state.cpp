@@ -10,7 +10,6 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
 	, m_grid{ sf::Vector2f{ 32.0f, 32.0 }, static_cast<sf::Vector2f>(m_app_data.window.getSize()), sf::Color::Red }
 	, m_current_zoom{ 0 }
-	, m_render_tile_translation{ 0, 0 }
 	, debug_follower{ sf::Vector2f{ 32.0f, 32.0 } }
 	, m_brush_mode{ aco::brush_mode::bidirectional }
 {
@@ -131,7 +130,7 @@ void aco::editor_state::update(float dt)
 	ImGui::Text("Hovered tile coordinates: (%.0f, %.0f)", 
 		m_hovered_tile_coords.x, m_hovered_tile_coords.y);
 	ImGui::Text("Render translation (tiles): (%i, %i)",
-		m_render_tile_translation.x, m_render_tile_translation.y);
+		m_level->render_translation().x, m_level->render_translation().y);
 
 	ImGui::End();
 
@@ -144,7 +143,7 @@ void aco::editor_state::update(float dt)
 void aco::editor_state::draw()
 {
 	m_app_data.window.clear();
-	m_app_data.window.draw(m_level->get_tilemap(), m_world_render_states);
+	m_app_data.window.draw(m_level->get_tilemap(), m_level->level_render_states());
 	m_app_data.window.draw(m_grid);
 	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
@@ -190,11 +189,8 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 
 	if (m_mouse_state[sf::Mouse::Button::Left] && new_tile_delta != m_prev_tile_delta)
 	{
-		m_world_render_states.transform.translate(-speed * m_prev_tile_delta);
-		m_world_render_states.transform.translate(speed * new_tile_delta);
-		auto matrix{ m_world_render_states.transform.getMatrix() };
-		m_render_tile_translation = 
-			static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_level->tile_size()));
+		m_level->move(-m_prev_tile_delta);
+		m_level->move(new_tile_delta);
 	}
 	else if (m_mouse_state[sf::Mouse::Button::Right] && new_tile_delta != m_prev_tile_delta)
 	{
@@ -260,7 +256,7 @@ sf::Vector2i aco::editor_state::calc_tile_world_coordinates(sf::Vector2i mouse_p
 		static_cast<sf::Vector2i>(calc_tile_coordinates(mouse_position, tile_size)) 
 	};
 
-	return tile_coordinates - m_render_tile_translation;
+	return tile_coordinates - m_level->render_translation();
 }
 
 void aco::integer_round(int& num, int step)

@@ -43,14 +43,12 @@ private:
 	grid m_grid;
 	std::unique_ptr<level> m_level;
 	std::unique_ptr<tile_picker> m_tile_picker;
-	sf::RenderStates m_world_render_states;
 
 	int m_current_zoom;
 	std::unordered_map<sf::Mouse::Button, bool> m_mouse_state;
 	sf::Vector2f m_origin_tile_coords;
 	sf::Vector2f m_hovered_tile_coords;
 	sf::Vector2f m_prev_tile_delta;
-	sf::Vector2i m_render_tile_translation;
 	bool m_is_grid_visible{ true };
 	int m_brush_mode;
 	int m_horizontal_bounds_input[2];

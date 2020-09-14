@@ -19,14 +19,37 @@ aco::level::level(sf::Texture tileset, float tile_size, size_t width, size_t hei
 	}
 }
 
-aco::tile& aco::level::at(size_t pos_x, size_t pos_y)
+aco::tile& aco::level::at(int pos_x, int pos_y)
 {
-	if (pos_x >= m_width || pos_y >= m_height)
+	size_t abs_pos_x{ static_cast<size_t>(std::abs(pos_x)) };
+	size_t abs_pos_y{ static_cast<size_t>(std::abs(pos_y)) };
+
+	if (pos_x < 0 && pos_y < 0)
 	{
-		resize(std::max(pos_x + 1, m_width), std::max(pos_y + 1, m_height));
+		resize(m_width + abs_pos_x, m_height + abs_pos_y, abs_pos_x, abs_pos_y);
+		abs_pos_x = 0;
+		abs_pos_y = 0;
+		move({ static_cast<float>(pos_x), static_cast<float>(pos_y) });
+	}
+	else if (pos_x < 0)
+	{
+		resize(m_width + abs_pos_x, m_height, abs_pos_x, 0);
+		abs_pos_x = 0;
+		move({ static_cast<float>(pos_x), 0.0f });
+	}
+	else if (pos_y < 0)
+	{
+		resize(m_width, m_height + abs_pos_y, 0, abs_pos_y);
+		abs_pos_y = 0;
+		move({ 0.0f, static_cast<float>(pos_y) });
 	}
 
-	return m_data[pos_y * m_width + pos_x];
+	if (abs_pos_x >= m_width || abs_pos_y >= m_height)
+	{
+		resize(std::max(abs_pos_x + 1, m_width), std::max(abs_pos_y + 1, m_height));
+	}
+
+	return m_data[abs_pos_y * m_width + abs_pos_x];
 }
 
 void aco::level::update_tilemap()
@@ -39,12 +62,29 @@ const aco::tilemap& aco::level::get_tilemap() const
 	return m_tilemap;
 }
 
+const sf::RenderStates& aco::level::level_render_states() const
+{
+	return m_level_render_states;
+}
+
+const sf::Vector2i aco::level::render_translation() const
+{
+	auto matrix{ m_level_render_states.transform.getMatrix() };
+	return static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_tile_size));
+}
+
 float aco::level::tile_size() const
 {
 	return m_tile_size;
 }
 
-void aco::level::resize(size_t new_width, size_t new_height)
+void aco::level::move(sf::Vector2f delta)
+{
+	m_level_render_states.transform.translate(m_tile_size * delta);
+}
+
+void aco::level::resize(size_t new_width, size_t new_height,
+	size_t offset_x, size_t offset_y)
 {
 	std::vector<aco::tile> temp{ new_width * new_height };
 	auto horizontal_limit{ std::min(m_width, new_width) };
@@ -54,7 +94,7 @@ void aco::level::resize(size_t new_width, size_t new_height)
 	{
 		for (size_t x{ 0 }; x < horizontal_limit; ++x)
 		{
-			temp[y * new_width + x] = m_data[y * m_width + x];
+			temp[(y + offset_y) * new_width + x + offset_x] = m_data[y * m_width + x];
 		}
 	}
 
