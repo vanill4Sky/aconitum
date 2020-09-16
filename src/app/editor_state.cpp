@@ -82,6 +82,16 @@ void aco::editor_state::update(float dt)
 	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - 300.0f, 0.0f });
 	ImGui::SetNextWindowSize({ 300.0f, /*m_app_data.window.getSize().y +*/ 0.0f });
 	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoResize);
+
+	static char str0[128] = "file-name";
+	ImGui::InputText("", str0, IM_ARRAYSIZE(str0)); ImGui::SameLine();
+	ImGui::Button("Init", {-1, 0});
+	ImGui::InputText("", str0, IM_ARRAYSIZE(str0)); ImGui::SameLine();
+	ImGui::Button("Load", { -1, 0 });
+	ImGui::InputText("", str0, IM_ARRAYSIZE(str0)); ImGui::SameLine();
+	ImGui::Button("Save", { -1, 0 });
+	ImGui::Separator();
+
 	for (size_t y = 0; y < m_tile_picker->height(); ++y)
 	{
 		for (size_t x = 0; x < m_tile_picker->width(); ++x)

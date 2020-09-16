@@ -1,6 +1,8 @@
 #pragma once
 
+#include <filesystem>
 #include <vector>
+#include <nlohmann/json.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -9,6 +11,9 @@
 
 namespace aco
 {
+
+void to_json(nlohmann::json& j, const aco::tile& tile);
+void from_json(const nlohmann::json& j, aco::tile& tile);
 
 enum class layer
 {
@@ -38,6 +43,9 @@ public:
 	void move(sf::Vector2f delta);
 	void update_tilemap();
 	void draw(sf::RenderWindow& render_window) const;
+
+	void write_to_file(const std::filesystem::path& path) const;
+	void read_from_file(const std::filesystem::path& path);
 
 private:
 	aco::tile& at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y);

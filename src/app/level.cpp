@@ -1,5 +1,8 @@
 #include "level.hpp"
 
+#include <fstream>
+#include <iomanip>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
 aco::level::level(sf::Texture tileset, float tile_size, size_t width, size_t height)
@@ -8,6 +11,7 @@ aco::level::level(sf::Texture tileset, float tile_size, size_t width, size_t hei
 	, m_width{ width }
 	, m_height{ height }
 {
+	read_from_file("assets/levels/test_01.json");
 }
 
 aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y)
@@ -21,12 +25,39 @@ void aco::level::update_tilemap()
 		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height);
 	m_tilemap.get(aco::layer::top) = aco::tilemap(
 		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height);
+
+	write_to_file("assets/levels/test_01.json");
 }
 
 void aco::level::draw(sf::RenderWindow& render_window) const
 {
 	render_window.draw(m_tilemap.get(aco::layer::bottom), m_level_render_states);
 	render_window.draw(m_tilemap.get(aco::layer::top), m_level_render_states);
+}
+
+void aco::level::write_to_file(const std::filesystem::path& path) const
+{
+	std::ofstream output(path);
+	nlohmann::json json;
+	json["width"] = m_width;
+	json["height"] = m_height;
+	json["tile_size"] = m_tile_size;
+	json["bottom_layer_data"] = m_data.bottom;
+	json["top_layer_data"] = m_data.top;
+	output << json << '\n';
+}
+
+void aco::level::read_from_file(const std::filesystem::path& path)
+{
+	std::ifstream input(path);
+	nlohmann::json json;
+	input >> json;
+	m_width = json["width"].get<size_t>();
+	m_height = json["height"].get<size_t>();
+	m_tile_size = json["tile_size"].get<float>();
+	m_data.bottom = json["bottom_layer_data"].get<std::vector<aco::tile>>();
+	m_data.top = json["top_layer_data"].get<std::vector<aco::tile>>();
+	update_tilemap();
 }
 
 const sf::RenderStates& aco::level::level_render_states() const
@@ -110,4 +141,20 @@ void aco::level::resize(std::vector<aco::tile>& layer_data, size_t new_width, si
 	}
 
 	layer_data = std::move(temp);
+}
+
+void aco::to_json(nlohmann::json& j, const aco::tile& tile)
+{
+	//j = nlohmann::json{ 
+	//	{"is_blank", tile.is_blank}, 
+	//	{"tex_x", tile.tex_coords.x}, {"tex_y", tile.tex_coords.y} 
+	//};
+	j = nlohmann::json{ tile.is_blank, tile.tex_coords.x, tile.tex_coords.y };
+}
+
+void aco::from_json(const nlohmann::json& j, aco::tile& tile)
+{
+	j.at(0).get_to(tile.is_blank);
+	j.at(1).get_to(tile.tex_coords.x);
+	j.at(2).get_to(tile.tex_coords.y);
 }
