@@ -3,38 +3,84 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include "../core/tilemap.hpp"
 
 namespace aco
 {
 
+enum class layer
+{
+	bottom,
+	top
+};
+
+template<typename T>
+struct pair
+{
+	T bottom;
+	T top;
+	T& get(aco::layer layer);
+	const T& get(aco::layer layer) const;
+};
+
 class level
 {
 public:
 	level(sf::Texture tileset, float tile_size, size_t width, size_t height);
 
-	aco::tile& at(int pos_x, int pos_y);
-	void move(sf::Vector2f delta);
-	void update_tilemap();
-
-	const aco::tilemap& get_tilemap() const;
+	aco::tile& at(aco::layer layer, int pos_x, int pos_y);
 	const sf::RenderStates& level_render_states() const;
 	const sf::Vector2i render_translation() const;
 	float tile_size() const;
 
+	void move(sf::Vector2f delta);
+	void update_tilemap();
+	void draw(sf::RenderWindow& render_window) const;
 
 private:
-	void resize(size_t new_width, size_t new_height, 
+	aco::tile& at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y);
+	void resize(size_t new_width, size_t new_height,
+		size_t offset_x = 0, size_t offset_y = 0);
+	void resize(std::vector<aco::tile>& layer_data, size_t new_width, size_t new_height,
 		size_t offset_x = 0, size_t offset_y = 0);
 
 	sf::Texture m_tileset;
-	aco::tilemap m_tilemap;
+	pair<aco::tilemap> m_tilemap;
+	pair<std::vector<aco::tile>> m_data;
 	sf::RenderStates m_level_render_states;
 	float m_tile_size;
-	std::vector<aco::tile> m_data;
 	size_t m_width;
 	size_t m_height;
 };
 
+}
+
+template<typename T>
+inline T& aco::pair<T>::get(aco::layer layer)
+{
+	switch (layer)
+	{
+	case aco::layer::bottom:
+		return bottom;
+	case aco::layer::top:
+		return top;
+	default:
+		return bottom;
+	}
+}
+
+template<typename T>
+inline const T& aco::pair<T>::get(aco::layer layer) const
+{
+	switch (layer)
+	{
+	case aco::layer::bottom:
+		return bottom;
+	case aco::layer::top:
+		return top;
+	default:
+		return bottom;
+	}
 }

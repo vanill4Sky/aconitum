@@ -12,11 +12,12 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	, m_current_zoom{ 0 }
 	, debug_follower{ sf::Vector2f{ 32.0f, 32.0 } }
 	, m_brush_mode{ aco::brush_mode::bidirectional }
+	, m_current_layer{ static_cast<int>(aco::layer::bottom) }
 {
 	ImGui::SFML::Init(app_data.window);
 
-	tileset.loadFromFile("assets/textures/tileset_dungeon_01.png");
-	m_level = std::make_unique<aco::level>(tileset, 32.0f, 10, 10);
+	tileset.loadFromFile("assets/textures/tileset_dungeon_02.png");
+	m_level = std::make_unique<aco::level>(tileset, 32.0f, 0, 0);
 	m_level->update_tilemap();
 	m_tile_picker = std::make_unique<aco::tile_picker>(tileset, 32.0f);
 	m_horizontal_bounds_input[1] = m_tile_picker->width();
@@ -122,6 +123,10 @@ void aco::editor_state::update(float dt)
 	ImGui::Text("Tile wraping range:");
 	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker->width() - 1);
 	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker->height() - 1);
+
+	ImGui::Spacing();
+	ImGui::Text("Level layer selection");
+	ImGui::Combo("Current layer", &m_current_layer, "bottom\0top\0\0");
 	ImGui::Separator();
 
 	ImGui::Checkbox("Show grid", &m_is_grid_visible);
@@ -143,7 +148,7 @@ void aco::editor_state::update(float dt)
 void aco::editor_state::draw()
 {
 	m_app_data.window.clear();
-	m_app_data.window.draw(m_level->get_tilemap(), m_level->level_render_states());
+	m_level->draw(m_app_data.window);
 	m_app_data.window.draw(m_grid);
 	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
@@ -176,7 +181,8 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 		auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
 
 		auto active_tile_pos{ m_tile_picker->active_tile() };
-		m_level->at(selected_tile.x, selected_tile.y) = aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
+		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y) 
+			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
 		m_level->update_tilemap();
 	}
 	
@@ -200,7 +206,8 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 		auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
 
 		auto active_tile_pos{ m_tile_picker->active_tile() };
-		m_level->at(selected_tile.x, selected_tile.y) = aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
+		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y)
+			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
 		m_level->update_tilemap();
 	}
 

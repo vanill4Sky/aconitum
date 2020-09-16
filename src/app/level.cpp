@@ -8,18 +8,44 @@ aco::level::level(sf::Texture tileset, float tile_size, size_t width, size_t hei
 	, m_width{ width }
 	, m_height{ height }
 {
-	m_data.resize(width * height);
-
-	for (int y = 0; y < 4; ++y)
-	{
-		for (int x = 0; x < 4; ++x)
-		{
-			m_data.at(y * width + x) = aco::tile(32.0f * x, 32.0f * y);
-		}
-	}
 }
 
-aco::tile& aco::level::at(int pos_x, int pos_y)
+aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y)
+{
+	return at(m_data.get(layer), pos_x, pos_y);
+}
+
+void aco::level::update_tilemap()
+{
+	m_tilemap.get(aco::layer::bottom) = aco::tilemap(
+		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height);
+	m_tilemap.get(aco::layer::top) = aco::tilemap(
+		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height);
+}
+
+void aco::level::draw(sf::RenderWindow& render_window) const
+{
+	render_window.draw(m_tilemap.get(aco::layer::bottom), m_level_render_states);
+	render_window.draw(m_tilemap.get(aco::layer::top), m_level_render_states);
+}
+
+const sf::RenderStates& aco::level::level_render_states() const
+{
+	return m_level_render_states;
+}
+
+const sf::Vector2i aco::level::render_translation() const
+{
+	auto matrix{ m_level_render_states.transform.getMatrix() };
+	return static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_tile_size));
+}
+
+float aco::level::tile_size() const
+{
+	return m_tile_size;
+}
+
+aco::tile& aco::level::at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y)
 {
 	size_t abs_pos_x{ static_cast<size_t>(std::abs(pos_x)) };
 	size_t abs_pos_y{ static_cast<size_t>(std::abs(pos_y)) };
@@ -49,33 +75,7 @@ aco::tile& aco::level::at(int pos_x, int pos_y)
 		resize(std::max(abs_pos_x + 1, m_width), std::max(abs_pos_y + 1, m_height));
 	}
 
-	return m_data[abs_pos_y * m_width + abs_pos_x];
-}
-
-void aco::level::update_tilemap()
-{
-	m_tilemap = aco::tilemap(m_tileset, { m_tile_size, m_tile_size }, m_data, m_width, m_height);
-}
-
-const aco::tilemap& aco::level::get_tilemap() const
-{
-	return m_tilemap;
-}
-
-const sf::RenderStates& aco::level::level_render_states() const
-{
-	return m_level_render_states;
-}
-
-const sf::Vector2i aco::level::render_translation() const
-{
-	auto matrix{ m_level_render_states.transform.getMatrix() };
-	return static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_tile_size));
-}
-
-float aco::level::tile_size() const
-{
-	return m_tile_size;
+	return layer_data[abs_pos_y * m_width + abs_pos_x];
 }
 
 void aco::level::move(sf::Vector2f delta)
@@ -86,6 +86,17 @@ void aco::level::move(sf::Vector2f delta)
 void aco::level::resize(size_t new_width, size_t new_height,
 	size_t offset_x, size_t offset_y)
 {
+	resize(m_data.get(aco::layer::bottom), new_width, new_height, offset_x, offset_y);
+	resize(m_data.get(aco::layer::top), new_width, new_height, offset_x, offset_y);
+	m_width = new_width;
+	m_height = new_height;
+
+	spdlog::info("current world size in tiles ({}, {})", m_width, m_height);
+}
+
+void aco::level::resize(std::vector<aco::tile>& layer_data, size_t new_width, size_t new_height, 
+	size_t offset_x, size_t offset_y)
+{
 	std::vector<aco::tile> temp{ new_width * new_height };
 	auto horizontal_limit{ std::min(m_width, new_width) };
 	auto vertical_limit{ std::min(m_height, new_height) };
@@ -94,13 +105,9 @@ void aco::level::resize(size_t new_width, size_t new_height,
 	{
 		for (size_t x{ 0 }; x < horizontal_limit; ++x)
 		{
-			temp[(y + offset_y) * new_width + x + offset_x] = m_data[y * m_width + x];
+			temp[(y + offset_y) * new_width + x + offset_x] = layer_data[y * m_width + x];
 		}
 	}
 
-	m_data = std::move(temp);
-	m_width = new_width;
-	m_height = new_height;
-
-	spdlog::info("current world size in tiles ({}, {})", m_width, m_height);
+	layer_data = std::move(temp);
 }

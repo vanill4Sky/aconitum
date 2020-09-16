@@ -53,6 +53,7 @@ private:
 	int m_brush_mode;
 	int m_horizontal_bounds_input[2];
 	int m_vertical_bounds_input[2];
+	int m_current_layer;
 
 	float zoom_factor{ 1.1f };
 	float speed{ 32.0f };
