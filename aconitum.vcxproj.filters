@@ -28,6 +28,12 @@
     <Filter Include="Pliki nagłówkowe\app">
       <UniqueIdentifier>{0825d623-1863-498e-a7e1-3beb2a6b4e19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\util">
+      <UniqueIdentifier>{91790322-ad3a-402b-9257-e3fb77c9be8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\util">
+      <UniqueIdentifier>{18134e2b-9644-49ac-82b2-34b43980b7c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -72,6 +78,9 @@
     <ClCompile Include="src\app\tile_picker.cpp">
       <Filter>Pliki źródłowe\app</Filter>
     </ClCompile>
+    <ClCompile Include="src\util\file.cpp">
+      <Filter>Pliki źródłowe\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -100,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="src\app\tile_picker.hpp">
       <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\file.hpp">
+      <Filter>Pliki nagłówkowe\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

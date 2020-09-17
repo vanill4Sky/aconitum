@@ -33,18 +33,21 @@ struct pair
 class level
 {
 public:
+	level(sf::Texture tileset, float tile_size);
 	level(sf::Texture tileset, float tile_size, size_t width, size_t height);
 
 	aco::tile& at(aco::layer layer, int pos_x, int pos_y);
 	const sf::RenderStates& level_render_states() const;
 	const sf::Vector2i render_translation() const;
 	float tile_size() const;
+	const std::string& filename() const;
 
 	void move(sf::Vector2f delta);
 	void update_tilemap();
 	void draw(sf::RenderWindow& render_window) const;
+	void set_filename(std::string filename);
 
-	void write_to_file(const std::filesystem::path& path) const;
+	void write_to_file(std::filesystem::path levels_dir) const;
 	void read_from_file(const std::filesystem::path& path);
 
 private:
@@ -54,6 +57,7 @@ private:
 	void resize(std::vector<aco::tile>& layer_data, size_t new_width, size_t new_height,
 		size_t offset_x = 0, size_t offset_y = 0);
 
+	std::string m_filename;
 	sf::Texture m_tileset;
 	pair<aco::tilemap> m_tilemap;
 	pair<std::vector<aco::tile>> m_data;

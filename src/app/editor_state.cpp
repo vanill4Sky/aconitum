@@ -1,10 +1,13 @@
 #include "editor_state.hpp"
 
+#include <algorithm>
 #include <cassert>
 #include <imgui/imgui.h>
 #include <imgui/imgui-SFML.h>
 #include <SFML/Window/Event.hpp>
 #include <spdlog/spdlog.h>
+
+#include "../util/file.hpp"
 
 aco::editor_state::editor_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
@@ -13,11 +16,13 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	, debug_follower{ sf::Vector2f{ 32.0f, 32.0 } }
 	, m_brush_mode{ aco::brush_mode::bidirectional }
 	, m_current_layer{ static_cast<int>(aco::layer::bottom) }
+	, m_level_files_list{ util::list_filenames(levels_dir, "json") }
+	, m_current_level_file_idx{ 0 }
 {
 	ImGui::SFML::Init(app_data.window);
 
 	tileset.loadFromFile("assets/textures/tileset_dungeon_02.png");
-	m_level = std::make_unique<aco::level>(tileset, 32.0f, 0, 0);
+	m_level = std::make_unique<aco::level>(tileset, 32.0f);
 	m_level->update_tilemap();
 	m_tile_picker = std::make_unique<aco::tile_picker>(tileset, 32.0f);
 	m_horizontal_bounds_input[1] = m_tile_picker->width();
@@ -83,13 +88,32 @@ void aco::editor_state::update(float dt)
 	ImGui::SetNextWindowSize({ 300.0f, /*m_app_data.window.getSize().y +*/ 0.0f });
 	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoResize);
 
-	static char str0[128] = "file-name";
-	ImGui::InputText("", str0, IM_ARRAYSIZE(str0)); ImGui::SameLine();
-	ImGui::Button("Init", {-1, 0});
-	ImGui::InputText("", str0, IM_ARRAYSIZE(str0)); ImGui::SameLine();
-	ImGui::Button("Load", { -1, 0 });
-	ImGui::InputText("", str0, IM_ARRAYSIZE(str0)); ImGui::SameLine();
-	ImGui::Button("Save", { -1, 0 });
+	ImGui::TextWrapped("Current level: %s", m_level->filename().data());
+	ImGui::Spacing();
+
+	ImGui::PushID("init_input");
+	ImGui::InputTextWithHint("", "new level filename", m_new_level_name.data(), m_new_level_name.size()); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Init", { -1, 0 }))
+	{
+		init_level();
+	}
+
+	ImGui::PushID("load_input");
+	ImGui::Combo("", &m_current_level_file_idx, m_level_files_list); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Load", { -1, 0 }))
+	{
+		load_level();
+	}
+
+	ImGui::PushID("save_input");
+	ImGui::InputTextWithHint("", "this level filename", m_save_level_name.data(), m_save_level_name.size()); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Save", { -1, 0 }))
+	{
+		save_level();
+	}
 	ImGui::Separator();
 
 	for (size_t y = 0; y < m_tile_picker->height(); ++y)
@@ -276,8 +300,45 @@ sf::Vector2i aco::editor_state::calc_tile_world_coordinates(sf::Vector2i mouse_p
 	return tile_coordinates - m_level->render_translation();
 }
 
-void aco::integer_round(int& num, int step)
+void aco::editor_state::init_level()
 {
-	int sgn = (num >= 0) ? 1 : -1;
-	num = (num + sgn * step / 2) / step;
+	std::string new_level_filename{ m_new_level_name.data() };
+	aco::level new_level{ tileset, 32.0f };
+	new_level.set_filename(new_level_filename);
+	new_level.write_to_file(levels_dir);
+	m_level_files_list = util::list_filenames(levels_dir, "json");
+
+	m_new_level_name[0] = '\0';
+}
+
+void aco::editor_state::load_level()
+{
+	if (!m_level_files_list.empty())
+	{
+		const auto& filename{ m_level_files_list[m_current_level_file_idx] };
+		m_level->read_from_file(levels_dir + filename);
+		std::copy(filename.begin(), filename.end(), m_save_level_name.begin());
+		m_save_level_name[std::min(filename.size(), m_save_level_name.size() - 1)] = '\0';
+	}
+}
+
+void aco::editor_state::save_level()
+{
+	m_level->set_filename(m_save_level_name.data());
+	m_level->write_to_file(levels_dir);
+	m_level_files_list = util::list_filenames(levels_dir, "json");
+}
+
+bool ImGui::Combo(const char* label, int* currIndex, std::vector<std::string>& values)
+{
+	if (values.empty()) { return false; }
+	return Combo(label, currIndex, vector_getter,
+		static_cast<void*>(&values), values.size());
+}
+
+bool ImGui::ListBox(const char* label, int* currIndex, std::vector<std::string>& values)
+{
+	if (values.empty()) { return false; }
+	return ListBox(label, currIndex, vector_getter,
+		static_cast<void*>(&values), values.size());
 }

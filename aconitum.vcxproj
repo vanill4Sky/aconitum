@@ -162,6 +162,7 @@
     <ClCompile Include="src\core\state_manager.cpp" />
     <ClCompile Include="src\core\tilemap.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\util\file.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\app.hpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="src\core\state.hpp" />
     <ClInclude Include="src\core\state_manager.hpp" />
     <ClInclude Include="src\core\tilemap.hpp" />
+    <ClInclude Include="src\util\file.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

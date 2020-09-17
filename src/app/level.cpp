@@ -11,7 +11,11 @@ aco::level::level(sf::Texture tileset, float tile_size, size_t width, size_t hei
 	, m_width{ width }
 	, m_height{ height }
 {
-	read_from_file("assets/levels/test_01.json");
+}
+
+aco::level::level(sf::Texture tileset, float tile_size)
+	: aco::level::level(tileset, tile_size, 0, 0)
+{
 }
 
 aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y)
@@ -25,8 +29,6 @@ void aco::level::update_tilemap()
 		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height);
 	m_tilemap.get(aco::layer::top) = aco::tilemap(
 		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height);
-
-	write_to_file("assets/levels/test_01.json");
 }
 
 void aco::level::draw(sf::RenderWindow& render_window) const
@@ -35,20 +37,30 @@ void aco::level::draw(sf::RenderWindow& render_window) const
 	render_window.draw(m_tilemap.get(aco::layer::top), m_level_render_states);
 }
 
-void aco::level::write_to_file(const std::filesystem::path& path) const
+void aco::level::set_filename(std::string filename)
 {
-	std::ofstream output(path);
-	nlohmann::json json;
-	json["width"] = m_width;
-	json["height"] = m_height;
-	json["tile_size"] = m_tile_size;
-	json["bottom_layer_data"] = m_data.bottom;
-	json["top_layer_data"] = m_data.top;
-	output << json << '\n';
+	m_filename = std::move(filename);
+}
+
+void aco::level::write_to_file(std::filesystem::path levels_dir) const
+{
+	if(!m_filename.empty())
+	{
+		std::ofstream output(levels_dir /= std::filesystem::path(m_filename));
+		nlohmann::json json;
+		json["width"] = m_width;
+		json["height"] = m_height;
+		json["tile_size"] = m_tile_size;
+		json["bottom_layer_data"] = m_data.bottom;
+		json["top_layer_data"] = m_data.top;
+		output << json << '\n';
+	}
 }
 
 void aco::level::read_from_file(const std::filesystem::path& path)
 {
+	m_filename = path.filename().string();
+
 	std::ifstream input(path);
 	nlohmann::json json;
 	input >> json;
@@ -57,6 +69,7 @@ void aco::level::read_from_file(const std::filesystem::path& path)
 	m_tile_size = json["tile_size"].get<float>();
 	m_data.bottom = json["bottom_layer_data"].get<std::vector<aco::tile>>();
 	m_data.top = json["top_layer_data"].get<std::vector<aco::tile>>();
+
 	update_tilemap();
 }
 
@@ -74,6 +87,11 @@ const sf::Vector2i aco::level::render_translation() const
 float aco::level::tile_size() const
 {
 	return m_tile_size;
+}
+
+const std::string& aco::level::filename() const
+{
+	return m_filename;
 }
 
 aco::tile& aco::level::at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y)

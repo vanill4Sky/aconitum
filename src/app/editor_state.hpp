@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include <unordered_map>
 
@@ -15,7 +16,9 @@
 namespace aco
 {
 
-void integer_round(int& num, int step);
+const std::string levels_dir{ "assets/levels/" };
+
+using text_input_buffer = std::array<char, 256>;
 
 class editor_state : public state
 {
@@ -38,6 +41,9 @@ private:
 	void zoom(int delta);
 	sf::Vector2f calc_tile_coordinates(sf::Vector2i mouse_position, float tile_size) const;
 	sf::Vector2i calc_tile_world_coordinates(sf::Vector2i mouse_position, float tile_size);
+	void init_level();
+	void load_level();
+	void save_level();
 
 	app_data& m_app_data;
 	grid m_grid;
@@ -54,12 +60,28 @@ private:
 	int m_horizontal_bounds_input[2];
 	int m_vertical_bounds_input[2];
 	int m_current_layer;
+	std::vector<std::string> m_level_files_list;
+	int m_current_level_file_idx;
+	text_input_buffer m_new_level_name;
+	text_input_buffer m_save_level_name;
 
 	float zoom_factor{ 1.1f };
-	float speed{ 32.0f };
 
 	sf::Texture tileset;
 	sf::RectangleShape debug_follower;
 };
 
+}
+
+namespace ImGui
+{
+	static auto vector_getter = [](void* vec, int idx, const char** out_text)
+	{
+		auto& vector = *static_cast<std::vector<std::string>*>(vec);
+		if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+		*out_text = vector.at(idx).c_str();
+		return true;
+	};
+	bool Combo(const char* label, int* currIndex, std::vector<std::string>& values);
+	bool ListBox(const char* label, int* currIndex, std::vector<std::string>& values);
 }
