@@ -43,6 +43,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -102,6 +103,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\deps\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>
@@ -135,8 +137,9 @@
       <PreprocessorDefinitions>SFML_STATIC</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\deps\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +161,7 @@
     <ClCompile Include="src\app\editor_state.cpp" />
     <ClCompile Include="src\app\level.cpp" />
     <ClCompile Include="src\app\tile_picker.cpp" />
+    <ClCompile Include="src\core\dir.cpp" />
     <ClCompile Include="src\core\grid.cpp" />
     <ClCompile Include="src\core\state_manager.cpp" />
     <ClCompile Include="src\core\tilemap.cpp" />
@@ -170,6 +174,7 @@
     <ClInclude Include="src\app\editor_state.hpp" />
     <ClInclude Include="src\app\level.hpp" />
     <ClInclude Include="src\app\tile_picker.hpp" />
+    <ClInclude Include="src\core\dir.hpp" />
     <ClInclude Include="src\core\grid.hpp" />
     <ClInclude Include="src\core\state.hpp" />
     <ClInclude Include="src\core\state_manager.hpp" />

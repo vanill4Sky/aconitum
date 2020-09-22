@@ -81,6 +81,9 @@
     <ClCompile Include="src\util\file.cpp">
       <Filter>Pliki źródłowe\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\dir.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="src\util\file.hpp">
       <Filter>Pliki nagłówkowe\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\dir.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

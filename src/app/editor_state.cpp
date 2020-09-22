@@ -60,7 +60,7 @@ void aco::editor_state::handle_input()
 		{
 			handle_zoom_event(event.mouseWheelScroll);
 		}
-		else if (event.type == sf::Event::MouseButtonPressed)
+		else if (event.type == sf::Event::MouseButtonPressed && !ImGui::IsAnyWindowHovered())
 		{
 			m_mouse_state[event.mouseButton.button] = true;
 
