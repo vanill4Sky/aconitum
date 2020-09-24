@@ -6,7 +6,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
-#include <entt.hpp>
 #include <sol/sol.hpp>
 #include <spdlog/spdlog.h>
 

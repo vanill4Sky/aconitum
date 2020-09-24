@@ -34,6 +34,15 @@
     <Filter Include="Pliki źródłowe\util">
       <UniqueIdentifier>{18134e2b-9644-49ac-82b2-34b43980b7c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki nagłówkowe\sys">
+      <UniqueIdentifier>{c3fab77a-c482-4240-8bd1-6cd85c394019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\sys">
+      <UniqueIdentifier>{39da6313-1702-4bc9-bc16-9ac8b6b1a7a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\comp">
+      <UniqueIdentifier>{65d64da0-144b-43b3-a2bc-b091136b064d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -84,6 +93,21 @@
     <ClCompile Include="src\core\dir.cpp">
       <Filter>Pliki źródłowe\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\game_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\sprite_picker.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\player_input.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\movement.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\render.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -118,6 +142,36 @@
     </ClInclude>
     <ClInclude Include="src\core\dir.hpp">
       <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\game_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\sprite_picker.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\player_input.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\player.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\direction.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\entity_state.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\movement.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\position.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\render.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\sprite.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -159,26 +159,41 @@
     <ClCompile Include="src\app\app.cpp" />
     <ClCompile Include="src\app\app_data.cpp" />
     <ClCompile Include="src\app\editor_state.cpp" />
+    <ClCompile Include="src\app\game_state.cpp" />
     <ClCompile Include="src\app\level.cpp" />
+    <ClCompile Include="src\app\sprite_picker.cpp" />
     <ClCompile Include="src\app\tile_picker.cpp" />
     <ClCompile Include="src\core\dir.cpp" />
     <ClCompile Include="src\core\grid.cpp" />
     <ClCompile Include="src\core\state_manager.cpp" />
     <ClCompile Include="src\core\tilemap.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\sys\movement.cpp" />
+    <ClCompile Include="src\sys\player_input.cpp" />
+    <ClCompile Include="src\sys\render.cpp" />
     <ClCompile Include="src\util\file.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\app.hpp" />
     <ClInclude Include="src\app\app_data.hpp" />
     <ClInclude Include="src\app\editor_state.hpp" />
+    <ClInclude Include="src\app\game_state.hpp" />
     <ClInclude Include="src\app\level.hpp" />
+    <ClInclude Include="src\app\sprite_picker.hpp" />
     <ClInclude Include="src\app\tile_picker.hpp" />
+    <ClInclude Include="src\comp\direction.hpp" />
+    <ClInclude Include="src\comp\entity_state.hpp" />
+    <ClInclude Include="src\comp\player.hpp" />
+    <ClInclude Include="src\comp\position.hpp" />
+    <ClInclude Include="src\comp\sprite.hpp" />
     <ClInclude Include="src\core\dir.hpp" />
     <ClInclude Include="src\core\grid.hpp" />
     <ClInclude Include="src\core\state.hpp" />
     <ClInclude Include="src\core\state_manager.hpp" />
     <ClInclude Include="src\core\tilemap.hpp" />
+    <ClInclude Include="src\sys\movement.hpp" />
+    <ClInclude Include="src\sys\player_input.hpp" />
+    <ClInclude Include="src\sys\render.hpp" />
     <ClInclude Include="src\util\file.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
