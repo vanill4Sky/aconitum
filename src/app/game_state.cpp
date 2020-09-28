@@ -1,18 +1,14 @@
 #include "game_state.hpp"
 
 #include <SFML/Window/Event.hpp>
+#include <cassert>
 
 #include "sprite_picker.hpp"
 #include "../sys/player_input.hpp"
 #include "../sys/movement.hpp"
 #include "../sys/render.hpp"
-#include "../comp/direction.hpp"
-#include "../comp/player.hpp"
-#include "../comp/entity_state.hpp"
-#include "../comp/position.hpp"
-#include "../comp/sprite.hpp"
-
-using namespace aco::comp;
+#include "../sys/target_following.hpp"
+#include "factories.hpp"
 
 aco::game_state::game_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
@@ -22,14 +18,15 @@ aco::game_state::game_state(aco::app_data& app_data)
 void aco::game_state::init()
 {
 	player_tex.loadFromFile("assets/textures/player_thief_01.png");
-	player_sprite.setTexture(player_tex);
-	player_sprite.setTextureRect(aco::pick_sprite(32.0f, aco::pose::walkcycle, aco::dir::down_left, 0));
+	stalker_tex.loadFromFile("assets/textures/stalker_thief_01.png");
 
-	const auto e{ m_reg.create() };
-	m_reg.emplace<aco::comp::player>(e);
-	m_reg.emplace<aco::comp::direction>(e);
-	m_reg.emplace<aco::comp::position>(e, sf::Vector2f{ 500.0f, 500.0f });
-	m_reg.emplace<aco::comp::sprite>(e, player_sprite);
+	const auto player_entity{ aco::create_player(m_reg, player_tex) };
+	aco::create_stalker(m_reg, stalker_tex, player_entity);
+
+	sf::Vector2i vec{ -1, 0 };
+	assert(aco::to_vec2<int>(aco::to_dir(vec)) == vec);
+	vec = sf::Vector2i{ -1, -1 };
+	assert(aco::to_vec2<int>(aco::to_dir(vec)) == vec);
 }
 
 void aco::game_state::handle_input()
@@ -54,6 +51,8 @@ void aco::game_state::handle_input()
 
 void aco::game_state::update(float dt)
 {
+	aco::sys::localize_target(m_reg);
+	aco::sys::target_triggers(m_reg);
 	aco::sys::movement(m_reg);
 }
 
@@ -62,6 +61,7 @@ void aco::game_state::draw()
 	m_app_data.window.clear();
 
 	aco::sys::draw_player(m_reg, m_app_data.window, frame_cnt);
+	aco::sys::draw_creatures(m_reg, m_app_data.window, frame_cnt);
 
 	m_app_data.window.display();
 

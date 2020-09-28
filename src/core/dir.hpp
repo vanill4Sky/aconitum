@@ -1,5 +1,8 @@
 #pragma once
 
+#include <array>
+#include <cassert>
+
 #include <SFML/System/Vector2.hpp>
 
 namespace aco
@@ -7,50 +10,32 @@ namespace aco
 
 enum class dir : int
 {
+	up_left,
+	left,
+	down_left,
 	up,
+	none,
+	down,
 	up_right,
 	right,
 	down_right,
-	down,
-	down_left,
-	left,
-	up_left,
-	none,
 
-	count = none
+	count
 };
 
-constexpr dir operator-(dir other)
+static const std::array<dir, static_cast<size_t>(dir::count)> dir_to_vec2_map{
+	dir::up_left, dir::left, dir::down_left, dir::up,
+	dir::none, dir::down, dir::up_right, dir::right, dir::down_right
+};
+
+template<typename T>
+constexpr dir to_dir(sf::Vector2<T> vec)
 {
-	if (other == dir::none) 
-		return dir::none;
+	const auto ternary_num{ static_cast<sf::Vector2<int>>(vec) + sf::Vector2i{1, 1} };
+	const auto idx{ ternary_num.x * 3 + ternary_num.y };
+	assert(idx >= 0 && idx < static_cast<size_t>(dir::count));
 
-	constexpr int dir_count{ static_cast<int>(dir::count) };
-	int opposite_dir_value{ (static_cast<int>(other) - (dir_count / 2)) % (dir_count - 1) };
-
-	return static_cast<dir>(opposite_dir_value);
-}
-
-constexpr dir& operator++(dir& other)
-{
-	if (other == dir::none)
-		return other = dir::none;
-
-	constexpr int dir_count{ static_cast<int>(dir::count) };
-	int next_dir_value{ (static_cast<int>(other) + 1) % (dir_count - 1) };
-
-	return other = static_cast<dir>(next_dir_value);
-}
-
-constexpr dir& operator--(dir& other)
-{
-	if (other == dir::none)
-		return other = dir::none;
-
-	constexpr int dir_count{ static_cast<int>(dir::count) };
-	int next_dir_value{ (static_cast<int>(other) - 1) % (dir_count - 1) };
-
-	return other = static_cast<dir>(next_dir_value);
+	return dir_to_vec2_map[idx];
 }
 
 template<typename T> 

@@ -27,7 +27,7 @@ private:
 	std::unordered_map <sf::Keyboard::Key, bool> m_keyboard_state;
 
 	sf::Texture player_tex;
-	sf::Sprite player_sprite;
+	sf::Texture stalker_tex;
 	aco::dir player_dir{ aco::dir::none };
 	unsigned int frame_cnt{ 0 };
 };

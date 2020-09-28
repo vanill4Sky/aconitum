@@ -108,6 +108,12 @@
     <ClCompile Include="src\sys\render.cpp">
       <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\factories.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\target_following.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -172,6 +178,18 @@
     </ClInclude>
     <ClInclude Include="src\comp\sprite.hpp">
       <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\factories.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\creatures.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\target.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\target_following.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

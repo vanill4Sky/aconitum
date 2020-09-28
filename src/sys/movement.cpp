@@ -10,10 +10,10 @@ using namespace aco::comp;
 
 void aco::sys::movement(entt::registry& reg)
 {
-	auto view{ reg.view<position, direction, move_state>() };
+	auto view{ reg.view<position, velocity, move_state>() };
 	for (const auto e : view)
 	{
-		const auto dir{ view.get<direction>(e).dir };
-		view.get<position>(e).pos += aco::to_vec2<float>(dir) * 3.0f;
+		const auto v{ view.get<velocity>(e) };
+		view.get<position>(e).pos += aco::to_vec2<float>(v.dir) * v.speed;
 	}
 }

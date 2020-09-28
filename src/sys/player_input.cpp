@@ -81,10 +81,10 @@ bool aco::sys::key_pressed(entt::registry& reg,
 	aco::dir dir{ to_dir(keyboard_state, key) };
 	if (dir != aco::dir::none)
 	{
-		auto view = reg.view<player, direction>();
+		auto view = reg.view<player, velocity>();
 		for (const auto e : view)
 		{
-			view.get<direction>(e).dir = dir;
+			view.get<velocity>(e).dir = dir;
 			if (!reg.has<move_state>(e))
 			{
 				reg.emplace<move_state>(e);
@@ -101,12 +101,12 @@ void aco::sys::key_released(entt::registry& reg,
 	keyboard_state[key] = false;
 
 	aco::dir dir{ to_dir(keyboard_state, key) };
-	auto view = reg.view<player, direction>();
+	auto view = reg.view<player, velocity>();
 	if (dir != aco::dir::none)
 	{
 		for (const auto e : view)
 		{
-			view.get<direction>(e).dir = dir;
+			view.get<velocity>(e).dir = dir;
 			if (!reg.has<move_state>(e))
 			{
 				reg.emplace<move_state>(e);

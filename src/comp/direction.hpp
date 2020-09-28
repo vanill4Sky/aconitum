@@ -5,9 +5,10 @@
 namespace aco::comp
 {
 
-struct direction
+struct velocity
 {
 	aco::dir dir{ aco::dir::down };
+	float speed;
 };
 
 }
