@@ -182,14 +182,26 @@
     <ClInclude Include="src\app\factories.hpp">
       <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
-    <ClInclude Include="src\comp\creatures.hpp">
-      <Filter>Pliki nagłówkowe\comp</Filter>
-    </ClInclude>
     <ClInclude Include="src\comp\target.hpp">
       <Filter>Pliki nagłówkowe\comp</Filter>
     </ClInclude>
     <ClInclude Include="src\sys\target_following.hpp">
       <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\mob.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\collider.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\animation.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\iob.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\vec_math.hpp">
+      <Filter>Pliki nagłówkowe\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

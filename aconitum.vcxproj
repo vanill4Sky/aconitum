@@ -184,7 +184,10 @@
     <ClInclude Include="src\app\level.hpp" />
     <ClInclude Include="src\app\sprite_picker.hpp" />
     <ClInclude Include="src\app\tile_picker.hpp" />
-    <ClInclude Include="src\comp\creatures.hpp" />
+    <ClInclude Include="src\comp\animation.hpp" />
+    <ClInclude Include="src\comp\collider.hpp" />
+    <ClInclude Include="src\comp\iob.hpp" />
+    <ClInclude Include="src\comp\mob.hpp" />
     <ClInclude Include="src\comp\direction.hpp" />
     <ClInclude Include="src\comp\entity_state.hpp" />
     <ClInclude Include="src\comp\player.hpp" />
@@ -201,6 +204,7 @@
     <ClInclude Include="src\sys\render.hpp" />
     <ClInclude Include="src\sys\target_following.hpp" />
     <ClInclude Include="src\util\file.hpp" />
+    <ClInclude Include="src\util\vec_math.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

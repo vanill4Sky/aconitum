@@ -28,6 +28,7 @@ private:
 
 	sf::Texture player_tex;
 	sf::Texture stalker_tex;
+	sf::Texture box_tex;
 	aco::dir player_dir{ aco::dir::none };
 	unsigned int frame_cnt{ 0 };
 };

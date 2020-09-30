@@ -6,7 +6,6 @@
 namespace aco::sys
 {
 
-void draw_player(entt::registry& reg, sf::RenderWindow& window, const size_t frame_cnt);
-void draw_creatures(entt::registry& reg, sf::RenderWindow& window, const size_t frame_cnt);
+void draw_entities(entt::registry& reg, sf::RenderWindow& window, const size_t frame_cnt);
 
 }

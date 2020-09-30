@@ -3,8 +3,7 @@
 namespace aco::comp
 {
 
-struct creature {};
-
+struct mob {};
 struct stalker {};
 
 }

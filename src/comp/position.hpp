@@ -10,4 +10,9 @@ struct position
 	sf::Vector2f pos{ 0.0f, 0.0f };
 };
 
+struct next_position
+{
+	sf::Vector2f pos{ 0.0f, 0.0f };
+};
+
 }

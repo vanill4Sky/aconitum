@@ -19,14 +19,11 @@ void aco::game_state::init()
 {
 	player_tex.loadFromFile("assets/textures/player_thief_01.png");
 	stalker_tex.loadFromFile("assets/textures/stalker_thief_01.png");
+	box_tex.loadFromFile("assets/textures/box_01.png");
 
 	const auto player_entity{ aco::create_player(m_reg, player_tex) };
-	aco::create_stalker(m_reg, stalker_tex, player_entity);
-
-	sf::Vector2i vec{ -1, 0 };
-	assert(aco::to_vec2<int>(aco::to_dir(vec)) == vec);
-	vec = sf::Vector2i{ -1, -1 };
-	assert(aco::to_vec2<int>(aco::to_dir(vec)) == vec);
+	aco::create_stalker(m_reg, player_entity, stalker_tex);
+	aco::create_box(m_reg, box_tex);
 }
 
 void aco::game_state::handle_input()
@@ -53,15 +50,16 @@ void aco::game_state::update(float dt)
 {
 	aco::sys::localize_target(m_reg);
 	aco::sys::target_triggers(m_reg);
-	aco::sys::movement(m_reg);
+	aco::sys::find_next_position(m_reg);
+	aco::sys::player_iob_collide(m_reg);
+	aco::sys::submit_next_position(m_reg);
 }
 
 void aco::game_state::draw()
 {
 	m_app_data.window.clear();
 
-	aco::sys::draw_player(m_reg, m_app_data.window, frame_cnt);
-	aco::sys::draw_creatures(m_reg, m_app_data.window, frame_cnt);
+	aco::sys::draw_entities(m_reg, m_app_data.window, frame_cnt);
 
 	m_app_data.window.display();
 

@@ -5,6 +5,8 @@
 namespace aco::sys
 {
 
-void movement(entt::registry& reg);
+void find_next_position(entt::registry& reg);
+void player_iob_collide(entt::registry& reg);
+void submit_next_position(entt::registry& reg);
 
 }
