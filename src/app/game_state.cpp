@@ -23,7 +23,13 @@ void aco::game_state::init()
 
 	const auto player_entity{ aco::create_player(m_reg, player_tex) };
 	aco::create_stalker(m_reg, player_entity, stalker_tex);
-	aco::create_box(m_reg, box_tex);
+	sf::Vector2f box_pos{ 600.0f, 0.0f };
+	for (int i = 0; i < 10; ++i)
+	{
+		aco::create_box(m_reg, box_tex, box_pos);
+		aco::create_box(m_reg, box_tex, box_pos + sf::Vector2f{ 100.0f, 0.0f });
+		box_pos.y += 100.0f;
+	}
 }
 
 void aco::game_state::handle_input()

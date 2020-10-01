@@ -48,7 +48,7 @@ void aco::create_stalker(entt::registry& reg, const entt::entity target, const s
 	reg.emplace<aco::comp::target>(e, target, 250.0f, 50.0f);
 }
 
-void aco::create_box(entt::registry& reg, const sf::Texture& texture)
+void aco::create_box(entt::registry& reg, const sf::Texture& texture, sf::Vector2f position)
 {
 	sf::Sprite sprite{ texture };
 
@@ -56,7 +56,7 @@ void aco::create_box(entt::registry& reg, const sf::Texture& texture)
 	reg.emplace<aco::comp::iob>(e);
 	reg.emplace<aco::comp::box>(e);
 	reg.emplace<aco::comp::position>(e);
-	reg.emplace<aco::comp::next_position>(e, sf::Vector2f{ 600.0f, 500.0f });
+	reg.emplace<aco::comp::next_position>(e, position);
 	reg.emplace<aco::comp::sprite>(e, sprite);
 	reg.emplace<aco::comp::collider>(e, sf::Vector2f{ 0.0f, 0.0f }, sf::Vector2f{ 23.0f, 31.0f });
 }
