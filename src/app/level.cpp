@@ -23,12 +23,12 @@ aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y)
 	return at(m_data.get(layer), pos_x, pos_y);
 }
 
-void aco::level::update_tilemap()
+void aco::level::update_tilemap(bool show_colliders)
 {
 	m_tilemap.get(aco::layer::bottom) = aco::tilemap(
-		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height);
+		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height, show_colliders);
 	m_tilemap.get(aco::layer::top) = aco::tilemap(
-		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height);
+		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height, show_colliders);
 }
 
 void aco::level::draw(sf::RenderWindow& render_window) const
@@ -163,16 +163,13 @@ void aco::level::resize(std::vector<aco::tile>& layer_data, size_t new_width, si
 
 void aco::to_json(nlohmann::json& j, const aco::tile& tile)
 {
-	//j = nlohmann::json{ 
-	//	{"is_blank", tile.is_blank}, 
-	//	{"tex_x", tile.tex_coords.x}, {"tex_y", tile.tex_coords.y} 
-	//};
-	j = nlohmann::json{ tile.is_blank, tile.tex_coords.x, tile.tex_coords.y };
+	j = nlohmann::json{ tile.is_blank, tile.is_collidable, tile.tex_coords.x, tile.tex_coords.y };
 }
 
 void aco::from_json(const nlohmann::json& j, aco::tile& tile)
 {
 	j.at(0).get_to(tile.is_blank);
-	j.at(1).get_to(tile.tex_coords.x);
-	j.at(2).get_to(tile.tex_coords.y);
+	j.at(1).get_to(tile.is_collidable);
+	j.at(2).get_to(tile.tex_coords.x);
+	j.at(3).get_to(tile.tex_coords.y);
 }

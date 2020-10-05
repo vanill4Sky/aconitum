@@ -23,8 +23,8 @@ public:
 private:
 	std::stack<aco::state_ref> m_states;
 	aco::state_ref m_new_state;
-	bool m_is_removing;
-	bool m_is_adding;
+	bool m_is_removing{ false };
+	bool m_is_adding{ false };
 };
 
 }

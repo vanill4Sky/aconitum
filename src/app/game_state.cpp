@@ -32,6 +32,7 @@ void aco::game_state::init()
 	}
 }
 
+
 void aco::game_state::handle_input()
 {
 	sf::Event event;
@@ -40,7 +41,7 @@ void aco::game_state::handle_input()
 		if (event.type == sf::Event::Closed)
 		{
 			m_app_data.window.close();
-		} 
+		}
 		else if (event.type == sf::Event::KeyPressed)
 		{
 			aco::sys::key_pressed(m_reg, m_keyboard_state, event.key.code);

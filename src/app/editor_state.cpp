@@ -23,7 +23,7 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 
 	tileset.loadFromFile("assets/textures/tileset_dungeon_02.png");
 	m_level = std::make_unique<aco::level>(tileset, 32.0f);
-	m_level->update_tilemap();
+	m_level->update_tilemap(m_is_collider_visible);
 	m_tile_picker = std::make_unique<aco::tile_picker>(tileset, 32.0f);
 	m_horizontal_bounds_input[1] = m_tile_picker->width();
 	m_vertical_bounds_input[1] = m_tile_picker->height();
@@ -120,9 +120,9 @@ void aco::editor_state::update(float dt)
 	{
 		for (size_t x = 0; x < m_tile_picker->width(); ++x)
 		{
-			int id{ static_cast<int>(y * m_tile_picker->width() + x) };
+			const auto id{ static_cast<int>(y * m_tile_picker->width() + x) };
 			ImGui::PushID(id);
-			if (sf::Vector2<size_t> current_tile{ x, y }; 
+			if (const sf::Vector2<size_t> current_tile{ x, y }; 
 				m_tile_picker->active_tile() == current_tile)
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
@@ -154,6 +154,9 @@ void aco::editor_state::update(float dt)
 	ImGui::RadioButton("Fixed", &m_brush_mode, aco::brush_mode::fixed);
 
 	ImGui::Spacing();
+	ImGui::Checkbox("Add collider", &m_is_adding_collider);
+
+	ImGui::Spacing();
 	ImGui::Text("Tile wraping range:");
 	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker->width() - 1);
 	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker->height() - 1);
@@ -164,6 +167,10 @@ void aco::editor_state::update(float dt)
 	ImGui::Separator();
 
 	ImGui::Checkbox("Show grid", &m_is_grid_visible);
+	if (ImGui::Checkbox("Show tile colliders", &m_is_collider_visible))
+	{
+		m_level->update_tilemap(m_is_collider_visible);
+	}
 	ImGui::Separator();
 
 	ImGui::Text("Hovered tile coordinates: (%.0f, %.0f)", 
@@ -212,12 +219,12 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 
 	if (event.button == sf::Mouse::Right)
 	{
-		auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
+		const auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
 
 		auto active_tile_pos{ m_tile_picker->active_tile() };
 		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y) 
-			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
-		m_level->update_tilemap();
+			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
+		m_level->update_tilemap(m_is_collider_visible);
 	}
 	
 }
@@ -225,7 +232,7 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent& event)
 {
 	m_hovered_tile_coords = calc_tile_coordinates({ event.x, event.y }, m_level->tile_size());
-	sf::Vector2f new_tile_delta{ m_hovered_tile_coords - m_origin_tile_coords };
+	const sf::Vector2f new_tile_delta{ m_hovered_tile_coords - m_origin_tile_coords };
 
 	if (m_mouse_state[sf::Mouse::Button::Left] && new_tile_delta != m_prev_tile_delta)
 	{
@@ -234,15 +241,15 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 	}
 	else if (m_mouse_state[sf::Mouse::Button::Right] && new_tile_delta != m_prev_tile_delta)
 	{
-		auto step = static_cast<sf::Vector2i>(new_tile_delta - m_prev_tile_delta);
+		const auto step = static_cast<sf::Vector2i>(new_tile_delta - m_prev_tile_delta);
 		m_tile_picker->update_active_tile(step.x, step.y, static_cast<aco::brush_mode>(m_brush_mode));
 
-		auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
+		const auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
 
 		auto active_tile_pos{ m_tile_picker->active_tile() };
 		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y)
-			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f);
-		m_level->update_tilemap();
+			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
+		m_level->update_tilemap(m_is_collider_visible);
 	}
 
 	m_prev_tile_delta = new_tile_delta;
@@ -265,7 +272,7 @@ void aco::editor_state::validate_bounds_input()
 sf::View aco::editor_state::resize_current_view(sf::Vector2u new_size)
 {
 	auto view{ m_app_data.window.getView() };
-	sf::FloatRect view_rect{
+	const sf::FloatRect view_rect{
 		0.f, 0.f, static_cast<float>(new_size.x), static_cast<float>(new_size.y)
 	};
 	view.reset(view_rect);

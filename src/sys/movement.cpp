@@ -39,12 +39,9 @@ sf::Vector2<bool> iob_iob_collide(entt::registry& reg, entt::entity e)
 		}
 
 		const auto i_curr_pos{ iobs.get<position>(i).pos };
-		auto& i_next_pos{ iobs.get<next_position>(i).pos };
 		const auto& i_collider{ iobs.get<collider>(i) };
 		sf::FloatRect i_bbox{ i_curr_pos + i_collider.offset, i_collider.size };
-
-		if (sf::FloatRect intersection;
-			e_bbox.intersects(i_bbox, intersection))
+		if (e_bbox.intersects(i_bbox))
 		{
 			if (delta.x != 0.0f)
 			{

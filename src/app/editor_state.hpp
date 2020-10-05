@@ -56,6 +56,8 @@ private:
 	sf::Vector2f m_hovered_tile_coords;
 	sf::Vector2f m_prev_tile_delta;
 	bool m_is_grid_visible{ true };
+	bool m_is_collider_visible{ false };
+	bool m_is_adding_collider{ false };
 	int m_brush_mode;
 	int m_horizontal_bounds_input[2];
 	int m_vertical_bounds_input[2];

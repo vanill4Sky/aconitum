@@ -43,7 +43,7 @@ public:
 	const std::string& filename() const;
 
 	void move(sf::Vector2f delta);
-	void update_tilemap();
+	void update_tilemap(bool show_colliders = false);
 	void draw(sf::RenderWindow& render_window) const;
 	void set_filename(std::string filename);
 
