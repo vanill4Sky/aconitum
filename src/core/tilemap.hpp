@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <variant>
 
 #include <SFML/Graphics.hpp>
 
@@ -30,15 +31,17 @@ class tilemap : public sf::Drawable, public sf::Transformable
 {	
 public:
 	tilemap();
-	tilemap(const sf::Texture& tileset, sf::Vector2f tile_size, 
-		const std::vector<aco::tile>& world_map, size_t width, size_t height, bool show_cooliders);
+	tilemap(std::variant<sf::Color, sf::Texture> tile_fill, sf::Vector2f tile_size, 
+		const std::vector<aco::tile>& world_map, size_t width, size_t height);
 
 private:
-	void generate_vertex_array(sf::Vector2f tile_size,
-		const std::vector<aco::tile>& world_map, size_t width, size_t height, bool show_cooliders);
+	void generate_textured_tilemap(sf::Vector2f tile_size,
+		const std::vector<aco::tile>& world_map, size_t width, size_t height);
+	void generate_colored_tilemap(sf::Vector2f tile_size,
+		const std::vector<aco::tile>& world_map, size_t width, size_t height);
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
-	sf::Texture m_tileset;
+	std::variant<sf::Color, sf::Texture> m_tile_fill;
 	sf::VertexArray m_vertices;
 };
 

@@ -4,15 +4,22 @@
 
 aco::tilemap::tilemap() {}
 
-aco::tilemap::tilemap(const sf::Texture& tileset, sf::Vector2f tile_size,
-	const std::vector<aco::tile>& world_map, size_t width, size_t height, bool show_cooliders)
-	: m_tileset{ tileset }
+aco::tilemap::tilemap(std::variant<sf::Color, sf::Texture> tile_fill, sf::Vector2f tile_size,
+	const std::vector<aco::tile>& world_map, size_t width, size_t height)
+	: m_tile_fill{ tile_fill }
 {
-	generate_vertex_array(tile_size, world_map, width, height, show_cooliders);
+	if (std::holds_alternative<sf::Texture>(m_tile_fill))
+	{
+		generate_textured_tilemap(tile_size, world_map, width, height);
+	}
+	else if (std::holds_alternative<sf::Color>(m_tile_fill))
+	{
+		generate_colored_tilemap(tile_size, world_map, width, height);
+	}
 }
 
-void aco::tilemap::generate_vertex_array(sf::Vector2f tile_size, 
-	const std::vector<aco::tile>& world_map, size_t width, size_t height, bool show_cooliders)
+void aco::tilemap::generate_textured_tilemap(sf::Vector2f tile_size,
+	const std::vector<aco::tile>& world_map, size_t width, size_t height)
 {
 	m_vertices.setPrimitiveType(sf::Quads);
 	m_vertices.resize(width * height * 4);
@@ -39,13 +46,29 @@ void aco::tilemap::generate_vertex_array(sf::Vector2f tile_size,
 			current_tile_quad[1].texCoords = sf::Vector2f(curent_tile_tex.x + tile_size.x, curent_tile_tex.y);
 			current_tile_quad[2].texCoords = sf::Vector2f(curent_tile_tex.x + tile_size.x, curent_tile_tex.y + tile_size.y);
 			current_tile_quad[3].texCoords = sf::Vector2f(curent_tile_tex.x, curent_tile_tex.y + tile_size.y);
+		}
+	}
+}
 
-			if (show_cooliders && world_map[current_tile_idx].is_collidable)
+void aco::tilemap::generate_colored_tilemap(sf::Vector2f tile_size,
+	const std::vector<aco::tile>& world_map, size_t width, size_t height)
+{
+	m_vertices.setPrimitiveType(sf::Quads);
+	m_vertices.resize(0);
+
+	const auto tile_color{ std::get<sf::Color>(m_tile_fill) };
+
+	for (size_t i{ 0 }; i < height; ++i)
+	{
+		for (size_t j{ 0 }; j < width; ++j)
+		{
+			const auto current_tile_idx{ i * width + j };
+			if (world_map[current_tile_idx].is_collidable)
 			{
-				current_tile_quad[0].color = sf::Color::Green;
-				current_tile_quad[1].color = sf::Color::Green;
-				current_tile_quad[2].color = sf::Color::Green;
-				current_tile_quad[3].color = sf::Color::Green;
+				m_vertices.append({ sf::Vector2f(j * tile_size.x, i * tile_size.y), tile_color });
+				m_vertices.append({ sf::Vector2f((j + 1) * tile_size.x, i * tile_size.y), tile_color });
+				m_vertices.append({ sf::Vector2f((j + 1) * tile_size.x, (i + 1) * tile_size.y), tile_color });
+				m_vertices.append({ sf::Vector2f(j * tile_size.x, (i + 1) * tile_size.y), tile_color });
 			}
 		}
 	}
@@ -54,6 +77,9 @@ void aco::tilemap::generate_vertex_array(sf::Vector2f tile_size,
 void aco::tilemap::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
-	states.texture = &m_tileset;
+	if (const auto texture{ std::get_if<sf::Texture>(&m_tile_fill) }; texture)
+	{
+		states.texture = texture;
+	}
 	target.draw(m_vertices, states);
 }
