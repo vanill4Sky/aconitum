@@ -43,8 +43,8 @@ public:
 	const std::string& filename() const;
 
 	void move(sf::Vector2f delta);
-	void update_tilemap(bool show_colliders = false);
-	void draw(sf::RenderWindow& render_window) const;
+	void update_tilemap();
+	void draw(sf::RenderWindow& render_window, bool show_collider_mask) const;
 	void set_filename(std::string filename);
 
 	void write_to_file(std::filesystem::path levels_dir) const;
@@ -60,6 +60,7 @@ private:
 	std::string m_filename;
 	sf::Texture m_tileset;
 	pair<aco::tilemap> m_tilemap;
+	aco::tilemap m_collider_mask;
 	pair<std::vector<aco::tile>> m_data;
 	sf::RenderStates m_level_render_states;
 	float m_tile_size;

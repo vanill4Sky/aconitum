@@ -23,7 +23,7 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 
 	tileset.loadFromFile("assets/textures/tileset_dungeon_02.png");
 	m_level = std::make_unique<aco::level>(tileset, 32.0f);
-	m_level->update_tilemap(m_is_collider_visible);
+	m_level->update_tilemap();
 	m_tile_picker = std::make_unique<aco::tile_picker>(tileset, 32.0f);
 	m_horizontal_bounds_input[1] = m_tile_picker->width();
 	m_vertical_bounds_input[1] = m_tile_picker->height();
@@ -169,7 +169,7 @@ void aco::editor_state::update(float dt)
 	ImGui::Checkbox("Show grid", &m_is_grid_visible);
 	if (ImGui::Checkbox("Show tile colliders", &m_is_collider_visible))
 	{
-		m_level->update_tilemap(m_is_collider_visible);
+		m_level->update_tilemap();
 	}
 	ImGui::Separator();
 
@@ -189,7 +189,7 @@ void aco::editor_state::update(float dt)
 void aco::editor_state::draw()
 {
 	m_app_data.window.clear();
-	m_level->draw(m_app_data.window);
+	m_level->draw(m_app_data.window, m_is_collider_visible);
 	m_app_data.window.draw(m_grid);
 	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
@@ -224,7 +224,7 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 		auto active_tile_pos{ m_tile_picker->active_tile() };
 		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y) 
 			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
-		m_level->update_tilemap(m_is_collider_visible);
+		m_level->update_tilemap();
 	}
 	
 }
@@ -249,7 +249,7 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 		auto active_tile_pos{ m_tile_picker->active_tile() };
 		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y)
 			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
-		m_level->update_tilemap(m_is_collider_visible);
+		m_level->update_tilemap();
 	}
 
 	m_prev_tile_delta = new_tile_delta;

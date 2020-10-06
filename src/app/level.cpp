@@ -23,18 +23,24 @@ aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y)
 	return at(m_data.get(layer), pos_x, pos_y);
 }
 
-void aco::level::update_tilemap(bool show_colliders)
+void aco::level::update_tilemap()
 {
 	m_tilemap.get(aco::layer::bottom) = aco::tilemap(
-		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height, show_colliders);
+		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height);
 	m_tilemap.get(aco::layer::top) = aco::tilemap(
-		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height, show_colliders);
+		m_tileset, { m_tile_size, m_tile_size }, m_data.get(aco::layer::top), m_width, m_height);
+	m_collider_mask = aco::tilemap(
+		sf::Color{0, 100, 0, 125}, { m_tile_size, m_tile_size }, m_data.get(aco::layer::bottom), m_width, m_height);
 }
 
-void aco::level::draw(sf::RenderWindow& render_window) const
+void aco::level::draw(sf::RenderWindow& render_window, bool show_collider_mask) const
 {
 	render_window.draw(m_tilemap.get(aco::layer::bottom), m_level_render_states);
 	render_window.draw(m_tilemap.get(aco::layer::top), m_level_render_states);
+	if (show_collider_mask)
+	{
+		render_window.draw(m_collider_mask, m_level_render_states);
+	}
 }
 
 void aco::level::set_filename(std::string filename)
