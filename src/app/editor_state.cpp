@@ -152,6 +152,7 @@ void aco::editor_state::update(float dt)
 	ImGui::RadioButton("Horizontal only", &m_brush_mode, aco::brush_mode::horizontal_only);
 	ImGui::RadioButton("Vertical only", &m_brush_mode, aco::brush_mode::vertical_only);
 	ImGui::RadioButton("Fixed", &m_brush_mode, aco::brush_mode::fixed);
+	ImGui::RadioButton("Eraser", &m_brush_mode, aco::brush_mode::eraser);
 
 	ImGui::Spacing();
 	ImGui::Checkbox("Add collider", &m_is_adding_collider);
@@ -214,24 +215,21 @@ void aco::editor_state::handle_zoom_event(const sf::Event::MouseWheelScrollEvent
 
 void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& event)
 {
-	m_origin_tile_coords = calc_tile_coordinates({ event.x, event.y }, m_level->tile_size());
+	sf::Vector2i mouse_pos{ event.x, event.y };
+	m_origin_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
 	m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
 
 	if (event.button == sf::Mouse::Right)
 	{
-		const auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
-
-		auto active_tile_pos{ m_tile_picker->active_tile() };
-		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y) 
-			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
-		m_level->update_tilemap();
+		update_tile(mouse_pos, m_level->tile_size());
 	}
 	
 }
 
 void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent& event)
 {
-	m_hovered_tile_coords = calc_tile_coordinates({ event.x, event.y }, m_level->tile_size());
+	sf::Vector2i mouse_pos{ event.x, event.y };
+	m_hovered_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
 	const sf::Vector2f new_tile_delta{ m_hovered_tile_coords - m_origin_tile_coords };
 
 	if (m_mouse_state[sf::Mouse::Button::Left] && new_tile_delta != m_prev_tile_delta)
@@ -244,12 +242,7 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 		const auto step = static_cast<sf::Vector2i>(new_tile_delta - m_prev_tile_delta);
 		m_tile_picker->update_active_tile(step.x, step.y, static_cast<aco::brush_mode>(m_brush_mode));
 
-		const auto selected_tile{ calc_tile_world_coordinates({ event.x, event.y }, m_level->tile_size()) };
-
-		auto active_tile_pos{ m_tile_picker->active_tile() };
-		m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y)
-			= aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
-		m_level->update_tilemap();
+		update_tile(mouse_pos, m_level->tile_size());
 	}
 
 	m_prev_tile_delta = new_tile_delta;
@@ -305,6 +298,23 @@ sf::Vector2i aco::editor_state::calc_tile_world_coordinates(sf::Vector2i mouse_p
 	};
 
 	return tile_coordinates - m_level->render_translation();
+}
+
+void aco::editor_state::update_tile(sf::Vector2i mouse_position, float tile_size)
+{
+	const auto selected_tile{ calc_tile_world_coordinates(mouse_position, tile_size) };
+
+	auto active_tile_pos{ m_tile_picker->active_tile() };
+	if (auto& tile{ m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y) };
+		static_cast<aco::brush_mode>(m_brush_mode) == aco::eraser)
+	{
+		tile = aco::tile();
+	}
+	else
+	{
+		tile = aco::tile(active_tile_pos.x * 32.0f, active_tile_pos.y * 32.0f, m_is_adding_collider);
+	}
+	m_level->update_tilemap();
 }
 
 void aco::editor_state::init_level()

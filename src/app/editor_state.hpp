@@ -41,6 +41,7 @@ private:
 	void zoom(int delta);
 	sf::Vector2f calc_tile_coordinates(sf::Vector2i mouse_position, float tile_size) const;
 	sf::Vector2i calc_tile_world_coordinates(sf::Vector2i mouse_position, float tile_size);
+	void update_tile(sf::Vector2i mouse_position, float tile_size);
 	void init_level();
 	void load_level();
 	void save_level();

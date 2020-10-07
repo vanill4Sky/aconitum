@@ -56,6 +56,7 @@ private:
 		size_t offset_x = 0, size_t offset_y = 0);
 	void resize(std::vector<aco::tile>& layer_data, size_t new_width, size_t new_height,
 		size_t offset_x = 0, size_t offset_y = 0);
+	void optimize_size();
 
 	std::string m_filename;
 	sf::Texture m_tileset;

@@ -53,6 +53,7 @@ void aco::tile_picker::update_active_tile(int delta_x, int delta_y, aco::brush_m
 		delta_x = 0;
 		break;
 	case aco::fixed:
+	case aco::eraser:
 		delta_x = 0;
 		delta_y = 0;
 		break;

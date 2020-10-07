@@ -12,7 +12,8 @@ enum brush_mode
 	bidirectional,
 	horizontal_only,
 	vertical_only,
-	fixed
+	fixed,
+	eraser
 };
 
 class tile_picker

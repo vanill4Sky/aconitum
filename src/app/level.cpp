@@ -167,6 +167,11 @@ void aco::level::resize(std::vector<aco::tile>& layer_data, size_t new_width, si
 	layer_data = std::move(temp);
 }
 
+void aco::level::optimize_size()
+{
+
+}
+
 void aco::to_json(nlohmann::json& j, const aco::tile& tile)
 {
 	j = nlohmann::json{ tile.is_blank, tile.is_collidable, tile.tex_coords.x, tile.tex_coords.y };
