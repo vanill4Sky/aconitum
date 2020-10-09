@@ -19,12 +19,14 @@ enum brush_mode
 class tile_picker
 {
 public:
+	tile_picker();
 	tile_picker(const sf::Texture& tileset, float tile_size);
 
 	sf::Sprite at(size_t pos_x, size_t pos_y) const;
 	sf::Vector2<size_t> tile_count() const;
 	size_t width() const;
 	size_t height() const;
+	bool is_tileset_loaded() const;
 
 	void set_active_tile(size_t pos_x, size_t pos_y);
 	void update_active_tile(int delta_x, int delta_y, brush_mode bm);

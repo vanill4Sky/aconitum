@@ -203,5 +203,8 @@
     <ClInclude Include="src\util\vec_math.hpp">
       <Filter>Pliki nagłówkowe\util</Filter>
     </ClInclude>
+    <ClInclude Include="src\app\constants.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -184,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="src\app\app.hpp" />
     <ClInclude Include="src\app\app_data.hpp" />
+    <ClInclude Include="src\app\constants.hpp" />
     <ClInclude Include="src\app\editor_state.hpp" />
     <ClInclude Include="src\app\factories.hpp" />
     <ClInclude Include="src\app\game_state.hpp" />

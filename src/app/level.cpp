@@ -7,16 +7,14 @@
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
-aco::level::level(sf::Texture tileset, float tile_size, size_t width, size_t height)
-	: m_tileset{ std::move(tileset) }
-	, m_tile_size{ tile_size }
-	, m_width{ width }
-	, m_height{ height }
-{
-}
+#include "constants.hpp"
 
-aco::level::level(sf::Texture tileset, float tile_size)
-	: aco::level::level(tileset, tile_size, 0, 0)
+namespace fs = std::filesystem;
+
+aco::level::level(float tile_size)
+	: m_tile_size{ tile_size }
+	, m_width{ 0 }
+	, m_height{ 0 }
 {
 }
 
@@ -61,6 +59,7 @@ void aco::level::write_to_file(std::filesystem::path levels_dir) const
 		json["tile_size"] = m_tile_size;
 		json["bottom_layer_data"] = m_data.bottom;
 		json["top_layer_data"] = m_data.top;
+		json["tileset_filename"] = m_tileset_filename;
 		output << json << '\n';
 	}
 }
@@ -77,8 +76,22 @@ void aco::level::read_from_file(const std::filesystem::path& path)
 	m_tile_size = json["tile_size"].get<float>();
 	m_data.bottom = json["bottom_layer_data"].get<std::vector<aco::tile>>();
 	m_data.top = json["top_layer_data"].get<std::vector<aco::tile>>();
+	
+	auto tileset_filename{ json["tileset_filename"].get<std::string>() };
+	load_tileset(tileset_dir + tileset_filename);
 
 	update_tilemap();
+}
+
+bool aco::level::load_tileset(const std::string& tileset_path)
+{
+	if (m_tileset.loadFromFile(tileset_path))
+	{
+		m_tileset_filename = fs::path{ tileset_path }.filename().string();
+		update_tilemap();
+		return true;
+	}
+	return false;
 }
 
 const sf::RenderStates& aco::level::level_render_states() const
@@ -110,6 +123,16 @@ size_t aco::level::width() const
 size_t aco::level::height() const
 {
 	return m_height;
+}
+
+const sf::Texture& aco::level::tileset() const
+{
+	return m_tileset;
+}
+
+const std::string& aco::level::tileset_filename() const
+{
+	return m_tileset_filename;
 }
 
 aco::tile& aco::level::at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y)
@@ -185,7 +208,6 @@ void aco::level::optimize_size()
 		sf::Rect<size_t> layer_bbox(
 			std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max(),
 			std::numeric_limits<size_t>::min(), std::numeric_limits<size_t>::min());
-		bool is_whole_blank{ true };
 		for (size_t y{ 0 }; y < m_height; ++y)
 		{
 			for (size_t x{ 0 }; x < m_width; ++x)
@@ -197,30 +219,37 @@ void aco::level::optimize_size()
 
 					layer_bbox.width = std::max(layer_bbox.width, x - layer_bbox.left + 1);
 					layer_bbox.height = std::max(layer_bbox.height, y - layer_bbox.top + 1);
-
-					is_whole_blank = false;
 				}
 			}
-		}
-
-		if (is_whole_blank)
-		{
-			layer_bbox.left = 0;
-			layer_bbox.top = 0;
 		}
 
 		return layer_bbox;
 	};
 
+	const auto is_empty = [](const auto& bbox) {
+		return bbox.width == 0 && bbox.height == 0;
+	};
+
+	sf::Rect<size_t> level_bbox;
 	auto bottom_layer_bbox{ find_layer_bbox(m_data.bottom) };
 	auto top_layer_bbox{ find_layer_bbox(m_data.top) };
-	sf::Rect<size_t> level_bbox;
-	level_bbox.left = std::min(bottom_layer_bbox.left, top_layer_bbox.left);
-	level_bbox.top = std::min(bottom_layer_bbox.top, top_layer_bbox.top);
-	level_bbox.width = std::max(bottom_layer_bbox.left + bottom_layer_bbox.width,
-		top_layer_bbox.left + top_layer_bbox.width) - level_bbox.left;
-	level_bbox.height = std::max(bottom_layer_bbox.top + bottom_layer_bbox.height,
-		top_layer_bbox.top + top_layer_bbox.height) - level_bbox.top;
+	if (!is_empty(bottom_layer_bbox) && !is_empty(top_layer_bbox))
+	{
+		level_bbox.left = std::min(bottom_layer_bbox.left, top_layer_bbox.left);
+		level_bbox.top = std::min(bottom_layer_bbox.top, top_layer_bbox.top);
+		level_bbox.width = std::max(bottom_layer_bbox.left + bottom_layer_bbox.width,
+			top_layer_bbox.left + top_layer_bbox.width) - level_bbox.left;
+		level_bbox.height = std::max(bottom_layer_bbox.top + bottom_layer_bbox.height,
+			top_layer_bbox.top + top_layer_bbox.height) - level_bbox.top;
+	}
+	else if (!is_empty(bottom_layer_bbox) && is_empty(top_layer_bbox))
+	{
+		level_bbox = bottom_layer_bbox;
+	}
+	else if (is_empty(bottom_layer_bbox) && !is_empty(top_layer_bbox))
+	{
+		level_bbox = top_layer_bbox;
+	}
 
 	const auto crop_layer = [&](auto& layer) {
 		for (size_t y{ 0 }; y < level_bbox.height; ++y)
@@ -232,6 +261,7 @@ void aco::level::optimize_size()
 				layer[new_idx] = layer[old_idx];
 			}
 		}
+		layer.erase(layer.begin() + level_bbox.height * level_bbox.width);
 	};
 
 	crop_layer(m_data.bottom);

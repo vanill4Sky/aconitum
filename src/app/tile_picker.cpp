@@ -3,6 +3,14 @@
 #include <cassert>
 
 
+aco::tile_picker::tile_picker()
+	: m_tile_count{ 0, 0 }
+	, m_data{ }
+	, m_tile_size{ 1.0f }
+	, m_active_tile{ 0, 0 }
+{
+}
+
 aco::tile_picker::tile_picker(const sf::Texture& tileset, float tile_size)
 	: m_tile_count{ calc_tile_count(tileset, static_cast<unsigned int>(tile_size)) }
 	, m_data{ std::move(split_tileset(tileset, static_cast<int>(tile_size))) }
@@ -31,6 +39,11 @@ size_t aco::tile_picker::width() const
 size_t aco::tile_picker::height() const
 {
 	return m_tile_count.y;
+}
+
+bool aco::tile_picker::is_tileset_loaded() const
+{
+	return m_tile_count != sf::Vector2<size_t>{ 0, 0 };
 }
 
 void aco::tile_picker::set_active_tile(size_t pos_x, size_t pos_y)

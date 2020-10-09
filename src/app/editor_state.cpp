@@ -17,16 +17,17 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	, m_brush_mode{ aco::brush_mode::bidirectional }
 	, m_current_layer{ static_cast<int>(aco::layer::bottom) }
 	, m_level_files_list{ util::list_filenames(levels_dir, "json") }
+	, m_tileset_files_list{ util::list_filenames(tileset_dir) }
 	, m_current_level_file_idx{ 0 }
+	, m_current_tileset_file_idx{ 0 }
 {
 	ImGui::SFML::Init(app_data.window);
 
 	tileset.loadFromFile("assets/textures/tileset_dungeon_02.png");
-	m_level = std::make_unique<aco::level>(tileset, 32.0f);
+	m_level = std::make_unique<aco::level>(32.0f);
 	m_level->update_tilemap();
-	m_tile_picker = std::make_unique<aco::tile_picker>(tileset, 32.0f);
-	m_horizontal_bounds_input[1] = m_tile_picker->width();
-	m_vertical_bounds_input[1] = m_tile_picker->height();
+	m_horizontal_bounds_input[1] = m_tile_picker.width();
+	m_vertical_bounds_input[1] = m_tile_picker.height();
 
 	debug_follower.setFillColor(sf::Color(0, 255, 0, 63));
 }
@@ -84,9 +85,9 @@ void aco::editor_state::update(float dt)
 
 	ImGui::ShowTestWindow();
 
-	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - 300.0f, 0.0f });
-	ImGui::SetNextWindowSize({ 300.0f,  0.0f });
-	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoResize);
+	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - 350.0f, 0.0f });
+	ImGui::SetNextWindowSize({ 350.0f,  static_cast<float>(m_app_data.window.getSize().y) });
+	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
 
 	ImGui::TextWrapped("Current level: %s", m_level->filename().data());
 	ImGui::Spacing();
@@ -114,6 +115,18 @@ void aco::editor_state::update(float dt)
 	{
 		save_level();
 	}
+
+	ImGui::TextWrapped("Tileset: %s", m_level->tileset_filename().data());
+	ImGui::PushID("set_tileset_input");
+	ImGui::Combo("", &m_current_tileset_file_idx, m_tileset_files_list); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Set", { -1, 0 }))
+	{
+		if (m_level->load_tileset(tileset_dir + m_tileset_files_list[m_current_tileset_file_idx]))
+		{
+			m_tile_picker = aco::tile_picker(m_level->tileset(), m_level->tile_size());
+		}
+	}
 	ImGui::Separator();
 
 	if (ImGui::Button("Optimize", { 0, 0 }))
@@ -125,14 +138,14 @@ void aco::editor_state::update(float dt)
 	ImGui::Text("Level size: (%llu, %llu)", m_level->width(), m_level->height());
 	ImGui::Separator();
 
-	for (size_t y = 0; y < m_tile_picker->height(); ++y)
+	for (size_t y = 0; y < m_tile_picker.height(); ++y)
 	{
-		for (size_t x = 0; x < m_tile_picker->width(); ++x)
+		for (size_t x = 0; x < m_tile_picker.width(); ++x)
 		{
-			const auto id{ static_cast<int>(y * m_tile_picker->width() + x) };
+			const auto id{ static_cast<int>(y * m_tile_picker.width() + x) };
 			ImGui::PushID(id);
 			if (const sf::Vector2<size_t> current_tile{ x, y }; 
-				m_tile_picker->active_tile() == current_tile)
+				m_tile_picker.active_tile() == current_tile)
 			{
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
 				ImGui::PushStyleColor(ImGuiCol_Border, { 1.0f, 0.0f, 0.0f, 1.0f });
@@ -142,9 +155,9 @@ void aco::editor_state::update(float dt)
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 				ImGui::PushStyleColor(ImGuiCol_Border, { 0.0f, 0.0f, 0.0f, 1.0f });
 			}
-			if (ImGui::ImageButton(m_tile_picker->at(x, y), 1))
+			if (ImGui::ImageButton(m_tile_picker.at(x, y), 1))
 			{
-				m_tile_picker->set_active_tile(x, y);
+				m_tile_picker.set_active_tile(x, y);
 			}
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
@@ -168,8 +181,8 @@ void aco::editor_state::update(float dt)
 
 	ImGui::Spacing();
 	ImGui::Text("Tile wraping range:");
-	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker->width() - 1);
-	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker->height() - 1);
+	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker.width() - 1);
+	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker.height() - 1);
 
 	ImGui::Spacing();
 	ImGui::Text("Level layer selection");
@@ -228,7 +241,7 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 	m_origin_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
 	m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
 
-	if (event.button == sf::Mouse::Right)
+	if (m_tile_picker.is_tileset_loaded() && event.button == sf::Mouse::Right)
 	{
 		update_tile(mouse_pos, m_level->tile_size());
 	}
@@ -246,10 +259,11 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 		m_level->move(-m_prev_tile_delta);
 		m_level->move(new_tile_delta);
 	}
-	else if (m_mouse_state[sf::Mouse::Button::Right] && new_tile_delta != m_prev_tile_delta)
+	else if (m_tile_picker.is_tileset_loaded() && m_mouse_state[sf::Mouse::Button::Right] 
+		&& new_tile_delta != m_prev_tile_delta)
 	{
 		const auto step = static_cast<sf::Vector2i>(new_tile_delta - m_prev_tile_delta);
-		m_tile_picker->update_active_tile(step.x, step.y, static_cast<aco::brush_mode>(m_brush_mode));
+		m_tile_picker.update_active_tile(step.x, step.y, static_cast<aco::brush_mode>(m_brush_mode));
 
 		update_tile(mouse_pos, m_level->tile_size());
 	}
@@ -267,8 +281,8 @@ void aco::editor_state::validate_bounds_input()
 		input[1] = std::min(input[1], static_cast<int>(limit));
 		input[1] = std::max(input[0], input[1]);
 	};
-	validate_bound(m_horizontal_bounds_input, m_tile_picker->width());
-	validate_bound(m_vertical_bounds_input, m_tile_picker->height());
+	validate_bound(m_horizontal_bounds_input, m_tile_picker.width());
+	validate_bound(m_vertical_bounds_input, m_tile_picker.height());
 }
 
 sf::View aco::editor_state::resize_current_view(sf::Vector2u new_size)
@@ -313,7 +327,7 @@ void aco::editor_state::update_tile(sf::Vector2i mouse_position, float tile_size
 {
 	const auto selected_tile{ calc_tile_world_coordinates(mouse_position, tile_size) };
 
-	auto active_tile_pos{ m_tile_picker->active_tile() };
+	auto active_tile_pos{ m_tile_picker.active_tile() };
 	if (auto& tile{ m_level->at(static_cast<aco::layer>(m_current_layer), selected_tile.x, selected_tile.y) };
 		static_cast<aco::brush_mode>(m_brush_mode) == aco::eraser)
 	{
@@ -329,7 +343,7 @@ void aco::editor_state::update_tile(sf::Vector2i mouse_position, float tile_size
 void aco::editor_state::init_level()
 {
 	std::string new_level_filename{ m_new_level_name.data() };
-	aco::level new_level{ tileset, 32.0f };
+	aco::level new_level{ 32.0f };
 	new_level.set_filename(new_level_filename);
 	new_level.write_to_file(levels_dir);
 	m_level_files_list = util::list_filenames(levels_dir, "json");
@@ -345,6 +359,8 @@ void aco::editor_state::load_level()
 		m_level->read_from_file(levels_dir + filename);
 		std::copy(filename.begin(), filename.end(), m_save_level_name.begin());
 		m_save_level_name[std::min(filename.size(), m_save_level_name.size() - 1)] = '\0';
+
+		m_tile_picker = aco::tile_picker(m_level->tileset(), m_level->tile_size());
 	}
 }
 

@@ -12,12 +12,10 @@
 #include "app_data.hpp"
 #include "level.hpp"
 #include "tile_picker.hpp"
+#include "constants.hpp"
 
 namespace aco
 {
-
-const std::string levels_dir{ "assets/levels/" };
-
 using text_input_buffer = std::array<char, 256>;
 
 class editor_state : public state
@@ -49,7 +47,7 @@ private:
 	app_data& m_app_data;
 	grid m_grid;
 	std::unique_ptr<level> m_level;
-	std::unique_ptr<tile_picker> m_tile_picker;
+	tile_picker m_tile_picker;
 
 	int m_current_zoom;
 	std::unordered_map<sf::Mouse::Button, bool> m_mouse_state;
@@ -64,7 +62,9 @@ private:
 	int m_vertical_bounds_input[2];
 	int m_current_layer;
 	std::vector<std::string> m_level_files_list;
+	std::vector<std::string> m_tileset_files_list;
 	int m_current_level_file_idx;
+	int m_current_tileset_file_idx;
 	text_input_buffer m_new_level_name;
 	text_input_buffer m_save_level_name;
 

@@ -33,8 +33,7 @@ struct pair
 class level
 {
 public:
-	level(sf::Texture tileset, float tile_size);
-	level(sf::Texture tileset, float tile_size, size_t width, size_t height);
+	level(float tile_size);
 
 	aco::tile& at(aco::layer layer, int pos_x, int pos_y);
 	const sf::RenderStates& level_render_states() const;
@@ -43,6 +42,8 @@ public:
 	const std::string& filename() const;
 	size_t width() const;
 	size_t height() const;
+	const sf::Texture& tileset() const;
+	const std::string& tileset_filename() const;
 
 	void move(sf::Vector2f delta);
 	void update_tilemap();
@@ -51,6 +52,7 @@ public:
 
 	void write_to_file(std::filesystem::path levels_dir) const;
 	void read_from_file(const std::filesystem::path& path);
+	bool load_tileset(const std::string& tileset_path);
 
 	void optimize_size();
 
@@ -62,6 +64,7 @@ private:
 		size_t offset_x = 0, size_t offset_y = 0);
 
 	std::string m_filename;
+	std::string m_tileset_filename;
 	sf::Texture m_tileset;
 	pair<aco::tilemap> m_tilemap;
 	aco::tilemap m_collider_mask;
