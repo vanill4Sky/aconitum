@@ -1,7 +1,9 @@
 #include "level.hpp"
 
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 
@@ -84,7 +86,7 @@ const sf::RenderStates& aco::level::level_render_states() const
 	return m_level_render_states;
 }
 
-const sf::Vector2i aco::level::render_translation() const
+sf::Vector2i aco::level::render_translation() const
 {
 	auto matrix{ m_level_render_states.transform.getMatrix() };
 	return static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_tile_size));
@@ -98,6 +100,16 @@ float aco::level::tile_size() const
 const std::string& aco::level::filename() const
 {
 	return m_filename;
+}
+
+size_t aco::level::width() const
+{
+	return m_width;
+}
+
+size_t aco::level::height() const
+{
+	return m_height;
 }
 
 aco::tile& aco::level::at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y)
@@ -169,7 +181,65 @@ void aco::level::resize(std::vector<aco::tile>& layer_data, size_t new_width, si
 
 void aco::level::optimize_size()
 {
+	const auto find_layer_bbox = [&](const auto& layer) {
+		sf::Rect<size_t> layer_bbox(
+			std::numeric_limits<size_t>::max(), std::numeric_limits<size_t>::max(),
+			std::numeric_limits<size_t>::min(), std::numeric_limits<size_t>::min());
+		bool is_whole_blank{ true };
+		for (size_t y{ 0 }; y < m_height; ++y)
+		{
+			for (size_t x{ 0 }; x < m_width; ++x)
+			{
+				if (!layer[y * m_width + x].is_blank)
+				{
+					layer_bbox.left = std::min(layer_bbox.left, x);
+					layer_bbox.top = std::min(layer_bbox.top, y);
 
+					layer_bbox.width = std::max(layer_bbox.width, x - layer_bbox.left + 1);
+					layer_bbox.height = std::max(layer_bbox.height, y - layer_bbox.top + 1);
+
+					is_whole_blank = false;
+				}
+			}
+		}
+
+		if (is_whole_blank)
+		{
+			layer_bbox.left = 0;
+			layer_bbox.top = 0;
+		}
+
+		return layer_bbox;
+	};
+
+	auto bottom_layer_bbox{ find_layer_bbox(m_data.bottom) };
+	auto top_layer_bbox{ find_layer_bbox(m_data.top) };
+	sf::Rect<size_t> level_bbox;
+	level_bbox.left = std::min(bottom_layer_bbox.left, top_layer_bbox.left);
+	level_bbox.top = std::min(bottom_layer_bbox.top, top_layer_bbox.top);
+	level_bbox.width = std::max(bottom_layer_bbox.left + bottom_layer_bbox.width,
+		top_layer_bbox.left + top_layer_bbox.width) - level_bbox.left;
+	level_bbox.height = std::max(bottom_layer_bbox.top + bottom_layer_bbox.height,
+		top_layer_bbox.top + top_layer_bbox.height) - level_bbox.top;
+
+	const auto crop_layer = [&](auto& layer) {
+		for (size_t y{ 0 }; y < level_bbox.height; ++y)
+		{
+			for (size_t x{ 0 }; x < level_bbox.width; ++x)
+			{
+				const auto new_idx{ y * level_bbox.width + x };
+				const auto old_idx{ ((y + level_bbox.top) * m_width) + (x + level_bbox.left) };
+				layer[new_idx] = layer[old_idx];
+			}
+		}
+	};
+
+	crop_layer(m_data.bottom);
+	crop_layer(m_data.top);
+	m_width = level_bbox.width;
+	m_height = level_bbox.height;
+
+	update_tilemap();
 }
 
 void aco::to_json(nlohmann::json& j, const aco::tile& tile)

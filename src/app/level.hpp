@@ -38,9 +38,11 @@ public:
 
 	aco::tile& at(aco::layer layer, int pos_x, int pos_y);
 	const sf::RenderStates& level_render_states() const;
-	const sf::Vector2i render_translation() const;
+	sf::Vector2i render_translation() const;
 	float tile_size() const;
 	const std::string& filename() const;
+	size_t width() const;
+	size_t height() const;
 
 	void move(sf::Vector2f delta);
 	void update_tilemap();
@@ -50,13 +52,14 @@ public:
 	void write_to_file(std::filesystem::path levels_dir) const;
 	void read_from_file(const std::filesystem::path& path);
 
+	void optimize_size();
+
 private:
 	aco::tile& at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y);
 	void resize(size_t new_width, size_t new_height,
 		size_t offset_x = 0, size_t offset_y = 0);
 	void resize(std::vector<aco::tile>& layer_data, size_t new_width, size_t new_height,
 		size_t offset_x = 0, size_t offset_y = 0);
-	void optimize_size();
 
 	std::string m_filename;
 	sf::Texture m_tileset;

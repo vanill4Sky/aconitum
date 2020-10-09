@@ -85,7 +85,7 @@ void aco::editor_state::update(float dt)
 	ImGui::ShowTestWindow();
 
 	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - 300.0f, 0.0f });
-	ImGui::SetNextWindowSize({ 300.0f, /*m_app_data.window.getSize().y +*/ 0.0f });
+	ImGui::SetNextWindowSize({ 300.0f,  0.0f });
 	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoResize);
 
 	ImGui::TextWrapped("Current level: %s", m_level->filename().data());
@@ -114,6 +114,15 @@ void aco::editor_state::update(float dt)
 	{
 		save_level();
 	}
+	ImGui::Separator();
+
+	if (ImGui::Button("Optimize", { 0, 0 }))
+	{
+		m_level->optimize_size();
+	}
+	ImGui::SameLine();
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Level size: (%llu, %llu)", m_level->width(), m_level->height());
 	ImGui::Separator();
 
 	for (size_t y = 0; y < m_tile_picker->height(); ++y)
