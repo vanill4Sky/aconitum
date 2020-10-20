@@ -87,122 +87,25 @@ void aco::editor_state::update(float dt)
 
 	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - 350.0f, 0.0f });
 	ImGui::SetNextWindowSize({ 350.0f,  static_cast<float>(m_app_data.window.getSize().y) });
-	ImGui::Begin("Level editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
+	ImGui::Begin("Aconitum editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
 
-	ImGui::TextWrapped("Current level: %s", m_level->filename().data());
-	ImGui::Spacing();
-
-	ImGui::PushID("init_input");
-	ImGui::InputTextWithHint("", "new level filename", m_new_level_name.data(), m_new_level_name.size()); ImGui::SameLine();
-	ImGui::PopID();
-	if (ImGui::Button("Init", { -1, 0 }))
+	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+	if (ImGui::BeginTabBar("editor_tab_bar", tab_bar_flags))
 	{
-		init_level();
-	}
-
-	ImGui::PushID("load_input");
-	ImGui::Combo("", &m_current_level_file_idx, m_level_files_list); ImGui::SameLine();
-	ImGui::PopID();
-	if (ImGui::Button("Load", { -1, 0 }))
-	{
-		load_level();
-	}
-
-	ImGui::PushID("save_input");
-	ImGui::InputTextWithHint("", "this level filename", m_save_level_name.data(), m_save_level_name.size()); ImGui::SameLine();
-	ImGui::PopID();
-	if (ImGui::Button("Save", { -1, 0 }))
-	{
-		save_level();
-	}
-
-	ImGui::TextWrapped("Tileset: %s", m_level->tileset_filename().data());
-	ImGui::PushID("set_tileset_input");
-	ImGui::Combo("", &m_current_tileset_file_idx, m_tileset_files_list); ImGui::SameLine();
-	ImGui::PopID();
-	if (ImGui::Button("Set", { -1, 0 }))
-	{
-		if (m_level->load_tileset(tileset_dir + m_tileset_files_list[m_current_tileset_file_idx]))
+		if (ImGui::BeginTabItem("Level editor"))
 		{
-			m_tile_picker = aco::tile_picker(m_level->tileset(), m_level->tile_size());
+			update_level_editor_tab();
+			ImGui::EndTabItem();
 		}
-	}
-	ImGui::Separator();
-
-	if (ImGui::Button("Optimize", { 0, 0 }))
-	{
-		m_level->optimize_size();
-	}
-	ImGui::SameLine();
-	ImGui::AlignTextToFramePadding();
-	ImGui::Text("Level size: (%llu, %llu)", m_level->width(), m_level->height());
-	ImGui::Separator();
-
-	for (size_t y = 0; y < m_tile_picker.height(); ++y)
-	{
-		for (size_t x = 0; x < m_tile_picker.width(); ++x)
+		if (ImGui::BeginTabItem("Entity placer"))
 		{
-			const auto id{ static_cast<int>(y * m_tile_picker.width() + x) };
-			ImGui::PushID(id);
-			if (const sf::Vector2<size_t> current_tile{ x, y }; 
-				m_tile_picker.active_tile() == current_tile)
-			{
-				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
-				ImGui::PushStyleColor(ImGuiCol_Border, { 1.0f, 0.0f, 0.0f, 1.0f });
-			}
-			else
-			{
-				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
-				ImGui::PushStyleColor(ImGuiCol_Border, { 0.0f, 0.0f, 0.0f, 1.0f });
-			}
-			if (ImGui::ImageButton(m_tile_picker.at(x, y), 1))
-			{
-				m_tile_picker.set_active_tile(x, y);
-			}
-			ImGui::PopStyleVar();
-			ImGui::PopStyleColor();
-
-			ImGui::PopID();
-			ImGui::SameLine(0.0f, 1.0f);
+			ImGui::Text("Lorem Ipsum");
+			ImGui::EndTabItem();
 		}
-		ImGui::NewLine();
+		ImGui::EndTabBar();
 	}
-	ImGui::Separator();
-
-	ImGui::Text("Brush mode:");
-	ImGui::RadioButton("Bidirectional", &m_brush_mode, aco::brush_mode::bidirectional);
-	ImGui::RadioButton("Horizontal only", &m_brush_mode, aco::brush_mode::horizontal_only);
-	ImGui::RadioButton("Vertical only", &m_brush_mode, aco::brush_mode::vertical_only);
-	ImGui::RadioButton("Fixed", &m_brush_mode, aco::brush_mode::fixed);
-	ImGui::RadioButton("Eraser", &m_brush_mode, aco::brush_mode::eraser);
-
-	ImGui::Spacing();
-	ImGui::Checkbox("Add collider", &m_is_adding_collider);
-
-	ImGui::Spacing();
-	ImGui::Text("Tile wraping range:");
-	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker.width() - 1);
-	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker.height() - 1);
-
-	ImGui::Spacing();
-	ImGui::Text("Level layer selection");
-	ImGui::Combo("Current layer", &m_current_layer, "bottom\0top\0\0");
-	ImGui::Separator();
-
-	ImGui::Checkbox("Show grid", &m_is_grid_visible);
-	if (ImGui::Checkbox("Show tile colliders", &m_is_collider_visible))
-	{
-		m_level->update_tilemap();
-	}
-	ImGui::Separator();
-
-	ImGui::Text("Hovered tile coordinates: (%.0f, %.0f)", 
-		m_hovered_tile_coords.x, m_hovered_tile_coords.y);
-	ImGui::Text("Render translation (tiles): (%i, %i)",
-		m_level->render_translation().x, m_level->render_translation().y);
 
 	ImGui::End();
-
 	ImGui::EndFrame();
 
 	m_grid.set_visible(m_is_grid_visible);
@@ -321,6 +224,121 @@ sf::Vector2i aco::editor_state::calc_tile_world_coordinates(sf::Vector2i mouse_p
 	};
 
 	return tile_coordinates - m_level->render_translation();
+}
+
+void aco::editor_state::update_level_editor_tab()
+{
+	ImGui::TextWrapped("Current level: %s", m_level->filename().data());
+	ImGui::Spacing();
+
+	ImGui::PushID("init_input");
+	ImGui::InputTextWithHint("", "new level filename", m_new_level_name.data(), m_new_level_name.size()); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Init", { -1, 0 }))
+	{
+		init_level();
+	}
+
+	ImGui::PushID("load_input");
+	ImGui::Combo("", &m_current_level_file_idx, m_level_files_list); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Load", { -1, 0 }))
+	{
+		load_level();
+	}
+
+	ImGui::PushID("save_input");
+	ImGui::InputTextWithHint("", "this level filename", m_save_level_name.data(), m_save_level_name.size()); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Save", { -1, 0 }))
+	{
+		save_level();
+	}
+
+	ImGui::TextWrapped("Tileset: %s", m_level->tileset_filename().data());
+	ImGui::PushID("set_tileset_input");
+	ImGui::Combo("", &m_current_tileset_file_idx, m_tileset_files_list); ImGui::SameLine();
+	ImGui::PopID();
+	if (ImGui::Button("Set", { -1, 0 }))
+	{
+		if (m_level->load_tileset(tileset_dir + m_tileset_files_list[m_current_tileset_file_idx]))
+		{
+			m_tile_picker = aco::tile_picker(m_level->tileset(), m_level->tile_size());
+		}
+	}
+	ImGui::Separator();
+
+	if (ImGui::Button("Optimize", { 0, 0 }))
+	{
+		m_level->optimize_size();
+	}
+	ImGui::SameLine();
+	ImGui::AlignTextToFramePadding();
+	ImGui::Text("Level size: (%llu, %llu)", m_level->width(), m_level->height());
+	ImGui::Separator();
+
+	for (size_t y = 0; y < m_tile_picker.height(); ++y)
+	{
+		for (size_t x = 0; x < m_tile_picker.width(); ++x)
+		{
+			const auto id{ static_cast<int>(y * m_tile_picker.width() + x) };
+			ImGui::PushID(id);
+			if (const sf::Vector2<size_t> current_tile{ x, y };
+				m_tile_picker.active_tile() == current_tile)
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 3.0f);
+				ImGui::PushStyleColor(ImGuiCol_Border, { 1.0f, 0.0f, 0.0f, 1.0f });
+			}
+			else
+			{
+				ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
+				ImGui::PushStyleColor(ImGuiCol_Border, { 0.0f, 0.0f, 0.0f, 1.0f });
+			}
+			if (ImGui::ImageButton(m_tile_picker.at(x, y), 1))
+			{
+				m_tile_picker.set_active_tile(x, y);
+			}
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+
+			ImGui::PopID();
+			ImGui::SameLine(0.0f, 1.0f);
+		}
+		ImGui::NewLine();
+	}
+	ImGui::Separator();
+
+	ImGui::Text("Brush mode:");
+	ImGui::RadioButton("Bidirectional", &m_brush_mode, aco::brush_mode::bidirectional);
+	ImGui::RadioButton("Horizontal only", &m_brush_mode, aco::brush_mode::horizontal_only);
+	ImGui::RadioButton("Vertical only", &m_brush_mode, aco::brush_mode::vertical_only);
+	ImGui::RadioButton("Fixed", &m_brush_mode, aco::brush_mode::fixed);
+	ImGui::RadioButton("Eraser", &m_brush_mode, aco::brush_mode::eraser);
+
+	ImGui::Spacing();
+	ImGui::Checkbox("Add collider", &m_is_adding_collider);
+
+	ImGui::Spacing();
+	ImGui::Text("Tile wraping range:");
+	ImGui::DragInt2("Horizontal", m_horizontal_bounds_input, 0.1f, 0, m_tile_picker.width() - 1);
+	ImGui::DragInt2("Vertical", m_vertical_bounds_input, 0.1f, 0, m_tile_picker.height() - 1);
+
+	ImGui::Spacing();
+	ImGui::Text("Level layer selection");
+	ImGui::Combo("Current layer", &m_current_layer, "bottom\0top\0\0");
+	ImGui::Separator();
+
+	ImGui::Checkbox("Show grid", &m_is_grid_visible);
+	if (ImGui::Checkbox("Show tile colliders", &m_is_collider_visible))
+	{
+		m_level->update_tilemap();
+	}
+	ImGui::Separator();
+
+	ImGui::Text("Hovered tile coordinates: (%.0f, %.0f)",
+		m_hovered_tile_coords.x, m_hovered_tile_coords.y);
+	ImGui::Text("Render translation (tiles): (%i, %i)",
+		m_level->render_translation().x, m_level->render_translation().y);
 }
 
 void aco::editor_state::update_tile(sf::Vector2i mouse_position, float tile_size)

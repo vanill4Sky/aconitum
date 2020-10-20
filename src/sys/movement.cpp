@@ -96,11 +96,12 @@ void aco::sys::player_iob_collide(entt::registry& reg)
 				auto vel{ players.get<velocity>(p) };
 				auto dir_vec{ aco::to_vec2<float>(vel.dir) };
 
-				if (intersection.height > intersection.width)
+				constexpr float accuracy{ 1.0f };
+				if (intersection.height - intersection.width > accuracy)
 				{
 					dir_vec.y = 0;
 				}
-				else if (intersection.height < intersection.width)
+				else if (intersection.height - intersection.width < -accuracy)
 				{
 					dir_vec.x = 0;
 				}

@@ -12,7 +12,7 @@ aco::app::app(std::string_view window_title)
 {
 	m_app_data.window.create(sf::VideoMode{ 1500, 1000 }, window_title.data());
 	m_app_data.window.setFramerateLimit(60);
-	m_app_data.state_manager.push_state(std::make_unique<aco::editor_state>(m_app_data));
+	m_app_data.state_manager.push_state(std::make_unique<aco::game_state>(m_app_data));
 
 	m_app_data.window.setPosition(sf::Vector2i(1920 + (1920 - m_app_data.window.getSize().x) / 2, 0));
 	spdlog::set_level(spdlog::level::debug);
