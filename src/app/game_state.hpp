@@ -7,6 +7,7 @@
 #include "../core/state.hpp"
 #include "app_data.hpp"
 #include "../core/dir.hpp"
+#include "level.hpp"
 
 namespace aco
 {
@@ -25,6 +26,7 @@ private:
 	app_data& m_app_data;
 	entt::registry m_reg;
 	std::unordered_map <sf::Keyboard::Key, bool> m_keyboard_state;
+	level m_current_level;
 
 	sf::Texture player_tex;
 	sf::Texture stalker_tex;

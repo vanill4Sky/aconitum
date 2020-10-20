@@ -36,6 +36,7 @@ public:
 	level(float tile_size);
 
 	aco::tile& at(aco::layer layer, int pos_x, int pos_y);
+	const aco::tile& at(aco::layer layer, int pos_x, int pos_y) const;
 	const sf::RenderStates& level_render_states() const;
 	sf::Vector2i render_translation() const;
 	float tile_size() const;
@@ -58,6 +59,7 @@ public:
 
 private:
 	aco::tile& at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y);
+	const aco::tile& at(const std::vector<aco::tile>& layer_data, int pos_x, int pos_y) const;
 	void resize(size_t new_width, size_t new_height,
 		size_t offset_x = 0, size_t offset_y = 0);
 	void resize(std::vector<aco::tile>& layer_data, size_t new_width, size_t new_height,

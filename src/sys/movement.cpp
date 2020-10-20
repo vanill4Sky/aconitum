@@ -6,12 +6,12 @@
 #include "../comp/direction.hpp"
 #include "../comp/entity_state.hpp"
 #include "../comp/position.hpp"
-
 #include "../comp/player.hpp"
 #include "../comp/iob.hpp"
 #include "../comp/collider.hpp"
 #include "../comp/sprite.hpp"
 #include "../comp/animation.hpp"
+#include "../app/level.hpp"
 
 #include <spdlog/spdlog.h>
 
@@ -125,6 +125,38 @@ void aco::sys::player_iob_collide(entt::registry& reg)
 					p_next_pos.y = p_curr_pos.y;
 				}
 			}
+		}
+	}
+}
+
+void aco::sys::player_wall_collide(entt::registry& reg, const aco::level& level)
+{
+	auto players{ reg.view<position, next_position, collider, velocity>() };
+	for (const auto p : players)
+	{
+		const auto p_curr_pos{ players.get<position>(p).pos };
+		auto& p_next_pos{ players.get<next_position>(p).pos };
+		const auto& p_collider{ players.get<collider>(p) };
+
+		const float tile_size{ level.tile_size() };
+
+		const auto has_collision = [&](sf::FloatRect collider) {
+			const auto [x, y, w, h] = collider;
+			return level.at(aco::layer::bottom, x / tile_size, y / tile_size).is_collidable
+					|| level.at(aco::layer::bottom, (x + w) / tile_size, y / tile_size).is_collidable
+					|| level.at(aco::layer::bottom, x / tile_size, (y + h) / tile_size).is_collidable
+					|| level.at(aco::layer::bottom, (x + w) / tile_size, (y + h) / tile_size).is_collidable;
+		};
+
+		if (has_collision(sf::FloatRect{ 
+			p_collider.offset + sf::Vector2f{ p_next_pos.x, p_curr_pos.y }, p_collider.size }))
+		{
+			p_next_pos.x = p_curr_pos.x;
+		}
+		if (has_collision(sf::FloatRect{ 
+			p_collider.offset + sf::Vector2f{ p_curr_pos.x, p_next_pos.y }, p_collider.size }))
+		{
+			p_next_pos.y = p_curr_pos.y;
 		}
 	}
 }

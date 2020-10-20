@@ -23,6 +23,11 @@ aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y)
 	return at(m_data.get(layer), pos_x, pos_y);
 }
 
+const aco::tile& aco::level::at(aco::layer layer, int pos_x, int pos_y) const
+{
+	return at(m_data.get(layer), pos_x, pos_y);
+}
+
 void aco::level::update_tilemap()
 {
 	m_tilemap.get(aco::layer::bottom) = aco::tilemap(
@@ -166,6 +171,14 @@ aco::tile& aco::level::at(std::vector<aco::tile>& layer_data, int pos_x, int pos
 	}
 
 	return layer_data[abs_pos_y * m_width + abs_pos_x];
+}
+
+const aco::tile& aco::level::at(const std::vector<aco::tile>& layer_data, int pos_x, int pos_y) const
+{
+	assert(pos_x >= 0 && pos_x < m_width);
+	assert(pos_y >= 0 && pos_y < m_height);
+
+	return layer_data[pos_y * m_width + pos_x];
 }
 
 void aco::level::move(sf::Vector2f delta)

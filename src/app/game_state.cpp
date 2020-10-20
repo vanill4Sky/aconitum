@@ -9,9 +9,11 @@
 #include "../sys/render.hpp"
 #include "../sys/target_following.hpp"
 #include "factories.hpp"
+#include "constants.hpp"
 
 aco::game_state::game_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
+	, m_current_level{ 32.0f }
 {
 }
 
@@ -20,6 +22,7 @@ void aco::game_state::init()
 	player_tex.loadFromFile("assets/textures/player_thief_01.png");
 	stalker_tex.loadFromFile("assets/textures/stalker_thief_01.png");
 	box_tex.loadFromFile("assets/textures/box_01.png");
+	m_current_level.read_from_file(aco::levels_dir + "test_02.json");
 
 	const auto player_entity{ aco::create_player(m_reg, player_tex) };
 	aco::create_stalker(m_reg, player_entity, stalker_tex);
@@ -59,6 +62,7 @@ void aco::game_state::update(float dt)
 	aco::sys::target_triggers(m_reg);
 	aco::sys::find_next_position(m_reg);
 	aco::sys::player_iob_collide(m_reg);
+	aco::sys::player_wall_collide(m_reg, m_current_level);
 	aco::sys::submit_next_position(m_reg);
 }
 
@@ -66,6 +70,7 @@ void aco::game_state::draw()
 {
 	m_app_data.window.clear();
 
+	m_current_level.draw(m_app_data.window, false);
 	aco::sys::draw_entities(m_reg, m_app_data.window, frame_cnt);
 
 	m_app_data.window.display();
