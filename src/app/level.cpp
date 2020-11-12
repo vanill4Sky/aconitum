@@ -289,6 +289,11 @@ void aco::level::optimize_size()
 	update_tilemap();
 }
 
+void aco::level::reset_to_origin()
+{
+	m_level_render_states = sf::RenderStates();
+}
+
 void aco::to_json(nlohmann::json& j, const aco::tile& tile)
 {
 	j = nlohmann::json{ tile.is_blank, tile.is_collidable, tile.tex_coords.x, tile.tex_coords.y };

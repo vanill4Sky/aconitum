@@ -71,7 +71,6 @@ private:
 
 	float zoom_factor{ 1.1f };
 
-	sf::Texture tileset;
 	sf::RectangleShape debug_follower;
 };
 

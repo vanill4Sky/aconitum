@@ -23,11 +23,10 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 {
 	ImGui::SFML::Init(app_data.window);
 
-	tileset.loadFromFile("assets/textures/tileset_dungeon_02.png");
 	m_level = std::make_unique<aco::level>(32.0f);
 	m_level->update_tilemap();
-	m_horizontal_bounds_input[1] = m_tile_picker.width();
-	m_vertical_bounds_input[1] = m_tile_picker.height();
+	m_horizontal_bounds_input[1] = static_cast<int>(m_tile_picker.width());
+	m_vertical_bounds_input[1] = static_cast<int>(m_tile_picker.height());
 
 	debug_follower.setFillColor(sf::Color(0, 255, 0, 63));
 }
@@ -268,6 +267,12 @@ void aco::editor_state::update_level_editor_tab()
 	}
 	ImGui::Separator();
 
+	if (ImGui::Button("Origin", { 0, 0 }))
+	{
+		m_level->reset_to_origin();
+		zoom(m_current_zoom);
+	}
+	ImGui::SameLine();
 	if (ImGui::Button("Optimize", { 0, 0 }))
 	{
 		m_level->optimize_size();

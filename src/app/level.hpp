@@ -56,6 +56,7 @@ public:
 	bool load_tileset(const std::string& tileset_path);
 
 	void optimize_size();
+	void reset_to_origin();
 
 private:
 	aco::tile& at(std::vector<aco::tile>& layer_data, int pos_x, int pos_y);
