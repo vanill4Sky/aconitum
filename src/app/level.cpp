@@ -274,7 +274,11 @@ void aco::level::optimize_size()
 				layer[new_idx] = layer[old_idx];
 			}
 		}
-		layer.erase(layer.begin() + level_bbox.height * level_bbox.width);
+		if (const auto offset{ layer.begin() + level_bbox.height * level_bbox.width };
+			offset != layer.end())
+		{
+			layer.erase(offset);
+		}
 	};
 
 	crop_layer(m_data.bottom);
