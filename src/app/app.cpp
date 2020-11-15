@@ -6,10 +6,14 @@
 
 #include "editor_state.hpp"
 #include "game_state.hpp"
+#include "lua_binding.hpp"
 
 aco::app::app(std::string_view window_title)
 	: m_app_data{ aco::app_data::get_instance() }
 {
+	m_app_data.lua.open_libraries(sol::lib::base, sol::lib::package);
+	register_user_types(m_app_data.lua);
+
 	m_app_data.window.create(sf::VideoMode{ 1500, 1000 }, window_title.data());
 	m_app_data.window.setFramerateLimit(60);
 	m_app_data.state_manager.push_state(std::make_unique<aco::editor_state>(m_app_data));

@@ -38,7 +38,8 @@ public:
 	aco::tile& at(aco::layer layer, int pos_x, int pos_y);
 	const aco::tile& at(aco::layer layer, int pos_x, int pos_y) const;
 	const sf::RenderStates& level_render_states() const;
-	sf::Vector2i render_translation() const;
+	sf::Vector2i render_translation_tiles() const;
+	sf::Vector2f render_translation() const;
 	float tile_size() const;
 	const std::string& filename() const;
 	size_t width() const;

@@ -104,10 +104,16 @@ const sf::RenderStates& aco::level::level_render_states() const
 	return m_level_render_states;
 }
 
-sf::Vector2i aco::level::render_translation() const
+sf::Vector2i aco::level::render_translation_tiles() const
 {
 	auto matrix{ m_level_render_states.transform.getMatrix() };
 	return static_cast<sf::Vector2i>((sf::Vector2f{ matrix[12], matrix[13] } / m_tile_size));
+}
+
+sf::Vector2f aco::level::render_translation() const
+{
+	auto matrix{ m_level_render_states.transform.getMatrix() };
+	return sf::Vector2f{ matrix[12], matrix[13] };
 }
 
 float aco::level::tile_size() const

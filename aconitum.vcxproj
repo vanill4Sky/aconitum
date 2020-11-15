@@ -76,6 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -116,6 +117,9 @@
       <AdditionalDependencies>lua_static-d.lib;opengl32.lib;flac.lib;freetype.lib;ogg.lib;openal32.lib;winmm.lib;vorbis.lib;vorbisfile.lib;vorbisenc.lib;sfml-audio-s-d.lib;sfml-graphics-s-d.lib;sfml-network-s-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy  /Y /E /I "$(SolutionDir)assets" "$(TargetDir)assets"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -168,6 +172,7 @@
     <ClCompile Include="src\app\factories.cpp" />
     <ClCompile Include="src\app\game_state.cpp" />
     <ClCompile Include="src\app\level.cpp" />
+    <ClCompile Include="src\app\lua_binding.cpp" />
     <ClCompile Include="src\app\sprite_picker.cpp" />
     <ClCompile Include="src\app\tile_picker.cpp" />
     <ClCompile Include="src\core\dir.cpp" />
@@ -189,10 +194,12 @@
     <ClInclude Include="src\app\factories.hpp" />
     <ClInclude Include="src\app\game_state.hpp" />
     <ClInclude Include="src\app\level.hpp" />
+    <ClInclude Include="src\app\lua_binding.hpp" />
     <ClInclude Include="src\app\sprite_picker.hpp" />
     <ClInclude Include="src\app\tile_picker.hpp" />
     <ClInclude Include="src\comp\animation.hpp" />
     <ClInclude Include="src\comp\collider.hpp" />
+    <ClInclude Include="src\comp\components.hpp" />
     <ClInclude Include="src\comp\iob.hpp" />
     <ClInclude Include="src\comp\mob.hpp" />
     <ClInclude Include="src\comp\direction.hpp" />
@@ -203,6 +210,7 @@
     <ClInclude Include="src\comp\target.hpp" />
     <ClInclude Include="src\core\dir.hpp" />
     <ClInclude Include="src\core\grid.hpp" />
+    <ClInclude Include="src\core\resource_holder.hpp" />
     <ClInclude Include="src\core\state.hpp" />
     <ClInclude Include="src\core\state_manager.hpp" />
     <ClInclude Include="src\core\tilemap.hpp" />

@@ -20,6 +20,8 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	, m_tileset_files_list{ util::list_filenames(tileset_dir) }
 	, m_current_level_file_idx{ 0 }
 	, m_current_tileset_file_idx{ 0 }
+
+	, m_current_entity_file_idx{ 0 }
 {
 	ImGui::SFML::Init(app_data.window);
 
@@ -27,6 +29,9 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 	m_level->update_tilemap();
 	m_horizontal_bounds_input[1] = static_cast<int>(m_tile_picker.width());
 	m_vertical_bounds_input[1] = static_cast<int>(m_tile_picker.height());
+
+	get_available_templates(scripts_dir + "entities.lua");
+	load_template();
 
 	debug_follower.setFillColor(sf::Color(0, 255, 0, 63));
 }
@@ -84,22 +89,23 @@ void aco::editor_state::update(float dt)
 
 	ImGui::ShowTestWindow();
 
-	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - 350.0f, 0.0f });
-	ImGui::SetNextWindowSize({ 350.0f,  static_cast<float>(m_app_data.window.getSize().y) });
+	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - editor_width, 0.0f });
+	ImGui::SetNextWindowSize({ editor_width,  static_cast<float>(m_app_data.window.getSize().y) });
 	ImGui::Begin("Aconitum editor", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_HorizontalScrollbar);
 
-	ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("editor_tab_bar", tab_bar_flags))
+	if (ImGui::BeginTabBar("editor_tab_bar", ImGuiTabBarFlags_None))
 	{
 		if (ImGui::BeginTabItem("Level editor"))
 		{
 			update_level_editor_tab();
 			ImGui::EndTabItem();
+			m_is_level_editor_visible = true;
 		}
 		if (ImGui::BeginTabItem("Entity placer"))
 		{
-			ImGui::Text("Lorem Ipsum");
+			update_entity_placer_tab();
 			ImGui::EndTabItem();
+			m_is_level_editor_visible = false;
 		}
 		ImGui::EndTabBar();
 	}
@@ -115,6 +121,10 @@ void aco::editor_state::draw()
 {
 	m_app_data.window.clear();
 	m_level->draw(m_app_data.window, m_is_collider_visible);
+	for (const auto& stub : m_stubs)
+	{
+		m_app_data.window.draw(stub.sprite, m_level->level_render_states());
+	}
 	m_app_data.window.draw(m_grid);
 	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
@@ -140,29 +150,46 @@ void aco::editor_state::handle_zoom_event(const sf::Event::MouseWheelScrollEvent
 void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& event)
 {
 	sf::Vector2i mouse_pos{ event.x, event.y };
-	m_origin_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
-	m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
-
-	if (m_tile_picker.is_tileset_loaded() && event.button == sf::Mouse::Right)
+	if (m_is_level_editor_visible)
 	{
-		update_tile(mouse_pos, m_level->tile_size());
+		m_origin_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
+		m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
+
+		if (m_tile_picker.is_tileset_loaded() && event.button == sf::Mouse::Right)
+		{
+			update_tile(mouse_pos, m_level->tile_size());
+		}
 	}
-	
+	else
+	{
+		if (event.button == sf::Mouse::Right)
+		{
+			const auto mouse_world_position = 
+				m_app_data.window.mapPixelToCoords(mouse_pos) - m_level->render_translation();
+			sf::Sprite sprite{ m_miniature };
+			const auto sprite_bounds{ sprite.getGlobalBounds() };
+			sprite.setOrigin({ sprite_bounds.width / 2, sprite_bounds.height / 2 });
+			sprite.setPosition(mouse_world_position);
+			m_stubs.emplace_back(aco::entity_stub{ entity_stub::generate_id(current_entity_name()), current_entity_name(), sprite });
+			m_prev_mouse_pos = mouse_world_position;
+		}
+	}
 }
 
 void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent& event)
 {
 	sf::Vector2i mouse_pos{ event.x, event.y };
 	m_hovered_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
+
 	const sf::Vector2f new_tile_delta{ m_hovered_tile_coords - m_origin_tile_coords };
 
-	if (m_mouse_state[sf::Mouse::Button::Left] && new_tile_delta != m_prev_tile_delta)
+	if (m_mouse_state[sf::Mouse::Button::Middle] && new_tile_delta != m_prev_tile_delta)
 	{
 		m_level->move(-m_prev_tile_delta);
 		m_level->move(new_tile_delta);
 	}
-	else if (m_tile_picker.is_tileset_loaded() && m_mouse_state[sf::Mouse::Button::Right] 
-		&& new_tile_delta != m_prev_tile_delta)
+	else if (m_is_level_editor_visible && m_tile_picker.is_tileset_loaded()
+		&& m_mouse_state[sf::Mouse::Button::Right] && new_tile_delta != m_prev_tile_delta)
 	{
 		const auto step = static_cast<sf::Vector2i>(new_tile_delta - m_prev_tile_delta);
 		m_tile_picker.update_active_tile(step.x, step.y, static_cast<aco::brush_mode>(m_brush_mode));
@@ -171,6 +198,21 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 	}
 
 	m_prev_tile_delta = new_tile_delta;
+
+	if (m_mouse_state[sf::Mouse::Button::Left])
+	{
+		const auto translated_mouse_pos = 
+			m_app_data.window.mapPixelToCoords(mouse_pos) - m_level->render_translation();
+		for (auto it{ m_stubs.rbegin() }; it != m_stubs.rend(); ++it)
+		{
+			if (it->sprite.getGlobalBounds().contains(translated_mouse_pos))
+			{
+				it->sprite.move(translated_mouse_pos - m_prev_mouse_pos);
+				break;
+			}
+		}
+		m_prev_mouse_pos = translated_mouse_pos;
+	}
 
 	debug_follower.setPosition(m_hovered_tile_coords * static_cast<float>(m_level->tile_size()));
 }
@@ -222,7 +264,7 @@ sf::Vector2i aco::editor_state::calc_tile_world_coordinates(sf::Vector2i mouse_p
 		static_cast<sf::Vector2i>(calc_tile_coordinates(mouse_position, tile_size)) 
 	};
 
-	return tile_coordinates - m_level->render_translation();
+	return tile_coordinates - m_level->render_translation_tiles();
 }
 
 void aco::editor_state::update_level_editor_tab()
@@ -343,7 +385,25 @@ void aco::editor_state::update_level_editor_tab()
 	ImGui::Text("Hovered tile coordinates: (%.0f, %.0f)",
 		m_hovered_tile_coords.x, m_hovered_tile_coords.y);
 	ImGui::Text("Render translation (tiles): (%i, %i)",
-		m_level->render_translation().x, m_level->render_translation().y);
+		m_level->render_translation_tiles().x, m_level->render_translation_tiles().y);
+}
+
+void aco::editor_state::update_entity_placer_tab()
+{
+	if (ImGui::Combo("Templates", &m_current_entity_file_idx, m_entity_names_list))
+	{
+		load_template();
+	}
+	ImGui::Text("Sprite component");
+	const auto max_width{ ImGui::GetWindowContentRegionWidth() };
+	ImGui::Image(m_miniature, { max_width, max_width }, sf::Color::White, sf::Color::White);
+	ImGui::Separator();
+
+	ImGui::BeginChild("entities_list", { 0, -ImGui::GetFrameHeightWithSpacing() }, true);
+	static int index{ -1 };
+	ImGui::SetNextItemWidth(-1);
+	ImGui::ListBox("", &index, m_stubs);
+	ImGui::EndChild();
 }
 
 void aco::editor_state::update_tile(sf::Vector2i mouse_position, float tile_size)
@@ -394,6 +454,44 @@ void aco::editor_state::save_level()
 	m_level_files_list = util::list_filenames(levels_dir, "json");
 }
 
+void aco::editor_state::get_available_templates(const std::string& index_filename)
+{
+	m_app_data.lua.script_file(index_filename);
+	m_entities = m_app_data.lua["entities_templates"];
+
+	for (const auto& pair : m_entities)
+	{
+		sol::object key = pair.first;
+		m_entity_names_list.emplace_back(key.as<std::string>());
+	}
+
+	m_current_entity_file_idx = 0;
+}
+
+void aco::editor_state::load_template()
+{
+	sol::optional<std::string> tex_path_opt = 
+		m_entities[m_entity_names_list[m_current_entity_file_idx]]["sprite"]["tex_path"];
+	if (tex_path_opt != sol::nullopt && util::exists_not_empty(tex_path_opt.value()))
+	{
+		const auto tex_path = tex_path_opt.value();
+		m_app_data.textures.load(tex_path);
+		m_miniature.setTexture(m_app_data.textures.get(tex_path), true);
+
+		sol::optional<sf::Vector2f> frame_size_opt =
+			m_entities[m_entity_names_list[m_current_entity_file_idx]]["animation"]["frame_size"];
+		if (frame_size_opt != sol::nullopt)
+		{
+			m_miniature.setTextureRect({ sf::Vector2i{0, 0}, static_cast<sf::Vector2i>(frame_size_opt.value()) });
+		}
+	}
+}
+
+std::string aco::editor_state::current_entity_name() const
+{
+	return m_entity_names_list[m_current_entity_file_idx];
+}
+
 bool ImGui::Combo(const char* label, int* currIndex, std::vector<std::string>& values)
 {
 	if (values.empty()) { return false; }
@@ -407,3 +505,20 @@ bool ImGui::ListBox(const char* label, int* currIndex, std::vector<std::string>&
 	return ListBox(label, currIndex, vector_getter,
 		static_cast<void*>(&values), values.size());
 }
+
+bool ImGui::ListBox(const char* label, int* currIndex, std::vector<aco::entity_stub>& values)
+{
+	if (values.empty()) { return false; }
+	return ListBox(label, currIndex, vector_of_stubs_getter,
+		static_cast<void*>(&values), values.size(), values.size());
+}
+
+std::string aco::entity_stub::generate_id(const std::string& name)
+{
+	entity_stub::entity_count.try_emplace(name, 0);
+	std::string id{ name + "_" + std::to_string(entity_stub::entity_count[name]++) };
+
+	return id;
+}
+
+std::unordered_map<std::string, int> aco::entity_stub::entity_count;

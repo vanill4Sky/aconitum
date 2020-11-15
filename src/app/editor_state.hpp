@@ -18,6 +18,18 @@ namespace aco
 {
 using text_input_buffer = std::array<char, 256>;
 
+struct entity_stub
+{
+	static std::string generate_id(const std::string& name);
+
+	std::string id;
+	std::string name;
+	sf::Sprite sprite;
+
+private:
+	static std::unordered_map<std::string, int> entity_count;
+};
+
 class editor_state : public state
 {
 public:
@@ -40,10 +52,15 @@ private:
 	sf::Vector2f calc_tile_coordinates(sf::Vector2i mouse_position, float tile_size) const;
 	sf::Vector2i calc_tile_world_coordinates(sf::Vector2i mouse_position, float tile_size);
 	void update_level_editor_tab();
+	void update_entity_placer_tab();
 	void update_tile(sf::Vector2i mouse_position, float tile_size);
 	void init_level();
 	void load_level();
 	void save_level();
+
+	void get_available_templates(const std::string& index_filename);
+	void load_template();
+	std::string current_entity_name() const;
 
 	app_data& m_app_data;
 	grid m_grid;
@@ -68,6 +85,14 @@ private:
 	int m_current_tileset_file_idx;
 	text_input_buffer m_new_level_name;
 	text_input_buffer m_save_level_name;
+	bool m_is_level_editor_visible{ true };
+
+	sol::table m_entities;
+	std::vector<std::string> m_entity_names_list;
+	int m_current_entity_file_idx;
+	sf::Sprite m_miniature;
+	std::vector<entity_stub> m_stubs;
+	sf::Vector2f m_prev_mouse_pos;
 
 	float zoom_factor{ 1.1f };
 
@@ -85,6 +110,14 @@ namespace ImGui
 		*out_text = vector.at(idx).c_str();
 		return true;
 	};
+	static auto vector_of_stubs_getter = [](void* vec, int idx, const char** out_text)
+	{
+		auto& vector = *static_cast<std::vector<aco::entity_stub>*>(vec);
+		if (idx < 0 || idx >= static_cast<int>(vector.size())) { return false; }
+		*out_text = vector.at(idx).id.c_str();
+		return true;
+	};
 	bool Combo(const char* label, int* currIndex, std::vector<std::string>& values);
 	bool ListBox(const char* label, int* currIndex, std::vector<std::string>& values);
+	bool ListBox(const char* label, int* currIndex, std::vector<aco::entity_stub>& values);
 }

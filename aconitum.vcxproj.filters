@@ -114,6 +114,9 @@
     <ClCompile Include="src\sys\target_following.cpp">
       <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\lua_binding.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -205,6 +208,15 @@
     </ClInclude>
     <ClInclude Include="src\app\constants.hpp">
       <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\resource_holder.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\lua_binding.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\components.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

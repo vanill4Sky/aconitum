@@ -1,8 +1,11 @@
 #pragma once
 
-#include "SFML/Graphics/RenderWindow.hpp"
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <sol/sol.hpp>
 
 #include "../core/state_manager.hpp"
+#include "../core/resource_holder.hpp"
 
 namespace aco
 {
@@ -17,6 +20,8 @@ public:
 
 	sf::RenderWindow window;
 	aco::state_manager state_manager;
+	aco::resource_holder<sf::Texture> textures;
+	sol::state lua;
 
 private:
 	app_data() {};
