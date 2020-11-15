@@ -123,7 +123,7 @@ void aco::editor_state::draw()
 	m_level->draw(m_app_data.window, m_is_collider_visible);
 	for (const auto& stub : m_stubs)
 	{
-		m_app_data.window.draw(stub.sprite, m_level->level_render_states());
+		m_app_data.window.draw(stub.shape, m_level->level_render_states());
 	}
 	m_app_data.window.draw(m_grid);
 	m_app_data.window.draw(debug_follower);
@@ -150,28 +150,40 @@ void aco::editor_state::handle_zoom_event(const sf::Event::MouseWheelScrollEvent
 void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& event)
 {
 	sf::Vector2i mouse_pos{ event.x, event.y };
-	if (m_is_level_editor_visible)
-	{
-		m_origin_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
-		m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
+	const auto translated_mouse_pos =
+		m_app_data.window.mapPixelToCoords(mouse_pos) - m_level->render_translation();
+	m_prev_mouse_pos = translated_mouse_pos;
 
-		if (m_tile_picker.is_tileset_loaded() && event.button == sf::Mouse::Right)
+
+	if (event.button == sf::Mouse::Right)
+	{
+		if (m_is_level_editor_visible && m_tile_picker.is_tileset_loaded())
 		{
+			m_origin_tile_coords = calc_tile_coordinates(mouse_pos, m_level->tile_size());
+			m_prev_tile_delta = sf::Vector2f{ 0.0f, 0.0f };
+
 			update_tile(mouse_pos, m_level->tile_size());
 		}
-	}
-	else
-	{
-		if (event.button == sf::Mouse::Right)
+		else if (!m_is_level_editor_visible)
 		{
-			const auto mouse_world_position = 
-				m_app_data.window.mapPixelToCoords(mouse_pos) - m_level->render_translation();
 			sf::Sprite sprite{ m_miniature };
-			const auto sprite_bounds{ sprite.getGlobalBounds() };
-			sprite.setOrigin({ sprite_bounds.width / 2, sprite_bounds.height / 2 });
-			sprite.setPosition(mouse_world_position);
+			sprite.setPosition(translated_mouse_pos);
 			m_stubs.emplace_back(aco::entity_stub{ entity_stub::generate_id(current_entity_name()), current_entity_name(), sprite });
-			m_prev_mouse_pos = mouse_world_position;
+		}
+	}
+	else if (event.button == sf::Mouse::Left)
+	{
+		highlight_entity(m_selected_entity_idx, false);
+		m_selected_entity_idx = -1;
+		for (auto it{ m_stubs.rbegin() }; it != m_stubs.rend(); ++it)
+		{
+			if (it->shape.getGlobalBounds().contains(translated_mouse_pos))
+			{
+				m_selected_entity_idx = std::distance(it, m_stubs.rend()) - 1;
+				highlight_entity(m_selected_entity_idx, true);
+				break;
+			}
+
 		}
 	}
 }
@@ -203,14 +215,12 @@ void aco::editor_state::handle_mouse_move_event(const sf::Event::MouseMoveEvent&
 	{
 		const auto translated_mouse_pos = 
 			m_app_data.window.mapPixelToCoords(mouse_pos) - m_level->render_translation();
-		for (auto it{ m_stubs.rbegin() }; it != m_stubs.rend(); ++it)
+
+		if (m_selected_entity_idx >= 0)
 		{
-			if (it->sprite.getGlobalBounds().contains(translated_mouse_pos))
-			{
-				it->sprite.move(translated_mouse_pos - m_prev_mouse_pos);
-				break;
-			}
+			m_stubs[m_selected_entity_idx].shape.move(translated_mouse_pos - m_prev_mouse_pos);
 		}
+
 		m_prev_mouse_pos = translated_mouse_pos;
 	}
 
@@ -400,9 +410,14 @@ void aco::editor_state::update_entity_placer_tab()
 	ImGui::Separator();
 
 	ImGui::BeginChild("entities_list", { 0, -ImGui::GetFrameHeightWithSpacing() }, true);
-	static int index{ -1 };
 	ImGui::SetNextItemWidth(-1);
-	ImGui::ListBox("", &index, m_stubs);
+	int previous_entity = m_selected_entity_idx;
+	ImGui::ListBox("", &m_selected_entity_idx, m_stubs);
+	if (ImGui::IsItemEdited())
+	{
+		highlight_entity(previous_entity, false);
+		highlight_entity(m_selected_entity_idx, true);
+	}
 	ImGui::EndChild();
 }
 
@@ -492,6 +507,23 @@ std::string aco::editor_state::current_entity_name() const
 	return m_entity_names_list[m_current_entity_file_idx];
 }
 
+void aco::editor_state::highlight_entity(int index, bool is_highlighted)
+{
+	if (index < 0)
+	{
+		return;
+	}
+
+	if (is_highlighted)
+	{
+		m_stubs[index].shape.setOutlineColor(sf::Color::Green);
+	}
+	else
+	{
+		m_stubs[index].shape.setOutlineColor(sf::Color::Transparent);
+	}
+}
+
 bool ImGui::Combo(const char* label, int* currIndex, std::vector<std::string>& values)
 {
 	if (values.empty()) { return false; }
@@ -519,6 +551,20 @@ std::string aco::entity_stub::generate_id(const std::string& name)
 	std::string id{ name + "_" + std::to_string(entity_stub::entity_count[name]++) };
 
 	return id;
+}
+
+aco::entity_stub::entity_stub(std::string id, std::string name, const sf::Sprite& sprite)
+	: id{ id }
+	, name{ name }
+{
+	shape.setTexture(sprite.getTexture());
+	shape.setTextureRect(sprite.getTextureRect());
+	shape.setPosition(sprite.getPosition());
+	const auto sprite_bounds{ sprite.getGlobalBounds() };
+	shape.setSize({ sprite_bounds.width, sprite_bounds.height });
+	shape.setOrigin({ sprite_bounds.width / 2, sprite_bounds.height / 2 });
+	shape.setOutlineColor(sf::Color::Transparent);
+	shape.setOutlineThickness(1.0f);
 }
 
 std::unordered_map<std::string, int> aco::entity_stub::entity_count;

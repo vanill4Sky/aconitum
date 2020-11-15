@@ -74,7 +74,7 @@ inline const Resource& resource_holder<Resource>::get(const std::string& filenam
 template<typename Resource>
 inline void resource_holder<Resource>::insert_resource(std::string&& filename, std::unique_ptr<Resource> resource)
 {
-	m_resources.insert_or_assign(filename, std::move(resource));
+	m_resources.try_emplace(filename, std::move(resource));
 }
 
 }

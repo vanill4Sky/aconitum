@@ -22,9 +22,10 @@ struct entity_stub
 {
 	static std::string generate_id(const std::string& name);
 
+	entity_stub(std::string id, std::string name, const sf::Sprite& sprite);
 	std::string id;
 	std::string name;
-	sf::Sprite sprite;
+	sf::RectangleShape shape;
 
 private:
 	static std::unordered_map<std::string, int> entity_count;
@@ -61,6 +62,7 @@ private:
 	void get_available_templates(const std::string& index_filename);
 	void load_template();
 	std::string current_entity_name() const;
+	void highlight_entity(int index, bool is_highlighted);
 
 	app_data& m_app_data;
 	grid m_grid;
@@ -93,6 +95,7 @@ private:
 	sf::Sprite m_miniature;
 	std::vector<entity_stub> m_stubs;
 	sf::Vector2f m_prev_mouse_pos;
+	int m_selected_entity_idx{ -1 };
 
 	float zoom_factor{ 1.1f };
 
