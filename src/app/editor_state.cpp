@@ -6,6 +6,7 @@
 #include <imgui/imgui-SFML.h>
 #include <SFML/Window/Event.hpp>
 #include <spdlog/spdlog.h>
+#include <sstream>
 
 #include "../util/file.hpp"
 
@@ -121,12 +122,12 @@ void aco::editor_state::draw()
 {
 	m_app_data.window.clear();
 	m_level->draw(m_app_data.window, m_is_collider_visible);
+	m_app_data.window.draw(debug_follower);
 	for (const auto& stub : m_stubs)
 	{
 		m_app_data.window.draw(stub.shape, m_level->level_render_states());
 	}
 	m_app_data.window.draw(m_grid);
-	m_app_data.window.draw(debug_follower);
 	ImGui::SFML::Render(m_app_data.window);
 	m_app_data.window.display();
 }
@@ -404,13 +405,41 @@ void aco::editor_state::update_entity_placer_tab()
 	{
 		load_template();
 	}
-	ImGui::Text("Sprite component");
+	ImGui::Text("Sprite component:");
 	const auto max_width{ ImGui::GetWindowContentRegionWidth() };
 	ImGui::Image(m_miniature, { max_width, max_width }, sf::Color::White, sf::Color::White);
 	ImGui::Separator();
 
-	ImGui::BeginChild("entities_list", { 0, -ImGui::GetFrameHeightWithSpacing() }, true);
-	ImGui::SetNextItemWidth(-1);
+	if (ImGui::Button("Save stubs"))
+	{
+		save_stubs(scripts_dir + "test_stubs.lua");
+	}
+	ImGui::Spacing();
+
+	ImGui::Text("List of entities:");
+	if (ImGui::Button("/\\", { 50.0f, 0.0f }) && m_selected_entity_idx > 0)
+	{
+		auto selected_elem = m_stubs.begin() + m_selected_entity_idx;
+		std::iter_swap(selected_elem, selected_elem - 1);
+		--m_selected_entity_idx;
+		highlight_entity(m_selected_entity_idx, true);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("\\/", { 50.0f, 0.0f }) && m_selected_entity_idx < (m_stubs.size() - 1))
+	{
+		auto selected_elem = m_stubs.begin() + m_selected_entity_idx;
+		std::iter_swap(selected_elem, selected_elem + 1);
+		++m_selected_entity_idx;
+		highlight_entity(m_selected_entity_idx, true);
+	}
+	ImGui::SameLine(ImGui::GetWindowWidth() - 110.0f);
+	if (ImGui::Button("Delete entity", { 100.0f, 0.0f }) && m_selected_entity_idx > -1)
+	{
+		m_stubs.erase(m_stubs.begin() + m_selected_entity_idx);
+		--m_selected_entity_idx;
+		highlight_entity(m_selected_entity_idx, true);
+	}
+	ImGui::SetNextItemWidth(-1.0f);
 	int previous_entity = m_selected_entity_idx;
 	ImGui::ListBox("", &m_selected_entity_idx, m_stubs);
 	if (ImGui::IsItemEdited())
@@ -418,7 +447,6 @@ void aco::editor_state::update_entity_placer_tab()
 		highlight_entity(previous_entity, false);
 		highlight_entity(m_selected_entity_idx, true);
 	}
-	ImGui::EndChild();
 }
 
 void aco::editor_state::update_tile(sf::Vector2i mouse_position, float tile_size)
@@ -522,6 +550,30 @@ void aco::editor_state::highlight_entity(int index, bool is_highlighted)
 	{
 		m_stubs[index].shape.setOutlineColor(sf::Color::Transparent);
 	}
+}
+
+void aco::editor_state::save_stubs(const std::string& stubs_filename)
+{
+	std::stringstream ss;
+	ss << R"(
+-- BEGINING OF GENERATED CODE
+
+stubs = {
+)";
+	for (const auto& stub : m_stubs)
+	{
+		const auto pos = stub.shape.getPosition();
+		ss << "\t" << stub.id
+			<< " = { name = " << stub.name
+			<< ", postion = ex_vector2f:new(" << pos.x
+			<< ", " << pos.y
+			<< ") },\n";
+	}
+	ss << R"(}
+
+-- END OF GENERATED CODE)";
+
+	std::cout << ss.str();
 }
 
 bool ImGui::Combo(const char* label, int* currIndex, std::vector<std::string>& values)

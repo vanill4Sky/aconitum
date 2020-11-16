@@ -63,6 +63,7 @@ private:
 	void load_template();
 	std::string current_entity_name() const;
 	void highlight_entity(int index, bool is_highlighted);
+	void save_stubs(const std::string& stubs_filename);
 
 	app_data& m_app_data;
 	grid m_grid;
