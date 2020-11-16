@@ -417,7 +417,7 @@ void aco::editor_state::update_entity_placer_tab()
 	ImGui::Spacing();
 
 	ImGui::Text("List of entities:");
-	if (ImGui::Button("/\\", { 50.0f, 0.0f }) && m_selected_entity_idx > 0)
+	if (ImGui::Button("/\\", { 40.0f, 0.0f }) && m_selected_entity_idx > 0)
 	{
 		auto selected_elem = m_stubs.begin() + m_selected_entity_idx;
 		std::iter_swap(selected_elem, selected_elem - 1);
@@ -425,12 +425,20 @@ void aco::editor_state::update_entity_placer_tab()
 		highlight_entity(m_selected_entity_idx, true);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("\\/", { 50.0f, 0.0f }) && m_selected_entity_idx < (m_stubs.size() - 1))
+	if (ImGui::Button("\\/", { 40.0f, 0.0f }) && m_selected_entity_idx < (m_stubs.size() - 1))
 	{
 		auto selected_elem = m_stubs.begin() + m_selected_entity_idx;
 		std::iter_swap(selected_elem, selected_elem + 1);
 		++m_selected_entity_idx;
 		highlight_entity(m_selected_entity_idx, true);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("/|\\", { 40.0f, 0.0f }) && m_selected_entity_idx > 0)
+	{
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("\\|/", { 40.0f, 0.0f }) && m_selected_entity_idx < (m_stubs.size() - 1))
+	{
 	}
 	ImGui::SameLine(ImGui::GetWindowWidth() - 110.0f);
 	if (ImGui::Button("Delete entity", { 100.0f, 0.0f }) && m_selected_entity_idx > -1)
