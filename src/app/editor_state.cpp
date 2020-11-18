@@ -81,6 +81,15 @@ void aco::editor_state::handle_input()
 		{
 			handle_mouse_move_event(event.mouseMove);
 		}
+		else if (event.type == sf::Event::KeyPressed)
+		{
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Escape:
+				m_app_data.state_manager.pop_state();
+				break;
+			}
+		}
 	}
 
 }

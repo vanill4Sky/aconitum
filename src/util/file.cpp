@@ -45,7 +45,7 @@ bool util::exists_not_empty(const std::filesystem::path file_path)
         && (fs::file_size(file_path) != 0);
 }
 
-bool util::write_to_file(std::string_view content, const std::filesystem::path file_path, bool overwrite)
+bool util::write_to_file(std::string_view content, const std::filesystem::path& file_path, bool overwrite)
 {
     if (fs::exists(file_path) && !overwrite)
     {
@@ -56,4 +56,12 @@ bool util::write_to_file(std::string_view content, const std::filesystem::path f
     os << content;
 
     return os.good();
+}
+
+std::string util::replace_extension(std::string path, const std::string& new_extension)
+{
+    path.erase(path.rfind('.'));
+    path.append(new_extension);
+
+    return path;
 }
