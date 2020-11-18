@@ -8,8 +8,8 @@
 #include "../sys/movement.hpp"
 #include "../sys/render.hpp"
 #include "../sys/target_following.hpp"
-#include "factories.hpp"
 #include "constants.hpp"
+#include "lua_binding.hpp"
 
 aco::game_state::game_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
@@ -19,10 +19,15 @@ aco::game_state::game_state(aco::app_data& app_data)
 
 void aco::game_state::init()
 {
+	register_factory(m_app_data.lua, m_reg, m_app_data.textures);
+	m_app_data.lua.script_file(level_scripts_dir + "test_01.lua");
+
+	m_current_level.read_from_file(aco::levels_dir + "test_01.json");
+
+	/*
 	player_tex.loadFromFile("assets/textures/player_thief_01.png");
 	stalker_tex.loadFromFile("assets/textures/stalker_thief_01.png");
 	box_tex.loadFromFile("assets/textures/box_01.png");
-	m_current_level.read_from_file(aco::levels_dir + "test_02.json");
 
 	const auto player_entity{ aco::create_player(m_reg, player_tex) };
 	aco::create_stalker(m_reg, player_entity, stalker_tex);
@@ -33,6 +38,7 @@ void aco::game_state::init()
 		aco::create_box(m_reg, box_tex, box_pos + sf::Vector2f{ 100.0f, 0.0f });
 		box_pos.y += 100.0f;
 	}
+	*/
 }
 
 

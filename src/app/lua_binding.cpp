@@ -6,6 +6,8 @@
 #include <string>
 
 #include "../comp/components.hpp"
+#include "../core/dir.hpp"
+#include "factories.hpp"
 
 void aco::register_user_types(sol::state& state)
 {
@@ -18,6 +20,16 @@ void aco::register_user_types(sol::state& state)
 		"x", &sf::Vector2f::x,
 		"y", &sf::Vector2f::y);
 
+	state.new_enum("ex_dir",
+		"up_left", dir::up_left, "left", dir::left,
+		"down_left", dir::down_left, "up", dir::up, "none", dir::none,
+		"down", dir::down, "up_right", dir::up_right, "right", dir::right,
+		"down_right", dir::down_right, "count", dir::count);
+
+	state.new_usertype<velocity>("ex_velocity",
+		sol::constructors<velocity(), velocity(aco::dir, float)>(),
+		"dir", &velocity::dir,
+		"speed", &velocity::speed);
 	state.new_usertype<position>("ex_position",
 		sol::constructors<position(), position(sf::Vector2f), position(float, float)>(),
 		"pos", &position::pos);
@@ -45,4 +57,12 @@ void aco::register_user_types(sol::state& state)
 	state.new_usertype<player>("ex_player");
 	state.new_usertype<mob>("ex_mob");
 	state.new_usertype<stalker>("ex_stalker");
+}
+
+void aco::register_factory(sol::state& state, entt::registry& reg, resource_holder<sf::Texture>& textures)
+{
+	state.set_function("ex_create_entity",
+		[&](const sol::table& entity_template, sf::Vector2f position, size_t idx) {
+			return create_entity(reg, textures, entity_template, position, idx);
+		});
 }

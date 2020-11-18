@@ -612,7 +612,7 @@ local stubs = {
 	for (size_t i{ 0 }; i < m_stubs.size(); ++i)
 	{
 		const auto& stub{ m_stubs[i] };
-		const auto& pos = stub.shape.getPosition();
+		const auto& pos = stub.shape.getPosition() - stub.shape.getOrigin();
 		ss << "\t" << stub.id
 			<< " = { idx = " << i
 			<< ", name = \"" << stub.name
@@ -625,6 +625,8 @@ local stubs = {
 function get_stubs()
 	return stubs
 end
+
+return get_stubs
 
 -- END OF GENERATED CODE)";
 
@@ -718,10 +720,12 @@ aco::entity_stub::entity_stub(std::string id, std::string name, const sf::Sprite
 
 	shape.setTexture(sprite.getTexture());
 	shape.setTextureRect(sprite.getTextureRect());
-	shape.setPosition(sprite.getPosition());
+
 	const auto sprite_bounds{ sprite.getGlobalBounds() };
 	shape.setSize({ sprite_bounds.width, sprite_bounds.height });
 	shape.setOrigin({ sprite_bounds.width / 2, sprite_bounds.height / 2 });
+	shape.setPosition(sprite.getPosition() + shape.getOrigin());
+
 	shape.setOutlineColor(sf::Color::Transparent);
 	shape.setOutlineThickness(1.0f);
 }

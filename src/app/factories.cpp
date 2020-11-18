@@ -2,19 +2,14 @@
 
 #include <entt/entt.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <sol/sol.hpp>
+#include <spdlog/spdlog.h>
 
-#include "../comp/player.hpp"
-#include "../comp/direction.hpp"
-#include "../comp/position.hpp"
-#include "../comp/sprite.hpp"
-#include "../comp/mob.hpp"
-#include "../comp/iob.hpp"
-#include "../comp/target.hpp"
-#include "../comp/animation.hpp"
-#include "../comp/collider.hpp"
+#include "../comp/components.hpp"
 #include "sprite_picker.hpp"
 #include "../core/dir.hpp"
 
+using namespace aco::comp;
 
 entt::entity aco::create_player(entt::registry& reg, const sf::Texture& texture)
 {
@@ -59,4 +54,65 @@ void aco::create_box(entt::registry& reg, const sf::Texture& texture, sf::Vector
 	reg.emplace<aco::comp::next_position>(e, position);
 	reg.emplace<aco::comp::sprite>(e, sprite);
 	reg.emplace<aco::comp::collider>(e, sf::Vector2f{ 0.0f, 0.0f }, sf::Vector2f{ 23.0f, 31.0f });
+}
+
+entt::id_type aco::create_entity(entt::registry& reg, resource_holder<sf::Texture>& textures,
+	const sol::table& entity_template, const sf::Vector2f& pos, size_t idx)
+{
+	const auto e{ reg.create() };
+	for (const auto& pair : entity_template)
+	{
+		const auto comp_name{ pair.first.as<std::string>() };
+		if (comp_name == "sprite")
+		{
+			auto s{ pair.second.as<sprite>() };
+			textures.load(s.tex_path);
+			s.spr.setTexture(textures.get(s.tex_path));
+			reg.emplace<sprite>(e, s);
+		}
+		else if (comp_name == "position")
+		{
+			reg.emplace<position>(e, pair.second.as<position>());
+		}
+		else if (comp_name == "next_position")
+		{
+			reg.emplace<next_position>(e, pair.second.as<next_position>());
+		}
+		else if (comp_name == "iob")
+		{
+			reg.emplace<iob>(e, pair.second.as<iob>());
+		}
+		else if (comp_name == "box")
+		{
+			reg.emplace<box>(e, pair.second.as<box>());
+		}
+		else if (comp_name == "player")
+		{
+			reg.emplace<player>(e, pair.second.as<player>());
+		}
+		else if (comp_name == "animation")
+		{
+			reg.emplace<animation>(e, pair.second.as<animation>());
+		}
+		else if (comp_name == "velocity")
+		{
+			reg.emplace<velocity>(e, pair.second.as<velocity>());
+		}
+		else if (comp_name == "collider")
+		{
+			reg.emplace<collider>(e, pair.second.as<collider>());
+		}
+		else
+		{
+			spdlog::warn("Unhandled component: {}", comp_name);
+		}
+	}
+
+	if (reg.has<sprite, animation>(e))
+	{
+		auto& s{ reg.get<sprite>(e) };
+		s.spr.setTextureRect(aco::pick_sprite(64.0f, aco::pose::walkcycle, aco::dir::down_left, 0));
+	}
+
+	return static_cast<entt::id_type>(e);
 }

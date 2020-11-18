@@ -8,3 +8,10 @@ entities_templates = {
 	box = box:new(),
 	player = player:new()
 }
+
+local entities = {
+	box = box,
+	player = player
+}
+
+return entities
