@@ -20,14 +20,17 @@ using text_input_buffer = std::array<char, 256>;
 
 struct entity_stub
 {
-	static std::string generate_id(const std::string& name);
+	static void reset_counter();
 
-	entity_stub(std::string id, std::string name, const sf::Sprite& sprite);
+	entity_stub(std::string id, std::string name, const sf::Sprite& sprite, size_t idx);
+	entity_stub(std::string name, const sf::Sprite& sprite);
 	std::string id;
 	std::string name;
 	sf::RectangleShape shape;
+	size_t idx;
 
 private:
+	std::string generate_id(const std::string& name);
 	static std::unordered_map<std::string, int> entity_count;
 };
 
@@ -61,9 +64,13 @@ private:
 
 	void get_available_templates(const std::string& index_filename);
 	void load_template();
+	sf::Sprite load_template(std::string_view name);
 	std::string current_entity_name() const;
 	void highlight_entity(int index, bool is_highlighted);
+	std::string get_stubs_filename() const;
 	void save_stubs(const std::string& stubs_filename);
+	void load_stubs(const std::string& stubs_filename);
+	void move_selected_stub(const size_t new_pos);
 
 	app_data& m_app_data;
 	grid m_grid;

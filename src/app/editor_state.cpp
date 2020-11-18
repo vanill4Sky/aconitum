@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include <imgui/imgui.h>
 #include <imgui/imgui-SFML.h>
 #include <SFML/Window/Event.hpp>
@@ -169,7 +170,7 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 		{
 			sf::Sprite sprite{ m_miniature };
 			sprite.setPosition(translated_mouse_pos);
-			m_stubs.emplace_back(aco::entity_stub{ entity_stub::generate_id(current_entity_name()), current_entity_name(), sprite });
+			m_stubs.emplace_back(aco::entity_stub{ current_entity_name(), sprite });
 		}
 	}
 	else if (event.button == sf::Mouse::Left)
@@ -180,7 +181,7 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 		{
 			if (it->shape.getGlobalBounds().contains(translated_mouse_pos))
 			{
-				m_selected_entity_idx = std::distance(it, m_stubs.rend()) - 1;
+				m_selected_entity_idx = static_cast<int>(std::distance(it, m_stubs.rend())) - 1;
 				highlight_entity(m_selected_entity_idx, true);
 				break;
 			}
@@ -410,35 +411,37 @@ void aco::editor_state::update_entity_placer_tab()
 	ImGui::Image(m_miniature, { max_width, max_width }, sf::Color::White, sf::Color::White);
 	ImGui::Separator();
 
+	ImGui::Text("File:");
+	if (ImGui::Button("Load stubs"))
+	{
+		load_stubs(get_stubs_filename());
+	}
+	ImGui::SameLine();
 	if (ImGui::Button("Save stubs"))
 	{
-		save_stubs(scripts_dir + "test_stubs.lua");
+		save_stubs(get_stubs_filename());
 	}
 	ImGui::Spacing();
 
 	ImGui::Text("List of entities:");
 	if (ImGui::Button("/\\", { 40.0f, 0.0f }) && m_selected_entity_idx > 0)
 	{
-		auto selected_elem = m_stubs.begin() + m_selected_entity_idx;
-		std::iter_swap(selected_elem, selected_elem - 1);
-		--m_selected_entity_idx;
-		highlight_entity(m_selected_entity_idx, true);
+		move_selected_stub(static_cast<size_t>(m_selected_entity_idx) - 1);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("\\/", { 40.0f, 0.0f }) && m_selected_entity_idx < (m_stubs.size() - 1))
 	{
-		auto selected_elem = m_stubs.begin() + m_selected_entity_idx;
-		std::iter_swap(selected_elem, selected_elem + 1);
-		++m_selected_entity_idx;
-		highlight_entity(m_selected_entity_idx, true);
+		move_selected_stub(static_cast<size_t>(m_selected_entity_idx) + 1);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("/|\\", { 40.0f, 0.0f }) && m_selected_entity_idx > 0)
 	{
+		move_selected_stub(0);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("\\|/", { 40.0f, 0.0f }) && m_selected_entity_idx < (m_stubs.size() - 1))
 	{
+		move_selected_stub(static_cast<int>(m_stubs.size()) - 1);
 	}
 	ImGui::SameLine(ImGui::GetWindowWidth() - 110.0f);
 	if (ImGui::Button("Delete entity", { 100.0f, 0.0f }) && m_selected_entity_idx > -1)
@@ -538,6 +541,37 @@ void aco::editor_state::load_template()
 	}
 }
 
+sf::Sprite aco::editor_state::load_template(std::string_view name)
+{
+	sf::Sprite sprite;
+	sol::optional<sol::table> entity_template_opt = m_entities[name.data()];
+	if (entity_template_opt == sol::nullopt)
+	{
+		spdlog::error("Entity template \"{}\" is not defined.", name);
+		return sprite;
+	}
+	const auto& entity_template{ entity_template_opt.value() };
+	sol::optional<std::string> tex_path_opt = entity_template["sprite"]["tex_path"];
+	if (tex_path_opt != sol::nullopt && util::exists_not_empty(tex_path_opt.value()))
+	{
+		const auto& tex_path{ tex_path_opt.value() };
+		m_app_data.textures.load(tex_path);
+		sprite.setTexture(m_app_data.textures.get(tex_path), true);
+
+		sol::optional<sf::Vector2f> frame_size_opt = entity_template["animation"]["frame_size"];
+		if (frame_size_opt != sol::nullopt)
+		{
+			sprite.setTextureRect({ sf::Vector2i{0, 0}, static_cast<sf::Vector2i>(frame_size_opt.value()) });
+		}
+	}
+	else
+	{
+		spdlog::warn("Entity \"{}\" has no sprite component.", name);
+	}
+
+	return sprite;
+}
+
 std::string aco::editor_state::current_entity_name() const
 {
 	return m_entity_names_list[m_current_entity_file_idx];
@@ -560,63 +594,128 @@ void aco::editor_state::highlight_entity(int index, bool is_highlighted)
 	}
 }
 
+std::string aco::editor_state::get_stubs_filename() const
+{
+	const auto& level_filename{ m_level->filename() };
+	const auto last_dot{ level_filename.rfind('.') };
+	return level_filename.substr(0, last_dot) + stubs_file_extension;
+}
+
 void aco::editor_state::save_stubs(const std::string& stubs_filename)
 {
 	std::stringstream ss;
 	ss << R"(
 -- BEGINING OF GENERATED CODE
 
-stubs = {
+local stubs = {
 )";
-	for (const auto& stub : m_stubs)
+	for (size_t i{ 0 }; i < m_stubs.size(); ++i)
 	{
-		const auto pos = stub.shape.getPosition();
+		const auto& stub{ m_stubs[i] };
+		const auto& pos = stub.shape.getPosition();
 		ss << "\t" << stub.id
-			<< " = { name = " << stub.name
-			<< ", postion = ex_vector2f:new(" << pos.x
+			<< " = { idx = " << i
+			<< ", name = \"" << stub.name
+			<< "\", position = ex_vector2f:new(" << pos.x
 			<< ", " << pos.y
 			<< ") },\n";
 	}
 	ss << R"(}
 
+function get_stubs()
+	return stubs
+end
+
 -- END OF GENERATED CODE)";
 
-	std::cout << ss.str();
+	const auto path{ level_scripts_dir + stubs_filename };
+	if (util::write_to_file(ss.str(), path, true))
+	{
+		spdlog::info("Succesfully written entities stubs to file: {}", path);
+	}
+	else
+	{
+		spdlog::error("Failed to write entities stubs to file: {}", path);
+	}
+}
+
+void aco::editor_state::load_stubs(const std::string& stubs_filename)
+{
+	m_stubs = std::vector<entity_stub>();
+	entity_stub::reset_counter();
+
+	m_app_data.lua.script_file(level_scripts_dir + stubs_filename);
+	const sol::table stubs = m_app_data.lua["get_stubs"]();
+	for (const auto& pair : stubs)
+	{
+		sol::table value = pair.second.as<sol::table>();
+
+		std::string id = pair.first.as<std::string>();
+		std::string name = value["name"];
+		sf::Vector2f position = value["position"];
+		size_t idx = value["idx"];
+		
+		sf::Sprite sprite = load_template(name);
+		sprite.setPosition(position);
+
+		m_stubs.emplace_back(id, name, sprite, idx);
+	}
+
+	std::sort(m_stubs.begin(), m_stubs.end(), [](const auto& a, const auto& b) { return a.idx < b.idx; });
+}
+
+void aco::editor_state::move_selected_stub(const size_t new_pos)
+{
+	auto selected_elem_it{ m_stubs.begin() + m_selected_entity_idx };
+	auto selected_elem{ std::move(*selected_elem_it) };
+	m_stubs.erase(selected_elem_it);
+	m_stubs.insert(m_stubs.begin() + new_pos, selected_elem);
+	m_selected_entity_idx = static_cast<int>(new_pos);
+	highlight_entity(m_selected_entity_idx, true);
 }
 
 bool ImGui::Combo(const char* label, int* currIndex, std::vector<std::string>& values)
 {
 	if (values.empty()) { return false; }
 	return Combo(label, currIndex, vector_getter,
-		static_cast<void*>(&values), values.size());
+		static_cast<void*>(&values), static_cast<int>(values.size()));
 }
 
 bool ImGui::ListBox(const char* label, int* currIndex, std::vector<std::string>& values)
 {
 	if (values.empty()) { return false; }
 	return ListBox(label, currIndex, vector_getter,
-		static_cast<void*>(&values), values.size());
+		static_cast<void*>(&values), static_cast<int>(values.size()));
 }
 
 bool ImGui::ListBox(const char* label, int* currIndex, std::vector<aco::entity_stub>& values)
 {
+	const auto items_count{ static_cast<int>(values.size()) };
 	if (values.empty()) { return false; }
 	return ListBox(label, currIndex, vector_of_stubs_getter,
-		static_cast<void*>(&values), values.size(), values.size());
+		static_cast<void*>(&values), items_count, items_count);
 }
 
 std::string aco::entity_stub::generate_id(const std::string& name)
 {
-	entity_stub::entity_count.try_emplace(name, 0);
-	std::string id{ name + "_" + std::to_string(entity_stub::entity_count[name]++) };
+	std::string id{ name + "_" + std::to_string(entity_stub::entity_count[name]) };
 
 	return id;
 }
 
-aco::entity_stub::entity_stub(std::string id, std::string name, const sf::Sprite& sprite)
-	: id{ id }
-	, name{ name }
+void aco::entity_stub::reset_counter()
 {
+	entity_count.clear();
+}
+
+aco::entity_stub::entity_stub(std::string id, std::string name, const sf::Sprite& sprite, size_t idx)
+	: id{ std::move(id) }
+	, name{ std::move(name) }
+	, idx{ idx }
+{
+	entity_stub::entity_count.try_emplace(this->name, 0);
+	++entity_stub::entity_count[this->name];
+
 	shape.setTexture(sprite.getTexture());
 	shape.setTextureRect(sprite.getTextureRect());
 	shape.setPosition(sprite.getPosition());
@@ -626,5 +725,9 @@ aco::entity_stub::entity_stub(std::string id, std::string name, const sf::Sprite
 	shape.setOutlineColor(sf::Color::Transparent);
 	shape.setOutlineThickness(1.0f);
 }
+
+aco::entity_stub::entity_stub(std::string name, const sf::Sprite& sprite)
+	: entity_stub(generate_id(name), name, sprite, 0)
+{ }
 
 std::unordered_map<std::string, int> aco::entity_stub::entity_count;

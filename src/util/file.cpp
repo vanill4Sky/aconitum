@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <fstream>
 
 namespace fs = std::filesystem;
 
@@ -42,4 +43,17 @@ bool util::exists_not_empty(const std::filesystem::path file_path)
 {
     return fs::exists(file_path) && fs::is_regular_file(file_path) 
         && (fs::file_size(file_path) != 0);
+}
+
+bool util::write_to_file(std::string_view content, const std::filesystem::path file_path, bool overwrite)
+{
+    if (fs::exists(file_path) && !overwrite)
+    {
+        return false;
+    }
+
+    std::ofstream os{ file_path };
+    os << content;
+
+    return os.good();
 }
