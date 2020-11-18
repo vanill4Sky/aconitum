@@ -169,7 +169,8 @@ void aco::editor_state::handle_mouse_click(const sf::Event::MouseButtonEvent& ev
 		else if (!m_is_level_editor_visible)
 		{
 			sf::Sprite sprite{ m_miniature };
-			sprite.setPosition(translated_mouse_pos);
+			const auto sprite_bounds{ sprite.getGlobalBounds() };
+			sprite.setPosition(translated_mouse_pos - sf::Vector2f{ sprite_bounds.width, sprite_bounds.height } / 2.0f);
 			m_stubs.emplace_back(aco::entity_stub{ current_entity_name(), sprite });
 		}
 	}
@@ -612,7 +613,7 @@ local stubs = {
 	for (size_t i{ 0 }; i < m_stubs.size(); ++i)
 	{
 		const auto& stub{ m_stubs[i] };
-		const auto& pos = stub.shape.getPosition() - stub.shape.getOrigin();
+		const auto& pos = stub.shape.getPosition();
 		ss << "\t" << stub.id
 			<< " = { idx = " << i
 			<< ", name = \"" << stub.name
@@ -723,8 +724,7 @@ aco::entity_stub::entity_stub(std::string id, std::string name, const sf::Sprite
 
 	const auto sprite_bounds{ sprite.getGlobalBounds() };
 	shape.setSize({ sprite_bounds.width, sprite_bounds.height });
-	shape.setOrigin({ sprite_bounds.width / 2, sprite_bounds.height / 2 });
-	shape.setPosition(sprite.getPosition() + shape.getOrigin());
+	shape.setPosition(sprite.getPosition());
 
 	shape.setOutlineColor(sf::Color::Transparent);
 	shape.setOutlineThickness(1.0f);

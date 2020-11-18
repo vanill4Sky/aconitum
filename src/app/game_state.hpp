@@ -27,6 +27,7 @@ private:
 	entt::registry m_reg;
 	std::unordered_map <sf::Keyboard::Key, bool> m_keyboard_state;
 	level m_current_level;
+	sf::View m_view;
 
 	sf::Texture player_tex;
 	sf::Texture stalker_tex;

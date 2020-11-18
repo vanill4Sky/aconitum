@@ -19,7 +19,6 @@ void aco::sys::draw_entities(entt::registry& reg, sf::RenderWindow& window, cons
 	for (const auto e : view)
 	{
 		auto& spr{ view.get<sprite>(e).spr };
-		spr.setPosition(view.get<position>(e).pos);
 
 		if (reg.has<animation>(e))
 		{

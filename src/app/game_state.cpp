@@ -14,7 +14,9 @@
 aco::game_state::game_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
 	, m_current_level{ 32.0f }
+	, m_view{ m_app_data.window.getDefaultView() }
 {
+	m_view.zoom(0.5);
 }
 
 void aco::game_state::init()
@@ -69,7 +71,8 @@ void aco::game_state::update(float dt)
 	aco::sys::find_next_position(m_reg);
 	aco::sys::player_iob_collide(m_reg);
 	aco::sys::player_wall_collide(m_reg, m_current_level);
-	aco::sys::submit_next_position(m_reg);
+	aco::sys::submit_next_position(m_reg, m_view);
+	m_app_data.window.setView(m_view);
 }
 
 void aco::game_state::draw()

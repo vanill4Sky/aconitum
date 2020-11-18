@@ -161,9 +161,24 @@ void aco::sys::player_wall_collide(entt::registry& reg, const aco::level& level)
 	}
 }
 
-void aco::sys::submit_next_position(entt::registry& reg)
+void aco::sys::submit_next_position(entt::registry& reg, sf::View& render_view)
 {
-	auto view{ reg.view<position, next_position>() };
+	auto players{ reg.view<player, position, next_position>() };
+	for (const auto p : players)
+	{
+		const auto next_pos{ players.get<next_position>(p).pos };
+		auto& curr_pos{ players.get<position>(p).pos };
+		curr_pos = next_pos;
+
+		if (reg.has<sprite>(p))
+		{
+			reg.get<sprite>(p).spr.setPosition(next_pos);
+		}
+
+		render_view.setCenter(curr_pos);
+	}
+
+	auto view{ reg.view<position, next_position>(entt::exclude<player>) };
 	for (const auto e : view)
 	{
 		const auto next_pos{ view.get<next_position>(e).pos };
