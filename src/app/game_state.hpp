@@ -28,9 +28,10 @@ private:
 
 	app_data& m_app_data;
 	entt::registry m_reg;
-	std::unordered_map <sf::Keyboard::Key, bool> m_keyboard_state;
+	std::unordered_map<sf::Keyboard::Key, bool> m_keyboard_state;
 	level m_current_level;
 	sf::View m_view;
+	std::vector<const sf::Sprite*> m_ordered_sprites;
 	std::vector<std::string> m_level_files_list;
 	size_t m_current_level_idx{ 0 };
 

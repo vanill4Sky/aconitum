@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/Sprite.hpp>
+#include <string>
 
 namespace aco::comp
 {

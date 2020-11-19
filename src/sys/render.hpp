@@ -2,10 +2,13 @@
 
 #include <entt/fwd.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <vector>
 
 namespace aco::sys
 {
 
-void draw_entities(entt::registry& reg, sf::RenderWindow& window, const size_t frame_cnt);
+void sort_sprites(std::vector<const sf::Sprite*>& orderd_sprites);
+void draw_entities(std::vector<const sf::Sprite*>& orderd_sprites, sf::RenderWindow& window);
 
 }

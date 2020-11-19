@@ -9,6 +9,7 @@
 #include "../sys/movement.hpp"
 #include "../sys/render.hpp"
 #include "../sys/target_following.hpp"
+#include "../sys/level_init.hpp"
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
@@ -27,6 +28,7 @@ aco::game_state::game_state(aco::app_data& app_data)
 void aco::game_state::init()
 {
 	register_factory(m_app_data.lua, m_reg, m_app_data.textures);
+	register_modifiers(m_app_data.lua, m_reg);
 
 	/*
 	player_tex.loadFromFile("assets/textures/player_thief_01.png");
@@ -62,10 +64,13 @@ void aco::game_state::handle_input()
 				switch (event.key.code)
 				{
 				case sf::Keyboard::F5:
-					load_level(m_level_files_list[++m_current_level_idx % m_level_files_list.size()]);
-						break;
+					load_level(m_level_files_list[++m_current_level_idx %= m_level_files_list.size()]);
+					break;
 				case sf::Keyboard::F6:
-					load_level(m_level_files_list[--m_current_level_idx % m_level_files_list.size()]);
+					load_level(m_level_files_list[--m_current_level_idx %= m_level_files_list.size()]);
+					break;
+				case sf::Keyboard::F8:
+					load_level(m_level_files_list[m_current_level_idx]);
 					break;
 				case sf::Keyboard::F9:
 					m_app_data.state_manager.push_state(std::make_unique<editor_state>(m_app_data));
@@ -90,16 +95,17 @@ void aco::game_state::update(float dt)
 	aco::sys::player_iob_collide(m_reg);
 	aco::sys::player_wall_collide(m_reg, m_current_level);
 	aco::sys::submit_next_position(m_reg, m_view);
+	aco::sys::sort_sprites(m_ordered_sprites);
+
+	m_app_data.window.setView(m_view);
 }
 
 void aco::game_state::draw()
-{
-	m_app_data.window.setView(m_view);
-	
+{	
 	m_app_data.window.clear();
 
 	m_current_level.draw(m_app_data.window, false);
-	aco::sys::draw_entities(m_reg, m_app_data.window, frame_cnt);
+	aco::sys::draw_entities(m_ordered_sprites, m_app_data.window);
 
 	m_app_data.window.display();
 
@@ -125,4 +131,6 @@ void aco::game_state::load_level(const std::string& level_name)
 	{
 		spdlog::error("Level script file {} does not exisits.", level_script_path);
 	}
+
+	aco::sys::fill_orderd_sprites(m_reg, m_ordered_sprites);
 }

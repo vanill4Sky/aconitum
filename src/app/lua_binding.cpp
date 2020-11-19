@@ -8,6 +8,7 @@
 #include "../comp/components.hpp"
 #include "../core/dir.hpp"
 #include "factories.hpp"
+#include "modifiers.hpp"
 
 void aco::register_user_types(sol::state& state)
 {
@@ -64,5 +65,13 @@ void aco::register_factory(sol::state& state, entt::registry& reg, resource_hold
 	state.set_function("ex_create_entity",
 		[&](const sol::table& entity_template, sf::Vector2f position, size_t idx) {
 			return create_entity(reg, textures, entity_template, position, idx);
+		});
+}
+
+void aco::register_modifiers(sol::state& state, entt::registry& reg)
+{
+	state.set_function("ex_set_target",
+		[&](entt::entity self, entt::entity target) {
+			return set_target(reg, self, target);
 		});
 }

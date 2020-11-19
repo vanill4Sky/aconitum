@@ -102,6 +102,18 @@ entt::id_type aco::create_entity(entt::registry& reg, resource_holder<sf::Textur
 		{
 			reg.emplace<collider>(e, pair.second.as<collider>());
 		}
+		else if (comp_name == "mob")
+		{
+			reg.emplace<mob>(e, pair.second.as<mob>());
+		}
+		else if (comp_name == "target")
+		{
+			reg.emplace<target>(e, pair.second.as<target>());
+		}
+		else if (comp_name == "stalker")
+		{
+			reg.emplace<stalker>(e, pair.second.as<stalker>());
+		}
 		else
 		{
 			spdlog::warn("Unhandled component: {}", comp_name);

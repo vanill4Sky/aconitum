@@ -10,6 +10,12 @@ local stubs = {
 	box_4 = { idx = 5, name = "box", position = ex_vector2f:new(548.326, 224.289) },
 	box_6 = { idx = 6, name = "box", position = ex_vector2f:new(573.946, 197.017) },
 	box_5 = { idx = 7, name = "box", position = ex_vector2f:new(572.293, 224.289) },
+	stalker_0 = { idx = 8, name = "stalker", position = ex_vector2f:new(154.887, 3.70914) },
+	metal_box_0 = { idx = 9, name = "metal_box", position = ex_vector2f:new(545.947, 328.053) },
+	metal_box_1 = { idx = 10, name = "metal_box", position = ex_vector2f:new(569.966, 328.053) },
+	metal_box_2 = { idx = 11, name = "metal_box", position = ex_vector2f:new(544.706, 350.937) },
+	metal_box_3 = { idx = 12, name = "metal_box", position = ex_vector2f:new(572.16, 349.58) },
+	metal_box_4 = { idx = 13, name = "metal_box", position = ex_vector2f:new(516.616, 280.357) },
 }
 
 function get_stubs()
