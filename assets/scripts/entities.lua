@@ -6,23 +6,20 @@ package.path = "./assets/scripts/?.lua;" .. package.path
 package.loaded.helpers = nil
 local helpers = require("helpers")
 
-local box = helpers.reloading_require("box")
-local player = helpers.reloading_require("player")
-local stalker = helpers.reloading_require("stalker")
-local metal_box = helpers.reloading_require("metal_box")
-
-entities_templates = {
-	box = box:new(),
-	player = player:new(),
-	stalker = stalker:new(),
-	metal_box = metal_box:new()
+local entities = {
+	box = helpers.reloading_require("box"),
+	player = helpers.reloading_require("player"),
+	stalker = helpers.reloading_require("stalker"),
+	metal_box = helpers.reloading_require("metal_box"),
+	doors = helpers.reloading_require("doors")
 }
 
-local entities = {
-	box = box,
-	player = player,
-	stalker = stalker,
-	metal_box = metal_box
+entities_templates = {
+	box = entities.box:new(),
+	player = entities.player:new(),
+	stalker = entities.stalker:new(),
+	metal_box = entities.metal_box:new(),
+	doors = entities.doors:new()
 }
 
 return entities

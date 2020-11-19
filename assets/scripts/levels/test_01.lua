@@ -3,7 +3,6 @@ package.path = "./assets/scripts/levels/?.lua;" .. package.path
 package.path = "C:/Users/nightshade/Desktop/aconitum/assets/scripts/?.lua;" .. package.path
 package.path = "./assets/scripts/?.lua;" .. package.path
 
-package.loaded.helpers = nil
 local helpers = require("helpers")
 local templates = helpers.reloading_require("entities")
 local get_test_01_stubs = helpers.reloading_require("test_01_stubs")

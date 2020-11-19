@@ -25,8 +25,6 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 
 	, m_current_entity_file_idx{ 0 }
 {
-	ImGui::SFML::Init(app_data.window);
-
 	m_level = std::make_unique<aco::level>(32.0f);
 	m_level->update_tilemap();
 	m_horizontal_bounds_input[1] = static_cast<int>(m_tile_picker.width());
@@ -40,12 +38,15 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 
 aco::editor_state::~editor_state()
 {
+	ImGui::EndFrame();
 	ImGui::SFML::Shutdown();
 }
 
 void aco::editor_state::init()
 {
-
+	ImGui::SFML::Init(m_app_data.window);
+	m_level->reset_to_origin();
+	zoom(m_current_zoom);
 }
 
 void aco::editor_state::handle_input()

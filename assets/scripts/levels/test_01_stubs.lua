@@ -16,6 +16,7 @@ local stubs = {
 	metal_box_2 = { idx = 11, name = "metal_box", position = ex_vector2f:new(544.706, 350.937) },
 	metal_box_3 = { idx = 12, name = "metal_box", position = ex_vector2f:new(572.16, 349.58) },
 	metal_box_4 = { idx = 13, name = "metal_box", position = ex_vector2f:new(516.616, 280.357) },
+	doors_0 = { idx = 14, name = "doors", position = ex_vector2f:new(479.911, 95.4689) },
 }
 
 function get_stubs()
