@@ -10,7 +10,7 @@ function stalker:new()
 		next_position = ex_next_position:new(),
 		collider = ex_collider:new(20.0, 44.0, 24.0, 18.0),
 		sprite = ex_sprite:new("./assets/textures/stalker_01.png"),
-		target = ex_target:new(200.0, 100.0)
+		target = ex_target:new(200.0, 25.0)
 	}
 	setmetatable(o, self);
 	return o;

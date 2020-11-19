@@ -4,12 +4,12 @@
 #include <spdlog/spdlog.h>
 #include <cassert>
 
-#include "sprite_picker.hpp"
 #include "../sys/player_input.hpp"
 #include "../sys/movement.hpp"
 #include "../sys/render.hpp"
 #include "../sys/target_following.hpp"
 #include "../sys/level_init.hpp"
+#include "../sys/animation.hpp"
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
@@ -29,22 +29,6 @@ void aco::game_state::init()
 {
 	register_factory(m_app_data.lua, m_reg, m_app_data.textures);
 	register_modifiers(m_app_data.lua, m_reg);
-
-	/*
-	player_tex.loadFromFile("assets/textures/player_thief_01.png");
-	stalker_tex.loadFromFile("assets/textures/stalker_thief_01.png");
-	box_tex.loadFromFile("assets/textures/box_01.png");
-
-	const auto player_entity{ aco::create_player(m_reg, player_tex) };
-	aco::create_stalker(m_reg, player_entity, stalker_tex);
-	sf::Vector2f box_pos{ 600.0f, 0.0f };
-	for (int i = 0; i < 10; ++i)
-	{
-		aco::create_box(m_reg, box_tex, box_pos);
-		aco::create_box(m_reg, box_tex, box_pos + sf::Vector2f{ 100.0f, 0.0f });
-		box_pos.y += 100.0f;
-	}
-	*/
 }
 
 
@@ -96,6 +80,7 @@ void aco::game_state::update(float dt)
 	aco::sys::player_wall_collide(m_reg, m_current_level);
 	aco::sys::submit_next_position(m_reg, m_view);
 	aco::sys::sort_sprites(m_ordered_sprites);
+	aco::sys::animate_mob(m_reg, frame_cnt);
 
 	m_app_data.window.setView(m_view);
 }

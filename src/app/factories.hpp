@@ -11,10 +11,6 @@
 namespace aco
 {
 
-entt::entity create_player(entt::registry& reg, const sf::Texture& texture);
-void create_stalker(entt::registry& reg, const entt::entity target, const sf::Texture& texture);
-void create_box(entt::registry& reg, const sf::Texture& texture, sf::Vector2f position);
-
 entt::id_type create_entity(entt::registry& reg, resource_holder<sf::Texture>& textures, 
 	const sol::table& entity_template, const sf::Vector2f& pos, size_t idx);
 

@@ -181,6 +181,7 @@
     <ClCompile Include="src\core\state_manager.cpp" />
     <ClCompile Include="src\core\tilemap.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\sys\animation.cpp" />
     <ClCompile Include="src\sys\level_init.cpp" />
     <ClCompile Include="src\sys\movement.cpp" />
     <ClCompile Include="src\sys\player_input.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="src\core\state.hpp" />
     <ClInclude Include="src\core\state_manager.hpp" />
     <ClInclude Include="src\core\tilemap.hpp" />
+    <ClInclude Include="src\sys\animation.hpp" />
     <ClInclude Include="src\sys\level_init.hpp" />
     <ClInclude Include="src\sys\movement.hpp" />
     <ClInclude Include="src\sys\player_input.hpp" />
