@@ -73,16 +73,21 @@ void aco::game_state::handle_input()
 
 void aco::game_state::update(float dt)
 {
-	aco::sys::localize_target(m_reg);
-	aco::sys::target_triggers(m_reg);
-	aco::sys::find_next_position(m_reg);
-	aco::sys::player_iob_collide(m_reg);
-	aco::sys::player_wall_collide(m_reg, m_current_level);
-	aco::sys::submit_next_position(m_reg, m_view);
-	aco::sys::sort_sprites(m_ordered_sprites);
-	aco::sys::animate_mob(m_reg, frame_cnt);
+	using namespace aco::sys;
+
+	localize_target(m_reg);
+	target_triggers(m_reg);
+	find_next_position(m_reg);
+	player_iob_collide(m_reg);
+	player_wall_collide(m_reg, m_current_level);
+	submit_next_position(m_reg, m_view);
+	sort_sprites(m_ordered_sprites);
+	animate_mob(m_reg, frame_cnt);
+	animate_iob(m_reg, frame_cnt);
 
 	m_app_data.window.setView(m_view);
+
+	++frame_cnt;
 }
 
 void aco::game_state::draw()
@@ -93,8 +98,6 @@ void aco::game_state::draw()
 	aco::sys::draw_entities(m_ordered_sprites, m_app_data.window);
 
 	m_app_data.window.display();
-
-	++frame_cnt;
 }
 
 void aco::game_state::update_levels_list()

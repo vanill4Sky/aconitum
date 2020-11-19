@@ -3,7 +3,7 @@ local player = { }
 function player:new()
 	local o = {
 		player = ex_player:new(),
-		animation = ex_animation:new(64.0, 64.0),
+		animation = ex_animation:new(64.0, 64.0, 9),
 		velocity = ex_velocity:new(ex_dir.none, 3.0),
 		position = ex_position:new(),
 		next_position = ex_next_position:new(),

@@ -4,7 +4,7 @@ function stalker:new()
 	local o = {
 		mob = ex_mob:new(),
 		stalker = ex_stalker:new(),
-		animation = ex_animation:new(64.0, 64.0),
+		animation = ex_animation:new(64.0, 64.0, 9),
 		velocity = ex_velocity:new(ex_dir.none, 1.5),
 		position = ex_position:new(),
 		next_position = ex_next_position:new(),

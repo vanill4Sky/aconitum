@@ -7,7 +7,7 @@ sf::IntRect aco::pick_sprite(int size, int row, int col)
 	return sf::IntRect{ sf::Vector2i{ col, row } * size, sf::Vector2i{ size, size } };
 }
 
-sf::IntRect aco::pick_sprite(int size, aco::pose pose, aco::dir dir, int frame)
+sf::IntRect aco::pick_sprite(float size, aco::pose pose, aco::dir dir, int frame)
 {
 	int row{ static_cast<int>(pose) };
 
@@ -30,5 +30,5 @@ sf::IntRect aco::pick_sprite(int size, aco::pose pose, aco::dir dir, int frame)
 		break;
 	}
 
-	return aco::pick_sprite(size, row, frame);
+	return aco::pick_sprite(static_cast<int>(size), row, frame);
 }

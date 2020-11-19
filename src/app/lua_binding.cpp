@@ -38,8 +38,9 @@ void aco::register_user_types(sol::state& state)
 		sol::constructors<next_position(), next_position(sf::Vector2f), next_position(float, float)>(),
 		"pos", &next_position::pos);
 	state.new_usertype<animation>("ex_animation",
-		sol::constructors<animation(), animation(sf::Vector2f), animation(float, float)>(),
-		"frame_size", &animation::frame_size);
+		sol::constructors<animation(), animation(sf::Vector2f, int), animation(float, float, int)>(),
+		"frame_size", &animation::frame_size,
+		"frame_count", &animation::frame_count);
 	state.new_usertype<target>("ex_target",
 		sol::constructors<target(), target(float, float)>(),
 		"entity", &target::entity,
