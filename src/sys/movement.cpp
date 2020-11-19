@@ -20,14 +20,13 @@ using namespace aco::comp;
 namespace aco::sys
 {
 
-sf::Vector2<bool> iob_iob_collide(entt::registry& reg, entt::entity e)
+bool iob_iob_collide(entt::registry& reg, entt::entity e)
 {
 	auto iobs{ reg.view<iob, position, next_position, collider>() };
 	assert(iobs.contains(e));
 
 	const auto e_curr_pos{ iobs.get<position>(e).pos };
-	auto& e_next_pos{ iobs.get<next_position>(e).pos };
-	auto delta{ e_curr_pos - e_next_pos };
+	const auto e_next_pos{ iobs.get<next_position>(e).pos };
 	const auto& e_collider{ iobs.get<collider>(e) };
 	sf::FloatRect e_bbox{ e_next_pos + e_collider.offset, e_collider.size };
 
@@ -41,20 +40,14 @@ sf::Vector2<bool> iob_iob_collide(entt::registry& reg, entt::entity e)
 		const auto i_curr_pos{ iobs.get<position>(i).pos };
 		const auto& i_collider{ iobs.get<collider>(i) };
 		sf::FloatRect i_bbox{ i_curr_pos + i_collider.offset, i_collider.size };
+
 		if (e_bbox.intersects(i_bbox))
 		{
-			if (delta.x != 0.0f)
-			{
-				return sf::Vector2<bool>{ true, false };
-			}
-			else if (delta.y != 0.0f)
-			{
-				return sf::Vector2<bool>{ false, true };
-			}
+			return true;
 		}
 	}
 
-	return sf::Vector2<bool>{ false, false };
+	return false;
 }
 
 }
@@ -70,9 +63,19 @@ void aco::sys::find_next_position(entt::registry& reg)
 	}
 }
 
-void aco::sys::player_iob_collide(entt::registry& reg)
+bool has_collision(const aco::level& level, const sf::FloatRect& bbox)
 {
-	auto players{ reg.view<player, position, next_position, collider, velocity>() };
+	const float tile_size{ level.tile_size() };
+	const auto [x, y, w, h] = bbox;
+	return level.at(aco::layer::bottom, x / tile_size, y / tile_size).is_collidable
+		|| level.at(aco::layer::bottom, (x + w) / tile_size, y / tile_size).is_collidable
+		|| level.at(aco::layer::bottom, x / tile_size, (y + h) / tile_size).is_collidable
+		|| level.at(aco::layer::bottom, (x + w) / tile_size, (y + h) / tile_size).is_collidable;
+}
+
+void aco::sys::player_iob_collide(entt::registry& reg, const aco::level& level)
+{
+	auto players{ reg.view<player, position, next_position, collider>() };
 	auto iobs{ reg.view<iob, position, next_position, collider>() };
 
 	for (const auto p : players)
@@ -80,7 +83,10 @@ void aco::sys::player_iob_collide(entt::registry& reg)
 		const auto p_curr_pos{ players.get<position>(p).pos };
 		auto& p_next_pos{ players.get<next_position>(p).pos };
 		const auto& p_collider{ players.get<collider>(p) };
-		sf::FloatRect p_bbox{ p_next_pos + p_collider.offset, p_collider.size };
+		const sf::FloatRect p_bbox_horizontal{ 
+			p_collider.offset + sf::Vector2f{ p_next_pos.x, p_curr_pos.y }, p_collider.size };
+		const sf::FloatRect p_bbox_vertical{ 
+			p_collider.offset + sf::Vector2f{ p_curr_pos.x, p_next_pos.y }, p_collider.size };
 
 		for (const auto i : iobs)
 		{
@@ -89,37 +95,28 @@ void aco::sys::player_iob_collide(entt::registry& reg)
 			const auto& i_collider{ iobs.get<collider>(i) };
 			sf::FloatRect i_bbox{ i_curr_pos + i_collider.offset, i_collider.size };
 
-			if (sf::FloatRect intersection;
-				p_bbox.intersects(i_bbox, intersection))
+			bool is_horizontal, is_vertical;
+			if (is_horizontal = p_bbox_horizontal.intersects(i_bbox))
 			{
+				const auto offset{ p_next_pos.x - p_curr_pos.x };
+				i_next_pos.x += offset;
+				i_bbox.left += offset;
+			} 
+			else if (is_vertical = p_bbox_vertical.intersects(i_bbox))
+			{
+				const auto offset{ p_next_pos.y - p_curr_pos.y };
+				i_next_pos.y += offset;
+				i_bbox.top += offset;
+			}
 
-				auto vel{ players.get<velocity>(p) };
-				auto dir_vec{ aco::to_vec2<float>(vel.dir) };
-
-				constexpr float accuracy{ 1.0f };
-				if (intersection.height - intersection.width > accuracy)
-				{
-					dir_vec.y = 0;
-				}
-				else if (intersection.height - intersection.width < -accuracy)
-				{
-					dir_vec.x = 0;
-				}
-				else
-				{
-					dir_vec.x = 0;
-					dir_vec.y = 0;
-				}
-
-				i_next_pos += sf::Vector2f{ intersection.width * dir_vec.x, intersection.height * dir_vec.y };
-
-				auto pushed_iob_collision{ iob_iob_collide(reg, i) };
-				if (pushed_iob_collision.x)
+			if (has_collision(level, i_bbox) || iob_iob_collide(reg, i))
+			{
+				if (is_horizontal)
 				{
 					i_next_pos.x = i_curr_pos.x;
 					p_next_pos.x = p_curr_pos.x;
 				}
-				else if (pushed_iob_collision.y)
+				else if (is_vertical)
 				{
 					i_next_pos.y = i_curr_pos.y;
 					p_next_pos.y = p_curr_pos.y;
@@ -138,22 +135,13 @@ void aco::sys::player_wall_collide(entt::registry& reg, const aco::level& level)
 		auto& p_next_pos{ players.get<next_position>(p).pos };
 		const auto& p_collider{ players.get<collider>(p) };
 
-		const float tile_size{ level.tile_size() };
 
-		const auto has_collision = [&](sf::FloatRect collider) {
-			const auto [x, y, w, h] = collider;
-			return level.at(aco::layer::bottom, x / tile_size, y / tile_size).is_collidable
-					|| level.at(aco::layer::bottom, (x + w) / tile_size, y / tile_size).is_collidable
-					|| level.at(aco::layer::bottom, x / tile_size, (y + h) / tile_size).is_collidable
-					|| level.at(aco::layer::bottom, (x + w) / tile_size, (y + h) / tile_size).is_collidable;
-		};
-
-		if (has_collision(sf::FloatRect{ 
+		if (has_collision(level, sf::FloatRect{
 			p_collider.offset + sf::Vector2f{ p_next_pos.x, p_curr_pos.y }, p_collider.size }))
 		{
 			p_next_pos.x = p_curr_pos.x;
 		}
-		if (has_collision(sf::FloatRect{ 
+		if (has_collision(level, sf::FloatRect{
 			p_collider.offset + sf::Vector2f{ p_curr_pos.x, p_next_pos.y }, p_collider.size }))
 		{
 			p_next_pos.y = p_curr_pos.y;

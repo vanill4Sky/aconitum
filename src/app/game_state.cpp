@@ -78,7 +78,7 @@ void aco::game_state::update(float dt)
 	localize_target(m_reg);
 	target_triggers(m_reg);
 	find_next_position(m_reg);
-	player_iob_collide(m_reg);
+	player_iob_collide(m_reg, m_current_level);
 	player_wall_collide(m_reg, m_current_level);
 	submit_next_position(m_reg, m_view);
 	sort_sprites(m_ordered_sprites);

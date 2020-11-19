@@ -23,6 +23,6 @@ for id, stub in pairs(stubs) do
 	entities[id] = entity
 end
 
-for id, entity in pairs(entities) do
-	print(id .. " = " .. entity)
-end
+-- for id, entity in pairs(entities) do
+-- 	print(id .. " = " .. entity)
+-- end

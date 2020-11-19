@@ -117,14 +117,14 @@
     <ClCompile Include="src\app\lua_binding.cpp">
       <Filter>Pliki źródłowe\app</Filter>
     </ClCompile>
+    <ClCompile Include="src\sys\animation.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
     <ClCompile Include="src\app\modifiers.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
     <ClCompile Include="src\sys\level_init.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="src\sys\animation.cpp">
-      <Filter>Pliki źródłowe</Filter>
+      <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
