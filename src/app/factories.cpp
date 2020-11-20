@@ -57,6 +57,14 @@ entt::id_type aco::create_entity(entt::registry& reg, resource_holder<sf::Textur
 		{
 			reg.emplace<collider>(e, pair.second.as<collider>());
 		}
+		else if (comp_name == "kinematic")
+		{
+			reg.emplace<kinematic>(e, pair.second.as<kinematic>());
+		}
+		else if (comp_name == "trigger")
+		{
+			reg.emplace<trigger>(e, pair.second.as<trigger>());
+		}
 		else if (comp_name == "mob")
 		{
 			reg.emplace<mob>(e, pair.second.as<mob>());
@@ -68,6 +76,10 @@ entt::id_type aco::create_entity(entt::registry& reg, resource_holder<sf::Textur
 		else if (comp_name == "stalker")
 		{
 			reg.emplace<stalker>(e, pair.second.as<stalker>());
+		}
+		else if (comp_name == "idle_state")
+		{
+			reg.emplace<idle_state>(e, pair.second.as<idle_state>());
 		}
 		else
 		{

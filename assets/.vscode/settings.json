@@ -15,6 +15,9 @@
         "ex_target",
         "ex_vector2f",
         "ex_create_entity",
-        "ex_set_target"
+        "ex_set_target",
+        "ex_trigger",
+        "ex_kinematic",
+        "ex_idle_state"
     ]
 }

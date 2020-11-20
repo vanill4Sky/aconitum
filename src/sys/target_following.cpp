@@ -1,7 +1,9 @@
 #include "target_following.hpp"
 
 #include <cmath>
+#include <deque>
 #include <entt/entt.hpp>
+#include <vector>
 
 #include "../comp/position.hpp"
 #include "../comp/target.hpp"
@@ -9,6 +11,54 @@
 #include "../comp/entity_state.hpp"
 
 using namespace aco::comp;
+
+void aco::sys::localize_target(entt::registry& reg, const aco::level& level)
+{
+	constexpr int wall = -2;
+	constexpr int unvisited = -1;
+
+	const size_t w{ level.width() };
+	const size_t h{ level.height() };
+	const size_t size{ w * h };
+	std::vector<int> map(size);
+
+	for (size_t y = 0; y < h; ++y)
+	{
+		for (size_t x = 0; x < w; ++x)
+		{
+			int tile;
+			if (level.at(aco::layer::bottom, x, y).is_collidable)
+			{
+				tile = wall;
+			}
+			else
+			{
+				tile = unvisited;
+			}
+			map[y * w + x] = tile;
+		}
+	}
+
+	size_t s = 2 * w + 1;
+	size_t d = 5 * w + 15;
+
+	std::deque<size_t> q;
+	map[s] = s;
+	q.push_back(s);
+
+	while (!q.empty())
+	{
+		const auto v = q.front();
+		q.pop_front();
+
+		if (v == d)
+		{
+			return;
+		}
+
+
+	}
+}
 
 void aco::sys::localize_target(entt::registry& reg)
 {

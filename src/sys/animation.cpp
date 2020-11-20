@@ -42,12 +42,23 @@ sf::IntRect pick_frame(sf::Vector2f frame_size, int row, int col)
 
 void aco::sys::animate_iob(entt::registry& reg, size_t frame_cnt)
 {
-	const auto view{ reg.view<sprite, animation, iob>() };
+	const auto view{ reg.view<iob, sprite, animation>() };
 	for (const auto e : view)
 	{
 		auto& spr{ view.get<sprite>(e).spr };
 		const auto& a{ view.get<animation>(e) };
 
-		spr.setTextureRect(pick_frame(a.frame_size, 0, (frame_cnt / 4) % a.frame_count));
+		if (reg.has<active_state>(e))
+		{
+			spr.setTextureRect(pick_frame(a.frame_size, 0, a.frame_count - 1));
+		}
+		else if (reg.has<idle_state>(e))
+		{
+			spr.setTextureRect(pick_frame(a.frame_size, 0, (frame_cnt / 4) % a.frame_count));
+		}
+		else
+		{
+			spr.setTextureRect(pick_frame(a.frame_size, 0, 0));
+		}
 	}
 }

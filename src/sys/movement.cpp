@@ -83,6 +83,7 @@ void aco::sys::player_iob_collide(entt::registry& reg, const aco::level& level)
 		const auto p_curr_pos{ players.get<position>(p).pos };
 		auto& p_next_pos{ players.get<next_position>(p).pos };
 		const auto& p_collider{ players.get<collider>(p) };
+		const sf::FloatRect p_bbox{ p_collider.offset + p_next_pos, p_collider.size };
 		const sf::FloatRect p_bbox_horizontal{ 
 			p_collider.offset + sf::Vector2f{ p_next_pos.x, p_curr_pos.y }, p_collider.size };
 		const sf::FloatRect p_bbox_vertical{ 
@@ -95,31 +96,60 @@ void aco::sys::player_iob_collide(entt::registry& reg, const aco::level& level)
 			const auto& i_collider{ iobs.get<collider>(i) };
 			sf::FloatRect i_bbox{ i_curr_pos + i_collider.offset, i_collider.size };
 
-			bool is_horizontal, is_vertical;
-			if (is_horizontal = p_bbox_horizontal.intersects(i_bbox))
+			if (reg.has<trigger>(i))
 			{
-				const auto offset{ p_next_pos.x - p_curr_pos.x };
-				i_next_pos.x += offset;
-				i_bbox.left += offset;
-			} 
-			else if (is_vertical = p_bbox_vertical.intersects(i_bbox))
-			{
-				const auto offset{ p_next_pos.y - p_curr_pos.y };
-				i_next_pos.y += offset;
-				i_bbox.top += offset;
-			}
-
-			if (has_collision(level, i_bbox) || iob_iob_collide(reg, i))
-			{
-				if (is_horizontal)
+				if (p_bbox.intersects(i_bbox))
 				{
-					i_next_pos.x = i_curr_pos.x;
+					reg.emplace_or_replace<active_state>(i);
+				}
+				else
+				{
+					reg.remove_if_exists<active_state>(i);
+				}
+			}
+			else if (reg.has<kinematic>(i))
+			{
+				if (p_bbox_horizontal.intersects(i_bbox))
+				{
 					p_next_pos.x = p_curr_pos.x;
 				}
-				else if (is_vertical)
+				if (p_bbox_vertical.intersects(i_bbox))
 				{
-					i_next_pos.y = i_curr_pos.y;
 					p_next_pos.y = p_curr_pos.y;
+				}
+			}
+			else
+			{
+				sf::Vector2<bool> is_collision;
+				if (is_collision.x = p_bbox_horizontal.intersects(i_bbox))
+				{
+					const auto offset{ p_next_pos.x - p_curr_pos.x };
+					i_next_pos.x += offset;
+					i_bbox.left += offset;
+				}
+				else if (is_collision.y = p_bbox_vertical.intersects(i_bbox))
+				{
+					const auto offset{ p_next_pos.y - p_curr_pos.y };
+					i_next_pos.y += offset;
+					i_bbox.top += offset;
+				}
+				else
+				{
+					continue;
+				}
+
+				if (has_collision(level, i_bbox) || iob_iob_collide(reg, i))
+				{
+					if (is_collision.x)
+					{
+						i_next_pos.x = i_curr_pos.x;
+						p_next_pos.x = p_curr_pos.x;
+					}
+					else if (is_collision.y)
+					{
+						i_next_pos.y = i_curr_pos.y;
+						p_next_pos.y = p_curr_pos.y;
+					}
 				}
 			}
 		}
@@ -134,7 +164,6 @@ void aco::sys::player_wall_collide(entt::registry& reg, const aco::level& level)
 		const auto p_curr_pos{ players.get<position>(p).pos };
 		auto& p_next_pos{ players.get<next_position>(p).pos };
 		const auto& p_collider{ players.get<collider>(p) };
-
 
 		if (has_collision(level, sf::FloatRect{
 			p_collider.offset + sf::Vector2f{ p_next_pos.x, p_curr_pos.y }, p_collider.size }))

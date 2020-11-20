@@ -50,15 +50,17 @@ void aco::register_user_types(sol::state& state)
 		sol::constructors<collider(), collider(sf::Vector2f, sf::Vector2f), collider(float, float, float, float)>(),
 		"offset", &collider::offset,
 		"size", &collider::size);
+	state.new_usertype<kinematic>("ex_kinematic");
+	state.new_usertype<trigger>("ex_trigger");
 	state.new_usertype<sprite>("ex_sprite",
 		sol::constructors<sprite(), sprite(std::string)>(),
 		"tex_path", &sprite::tex_path);
 	state.new_usertype<iob>("ex_iob");
 	state.new_usertype<box>("ex_box");
-	state.new_usertype<move_state>("ex_move_state");
 	state.new_usertype<player>("ex_player");
 	state.new_usertype<mob>("ex_mob");
 	state.new_usertype<stalker>("ex_stalker");
+	state.new_usertype<idle_state>("ex_idle_state");
 }
 
 void aco::register_factory(sol::state& state, entt::registry& reg, resource_holder<sf::Texture>& textures)
