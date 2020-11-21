@@ -38,13 +38,15 @@ aco::editor_state::editor_state(aco::app_data& app_data)
 
 aco::editor_state::~editor_state()
 {
-	ImGui::EndFrame();
 	ImGui::SFML::Shutdown();
 }
 
 void aco::editor_state::init()
 {
 	ImGui::SFML::Init(m_app_data.window);
+	ImGui::NewFrame();
+	ImGui::EndFrame();
+
 	m_level->reset_to_origin();
 	zoom(m_current_zoom);
 }

@@ -23,7 +23,3 @@ for id, stub in pairs(stubs) do
 end
 
 ex_set_target(entities.stalker_0, entities.player_0)
-
--- for id, entity in pairs(entities) do
--- 	print(id .. " = " .. entity)
--- end

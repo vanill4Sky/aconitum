@@ -23,6 +23,13 @@ for id, stub in pairs(stubs) do
 	entities[id] = entity
 end
 
--- for id, entity in pairs(entities) do
--- 	print(id .. " = " .. entity)
--- end
+ex_set_target(entities.stalker_0, entities.player_0)
+ex_set_target(entities.stalker_1, entities.player_0)
+ex_set_target(entities.stalker_2, entities.player_0)
+ex_set_target(entities.stalker_3, entities.player_0)
+ex_set_target(entities.stalker_4, entities.player_0)
+ex_set_target(entities.stalker_5, entities.player_0)
+ex_set_target(entities.stalker_6, entities.player_0)
+ex_set_target(entities.stalker_7, entities.player_0)
+ex_set_target(entities.stalker_8, entities.player_0)
+ex_set_target(entities.stalker_9, entities.player_0)
