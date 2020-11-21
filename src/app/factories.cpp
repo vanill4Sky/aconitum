@@ -41,6 +41,10 @@ entt::id_type aco::create_entity(entt::registry& reg, resource_holder<sf::Textur
 		{
 			reg.emplace<box>(e, pair.second.as<box>());
 		}
+		else if (comp_name == "pressure_plate")
+		{
+			reg.emplace<pressure_plate>(e, pair.second.as<pressure_plate>());
+		}
 		else if (comp_name == "player")
 		{
 			reg.emplace<player>(e, pair.second.as<player>());

@@ -126,6 +126,9 @@
     <ClCompile Include="src\sys\level_init.cpp">
       <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
+    <ClCompile Include="src\sys\triggers.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -234,6 +237,9 @@
       <Filter>Pliki nagłówkowe\sys</Filter>
     </ClInclude>
     <ClInclude Include="src\sys\animation.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\triggers.hpp">
       <Filter>Pliki nagłówkowe\sys</Filter>
     </ClInclude>
   </ItemGroup>

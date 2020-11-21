@@ -23,12 +23,12 @@ void aco::sys::animate_mob(entt::registry& reg, size_t frame_cnt)
 		if (reg.has<move_state>(e))
 		{
 			spr.setTextureRect(
-				aco::pick_sprite(a.frame_size.x, aco::pose::walkcycle, dir, (frame_cnt / 4) % a.frame_count));
+				aco::pick_sprite(a.frame_size, aco::pose::walkcycle, dir, (frame_cnt / 4) % a.frame_count));
 		}
 		else
 		{
 			spr.setTextureRect(
-				aco::pick_sprite(a.frame_size.x, aco::pose::walkcycle, dir, 0));
+				aco::pick_sprite(a.frame_size, aco::pose::walkcycle, dir, 0));
 		}
 	}
 }

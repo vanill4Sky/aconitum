@@ -2,12 +2,12 @@
 
 #include <SFML/System/Vector2.hpp>
 
-sf::IntRect aco::pick_sprite(int size, int row, int col)
+sf::IntRect aco::pick_sprite(sf::Vector2i size, int row, int col)
 {
-	return sf::IntRect{ sf::Vector2i{ col, row } * size, sf::Vector2i{ size, size } };
+	return sf::IntRect{ sf::Vector2i{ col * size.x, row * size.y }, size };
 }
 
-sf::IntRect aco::pick_sprite(float size, aco::pose pose, aco::dir dir, int frame)
+sf::IntRect aco::pick_sprite(sf::Vector2f size, aco::pose pose, aco::dir dir, int frame)
 {
 	int row{ static_cast<int>(pose) };
 
@@ -30,5 +30,5 @@ sf::IntRect aco::pick_sprite(float size, aco::pose pose, aco::dir dir, int frame
 		break;
 	}
 
-	return aco::pick_sprite(static_cast<int>(size), row, frame);
+	return aco::pick_sprite(static_cast<sf::Vector2i>(size), row, frame);
 }

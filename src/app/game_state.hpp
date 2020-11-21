@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 
+#include "../comp/sprite.hpp"
 #include "../core/state.hpp"
 #include "app_data.hpp"
 #include "../core/dir.hpp"
@@ -31,7 +32,7 @@ private:
 	std::unordered_map<sf::Keyboard::Key, bool> m_keyboard_state;
 	level m_current_level;
 	sf::View m_view;
-	std::vector<const sf::Sprite*> m_ordered_sprites;
+	std::vector<const aco::comp::sprite*> m_ordered_sprites;
 	std::vector<std::string> m_level_files_list;
 	size_t m_current_level_idx{ 0 };
 

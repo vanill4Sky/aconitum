@@ -10,6 +10,7 @@
 #include "../sys/target_following.hpp"
 #include "../sys/level_init.hpp"
 #include "../sys/animation.hpp"
+#include "../sys/triggers.hpp"
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
@@ -79,11 +80,16 @@ void aco::game_state::update(float dt)
 	target_triggers(m_reg);
 	find_next_position(m_reg);
 	player_iob_collide(m_reg, m_current_level);
-	player_wall_collide(m_reg, m_current_level);
-	submit_next_position(m_reg, m_view);
+	mob_iob_collide(m_reg);
+	mob_wall_collide(m_reg, m_current_level);
+	submit_next_position(m_reg);
+	update_pressure_plates(m_reg);
+	center_view_on_player(m_reg, m_view);
 	sort_sprites(m_ordered_sprites);
 	animate_mob(m_reg, frame_cnt);
 	animate_iob(m_reg, frame_cnt);
+
+	clear_triggers(m_reg);
 
 	m_app_data.window.setView(m_view);
 

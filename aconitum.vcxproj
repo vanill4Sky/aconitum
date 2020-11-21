@@ -187,6 +187,7 @@
     <ClCompile Include="src\sys\player_input.cpp" />
     <ClCompile Include="src\sys\render.cpp" />
     <ClCompile Include="src\sys\target_following.cpp" />
+    <ClCompile Include="src\sys\triggers.cpp" />
     <ClCompile Include="src\util\file.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +225,7 @@
     <ClInclude Include="src\sys\player_input.hpp" />
     <ClInclude Include="src\sys\render.hpp" />
     <ClInclude Include="src\sys\target_following.hpp" />
+    <ClInclude Include="src\sys\triggers.hpp" />
     <ClInclude Include="src\util\file.hpp" />
     <ClInclude Include="src\util\vec_math.hpp" />
   </ItemGroup>

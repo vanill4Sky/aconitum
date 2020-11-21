@@ -18,6 +18,7 @@
         "ex_set_target",
         "ex_trigger",
         "ex_kinematic",
-        "ex_idle_state"
+        "ex_idle_state",
+        "ex_pressure_plate"
     ]
 }

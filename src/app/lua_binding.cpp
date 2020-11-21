@@ -53,10 +53,12 @@ void aco::register_user_types(sol::state& state)
 	state.new_usertype<kinematic>("ex_kinematic");
 	state.new_usertype<trigger>("ex_trigger");
 	state.new_usertype<sprite>("ex_sprite",
-		sol::constructors<sprite(), sprite(std::string)>(),
-		"tex_path", &sprite::tex_path);
+		sol::constructors<sprite(), sprite(std::string), sprite(std::string, bool)>(),
+		"tex_path", &sprite::tex_path,
+		"is_ground_object", &sprite::is_ground_object);
 	state.new_usertype<iob>("ex_iob");
 	state.new_usertype<box>("ex_box");
+	state.new_usertype<box>("ex_pressure_plate");
 	state.new_usertype<player>("ex_player");
 	state.new_usertype<mob>("ex_mob");
 	state.new_usertype<stalker>("ex_stalker");
