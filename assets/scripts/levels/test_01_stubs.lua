@@ -23,6 +23,7 @@ local stubs = {
 	pressure_plate_1 = { idx = 18, name = "pressure_plate", position = ex_vector2f:new(348.003, 333.801) },
 	pressure_plate_2 = { idx = 19, name = "pressure_plate", position = ex_vector2f:new(422.513, 335.664) },
 	box_7 = { idx = 20, name = "box", position = ex_vector2f:new(347.382, 261.121) },
+	box_7 = { idx = 21, name = "box", position = ex_vector2f:new(321.377, 210.644) },
 }
 
 function get_stubs()

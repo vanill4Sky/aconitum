@@ -2,7 +2,6 @@
 
 namespace aco
 {
-
 class state
 {
 public:
@@ -15,5 +14,4 @@ public:
 	virtual void pause() {};
 	virtual void resume() {};
 };
-
 }

@@ -129,6 +129,9 @@
     <ClCompile Include="src\sys\triggers.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\splash_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -241,6 +244,12 @@
     </ClInclude>
     <ClInclude Include="src\sys\triggers.hpp">
       <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\splash_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\graphics.hpp">
+      <Filter>Pliki nagłówkowe\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

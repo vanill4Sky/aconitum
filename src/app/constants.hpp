@@ -13,4 +13,7 @@ const std::string level_scripts_dir{ scripts_dir + "levels/" };
 const std::string stubs_file_extension{ "_stubs.lua" };
 constexpr float editor_width{ 350.0f };
 
+constexpr float splash_screen_display_time{ 2.0f };
+const std::string logo_path{ "assets/textures/logo.png" };
+
 }

@@ -174,6 +174,7 @@
     <ClCompile Include="src\app\level.cpp" />
     <ClCompile Include="src\app\lua_binding.cpp" />
     <ClCompile Include="src\app\modifiers.cpp" />
+    <ClCompile Include="src\app\splash_state.cpp" />
     <ClCompile Include="src\app\sprite_picker.cpp" />
     <ClCompile Include="src\app\tile_picker.cpp" />
     <ClCompile Include="src\core\dir.cpp" />
@@ -200,6 +201,7 @@
     <ClInclude Include="src\app\level.hpp" />
     <ClInclude Include="src\app\lua_binding.hpp" />
     <ClInclude Include="src\app\modifiers.hpp" />
+    <ClInclude Include="src\app\splash_state.hpp" />
     <ClInclude Include="src\app\sprite_picker.hpp" />
     <ClInclude Include="src\app\tile_picker.hpp" />
     <ClInclude Include="src\comp\animation.hpp" />
@@ -227,6 +229,7 @@
     <ClInclude Include="src\sys\target_following.hpp" />
     <ClInclude Include="src\sys\triggers.hpp" />
     <ClInclude Include="src\util\file.hpp" />
+    <ClInclude Include="src\util\graphics.hpp" />
     <ClInclude Include="src\util\vec_math.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

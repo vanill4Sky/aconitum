@@ -263,10 +263,11 @@ void aco::sys::submit_next_position(entt::registry& reg)
 
 void aco::sys::center_view_on_player(entt::registry& reg, sf::View& render_view)
 {
-	auto players{ reg.view<player, position>() };
+	auto players{ reg.view<player, position, animation>() };
 	for (const auto p : players)
 	{
 		const auto curr_pos{ players.get<position>(p).pos };
-		render_view.setCenter(curr_pos);
+		const auto center_offset{ players.get<animation>(p).frame_size / 2.0f };
+		render_view.setCenter(curr_pos + center_offset);
 	}
 }

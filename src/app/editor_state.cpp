@@ -109,7 +109,7 @@ void aco::editor_state::update(float dt)
 
 	if (ImGui::BeginTabBar("editor_tab_bar", ImGuiTabBarFlags_None))
 	{
-		if (ImGui::BeginTabItem("Level editor"))
+		if (ImGui::BeginTabItem("Map editor"))
 		{
 			update_level_editor_tab();
 			ImGui::EndTabItem();

@@ -67,6 +67,10 @@ void aco::sys::localize_target(entt::registry& reg)
 	{
 		const auto current_pos{ view.get<position>(e).pos };
 		const auto current_target{ view.get<target>(e) };
+		if (current_target.entity == entt::null)
+		{
+			continue;
+		}
 		const auto target_pos{ reg.get<position>(current_target.entity).pos };
 
 		auto new_direction{ target_pos - current_pos };
@@ -85,6 +89,10 @@ void aco::sys::target_triggers(entt::registry& reg)
 	{
 		const auto current_pos{ view.get<position>(e).pos };
 		const auto current_target{ view.get<target>(e) };
+		if (current_target.entity == entt::null)
+		{
+			continue;
+		}
 		const auto target_pos{ reg.get<position>(current_target.entity).pos };
 
 		auto distance{ std::sqrt(std::pow(target_pos.y - current_pos.y, 2)
