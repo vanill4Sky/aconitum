@@ -1,5 +1,7 @@
 #include "graphics.hpp"
 
+#include "../app/button.hpp"
+
 void util::scale_sprite(sf::Sprite& sprite, sf::Vector2f desired_size)
 {
 	const auto sprite_global_bounds = sprite.getGlobalBounds();
@@ -35,4 +37,17 @@ sf::View util::resize_view(const sf::View& view, sf::Vector2u new_size)
 	new_view.reset(view_rect);
 
 	return new_view;
+}
+
+void util::column_layout(aco::button& widget, unsigned int window_width, float offset)
+{
+	const sf::Vector2f size = widget.size();
+	widget.setPosition((static_cast<float>(window_width) - size.x) / 2.0f, offset);
+}
+
+void util::column_layout(sf::Sprite& widget, unsigned int window_width, float offset)
+{
+	auto gb = widget.getGlobalBounds();
+	const sf::Vector2f size{ gb.width, gb.height };
+	widget.setPosition((static_cast<float>(window_width) - size.x) / 2.0f, offset);
 }

@@ -59,6 +59,10 @@ void aco::register_user_types(sol::state& state)
 	state.new_usertype<iob>("ex_iob");
 	state.new_usertype<box>("ex_box");
 	state.new_usertype<box>("ex_pressure_plate");
+	state.new_usertype<torch>("ex_torch");
+	state.new_usertype<lever_switch>("ex_lever_switch",
+		sol::constructors<lever_switch(), lever_switch(float)>(),
+		"activation_distance", &lever_switch::activation_distance);
 	state.new_usertype<player>("ex_player");
 	state.new_usertype<mob>("ex_mob");
 	state.new_usertype<stalker>("ex_stalker");
@@ -78,5 +82,10 @@ void aco::register_modifiers(sol::state& state, entt::registry& reg)
 	state.set_function("ex_set_target",
 		[&](entt::entity self, entt::entity target) {
 			return set_target(reg, self, target);
+		});
+
+	state.set_function("ex_connect_torch",
+		[&](entt::entity self, entt::entity torch) {
+			return connect_torch(reg, self, torch);
 		});
 }

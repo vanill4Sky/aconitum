@@ -12,7 +12,9 @@ local entities = {
 	stalker = helpers.reloading_require("stalker"),
 	metal_box = helpers.reloading_require("metal_box"),
 	doors = helpers.reloading_require("doors"),
-	pressure_plate = helpers.reloading_require("pressure_plate")
+	pressure_plate = helpers.reloading_require("pressure_plate"),
+	torch = helpers.reloading_require("torch"),
+	lever_switch = helpers.reloading_require("lever_switch")
 }
 
 entities_templates = {
@@ -21,7 +23,9 @@ entities_templates = {
 	stalker = entities.stalker:new(),
 	metal_box = entities.metal_box:new(),
 	doors = entities.doors:new(),
-	pressure_plate = entities.pressure_plate:new()
+	pressure_plate = entities.pressure_plate:new(),
+	torch = entities.torch:new(),
+	lever_switch = entities.lever_switch:new()
 }
 
 return entities

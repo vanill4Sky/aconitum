@@ -135,6 +135,15 @@
     <ClCompile Include="src\util\graphics.cpp">
       <Filter>Pliki źródłowe\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\button.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\main_menu_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\levers.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -253,6 +262,15 @@
     </ClInclude>
     <ClInclude Include="src\util\graphics.hpp">
       <Filter>Pliki nagłówkowe\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\button.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\main_menu_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\levers.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

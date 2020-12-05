@@ -1,0 +1,7 @@
+{
+    "Lua.diagnostics.globals": [
+        "ex_set_target",
+        "ex_create_entity",
+        "ex_connect_torch"
+    ]
+}

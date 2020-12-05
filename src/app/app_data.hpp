@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include <sol/sol.hpp>
 
 #include "../core/state_manager.hpp"
@@ -21,6 +22,7 @@ public:
 	sf::RenderWindow window;
 	aco::state_manager state_manager;
 	aco::resource_holder<sf::Texture> textures;
+	aco::resource_holder<sf::Font> fonts;
 	sol::state lua;
 
 private:

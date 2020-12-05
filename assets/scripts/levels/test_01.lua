@@ -23,3 +23,8 @@ for id, stub in pairs(stubs) do
 end
 
 ex_set_target(entities.stalker_0, entities.player_0)
+ex_connect_torch(entities.lever_switch_0, entities.torch_0)
+ex_connect_torch(entities.lever_switch_0, entities.torch_1)
+ex_connect_torch(entities.lever_switch_0, entities.torch_2)
+ex_connect_torch(entities.lever_switch_1, entities.torch_0)
+ex_connect_torch(entities.lever_switch_1, entities.torch_3)

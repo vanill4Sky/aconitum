@@ -16,3 +16,15 @@ bool aco::set_target(entt::registry& reg, entt::entity self, entt::entity target
 	}
 	return false;
 }
+
+bool aco::connect_torch(entt::registry& reg, entt::entity self, entt::entity torch)
+{
+	if (reg.has<aco::comp::lever_switch>(self))
+	{
+		auto& torches{ reg.get<aco::comp::lever_switch>(self).torches };
+		torches.push_back(torch);
+
+		return true;
+	}
+	return false;
+}

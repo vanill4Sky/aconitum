@@ -11,6 +11,7 @@
 #include "../sys/level_init.hpp"
 #include "../sys/animation.hpp"
 #include "../sys/triggers.hpp"
+#include "../sys/levers.hpp"
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
@@ -45,6 +46,11 @@ void aco::game_state::handle_input()
 		}
 		else if (event.type == sf::Event::KeyPressed)
 		{
+			if (event.key.code == sf::Keyboard::Escape)
+			{
+				m_app_data.state_manager.pop_state();
+			}
+
 			if (!m_level_files_list.empty())
 			{
 				switch (event.key.code)
@@ -64,7 +70,10 @@ void aco::game_state::handle_input()
 				}
 			}
 
-			aco::sys::key_pressed(m_reg, m_keyboard_state, event.key.code);
+			if (aco::sys::key_pressed(m_reg, m_keyboard_state, event.key.code))
+			{
+				aco::sys::toggle_lever(m_reg, event.key.code);
+			}
 		}
 		else if (event.type == sf::Event::KeyReleased)
 		{
@@ -91,6 +100,7 @@ void aco::game_state::update(float dt)
 	mob_wall_collide(m_reg, m_current_level);
 	submit_next_position(m_reg);
 	update_pressure_plates(m_reg);
+	activate_lever(m_reg);
 	center_view_on_player(m_reg, m_view);
 	sort_sprites(m_ordered_sprites);
 	animate_mob(m_reg, frame_cnt);

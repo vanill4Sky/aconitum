@@ -168,11 +168,13 @@
     <ClCompile Include="deps\src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\app\app.cpp" />
     <ClCompile Include="src\app\app_data.cpp" />
+    <ClCompile Include="src\app\button.cpp" />
     <ClCompile Include="src\app\editor_state.cpp" />
     <ClCompile Include="src\app\factories.cpp" />
     <ClCompile Include="src\app\game_state.cpp" />
     <ClCompile Include="src\app\level.cpp" />
     <ClCompile Include="src\app\lua_binding.cpp" />
+    <ClCompile Include="src\app\main_menu_state.cpp" />
     <ClCompile Include="src\app\modifiers.cpp" />
     <ClCompile Include="src\app\splash_state.cpp" />
     <ClCompile Include="src\app\sprite_picker.cpp" />
@@ -184,6 +186,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sys\animation.cpp" />
     <ClCompile Include="src\sys\level_init.cpp" />
+    <ClCompile Include="src\sys\levers.cpp" />
     <ClCompile Include="src\sys\movement.cpp" />
     <ClCompile Include="src\sys\player_input.cpp" />
     <ClCompile Include="src\sys\render.cpp" />
@@ -195,12 +198,14 @@
   <ItemGroup>
     <ClInclude Include="src\app\app.hpp" />
     <ClInclude Include="src\app\app_data.hpp" />
+    <ClInclude Include="src\app\button.hpp" />
     <ClInclude Include="src\app\constants.hpp" />
     <ClInclude Include="src\app\editor_state.hpp" />
     <ClInclude Include="src\app\factories.hpp" />
     <ClInclude Include="src\app\game_state.hpp" />
     <ClInclude Include="src\app\level.hpp" />
     <ClInclude Include="src\app\lua_binding.hpp" />
+    <ClInclude Include="src\app\main_menu_state.hpp" />
     <ClInclude Include="src\app\modifiers.hpp" />
     <ClInclude Include="src\app\splash_state.hpp" />
     <ClInclude Include="src\app\sprite_picker.hpp" />
@@ -224,6 +229,7 @@
     <ClInclude Include="src\core\tilemap.hpp" />
     <ClInclude Include="src\sys\animation.hpp" />
     <ClInclude Include="src\sys\level_init.hpp" />
+    <ClInclude Include="src\sys\levers.hpp" />
     <ClInclude Include="src\sys\movement.hpp" />
     <ClInclude Include="src\sys\player_input.hpp" />
     <ClInclude Include="src\sys\render.hpp" />
