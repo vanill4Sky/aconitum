@@ -126,11 +126,14 @@
     <ClCompile Include="src\sys\level_init.cpp">
       <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
-    <ClCompile Include="src\sys\triggers.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
     <ClCompile Include="src\app\splash_state.cpp">
       <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\triggers.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\graphics.cpp">
+      <Filter>Pliki źródłowe\util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

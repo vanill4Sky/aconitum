@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "../util/file.hpp"
+#include "../util/graphics.hpp"
 
 aco::editor_state::editor_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
@@ -147,7 +148,7 @@ void aco::editor_state::draw()
 
 void aco::editor_state::handle_resize_event(const sf::Event::SizeEvent& event)
 {
-	m_app_data.window.setView(resize_current_view({ event.width, event.height }));
+	m_app_data.window.setView(util::resize_view(m_app_data.window.getView(), { event.width, event.height }));
 	zoom(0);
 
 	m_grid.resize(static_cast<sf::Vector2f>(m_app_data.window.getSize()));
@@ -254,20 +255,9 @@ void aco::editor_state::validate_bounds_input()
 	validate_bound(m_vertical_bounds_input, m_tile_picker.height());
 }
 
-sf::View aco::editor_state::resize_current_view(sf::Vector2u new_size)
-{
-	auto view{ m_app_data.window.getView() };
-	const sf::FloatRect view_rect{
-		0.f, 0.f, static_cast<float>(new_size.x), static_cast<float>(new_size.y)
-	};
-	view.reset(view_rect);
-
-	return view;
-}
-
 void aco::editor_state::zoom(int delta)
 {
-	auto view{ resize_current_view(m_app_data.window.getSize()) };
+	auto view{ util::resize_view(m_app_data.window.getView(), m_app_data.window.getSize()) };
 	m_current_zoom -= delta;
 	view.zoom(std::pow(zoom_factor, m_current_zoom));
 	m_app_data.window.setView(view);

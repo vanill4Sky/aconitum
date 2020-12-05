@@ -190,6 +190,7 @@
     <ClCompile Include="src\sys\target_following.cpp" />
     <ClCompile Include="src\sys\triggers.cpp" />
     <ClCompile Include="src\util\file.cpp" />
+    <ClCompile Include="src\util\graphics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\app.hpp" />

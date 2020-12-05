@@ -16,4 +16,5 @@ constexpr float editor_width{ 350.0f };
 constexpr float splash_screen_display_time{ 2.0f };
 const std::string logo_path{ "assets/textures/logo.png" };
 
+constexpr float game_view_zoom{ 0.5f };
 }

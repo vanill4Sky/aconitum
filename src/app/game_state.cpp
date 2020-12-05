@@ -14,6 +14,7 @@
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
+#include "../util/graphics.hpp"
 
 #include "editor_state.hpp"
 
@@ -23,7 +24,7 @@ aco::game_state::game_state(aco::app_data& app_data)
 	, m_view{ m_app_data.window.getDefaultView() }
 {
 	update_levels_list();
-	m_view.zoom(0.5);
+	m_view.zoom(game_view_zoom);
 }
 
 void aco::game_state::init()
@@ -68,6 +69,12 @@ void aco::game_state::handle_input()
 		else if (event.type == sf::Event::KeyReleased)
 		{
 			aco::sys::key_released(m_reg, m_keyboard_state, event.key.code);
+		}
+		else if (event.type == sf::Event::Resized)
+		{
+			sf::Vector2u new_size{ event.size.width, event.size.height };
+			m_view = util::resize_view(m_view, new_size);
+			m_view.zoom(game_view_zoom);
 		}
 	}
 }

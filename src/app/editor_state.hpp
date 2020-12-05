@@ -51,7 +51,6 @@ private:
 	void handle_mouse_click(const sf::Event::MouseButtonEvent& event);
 	void handle_mouse_move_event(const sf::Event::MouseMoveEvent& event);
 	void validate_bounds_input();
-	sf::View resize_current_view(sf::Vector2u new_size);
 	void zoom(int delta);
 	sf::Vector2f calc_tile_coordinates(sf::Vector2i mouse_position, float tile_size) const;
 	sf::Vector2i calc_tile_world_coordinates(sf::Vector2i mouse_position, float tile_size);
