@@ -6,6 +6,7 @@
 #include "game_state.hpp"
 #include "../util/graphics.hpp"
 #include "../app/editor_state.hpp"
+#include "../app/info_state.hpp"
 
 aco::main_menu_state::main_menu_state(aco::app_data& app_data)
 	: m_app_data{ app_data }
@@ -38,11 +39,13 @@ void aco::main_menu_state::init()
 	m_help_button = aco::button(
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),
-		"Help", 30);
+		"Help", 30,
+		[&] { m_app_data.state_manager.push_state(std::make_unique<aco::info_state>(m_app_data, help_state_background)); });
 	m_about_button = aco::button(
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),
-		"About", 30);
+		"About", 30,
+		[&] { m_app_data.state_manager.push_state(std::make_unique<aco::info_state>(m_app_data, about_state_background)); });
 	m_editor_button = aco::button(
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),

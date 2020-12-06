@@ -30,4 +30,7 @@ const std::string pause_menu_background{ "assets/textures/game_paused_background
 
 const std::string game_win_background{ "assets/textures/game_win_background.png" };
 const std::string game_lost_background{ "assets/textures/game_lost_background.png" };
+
+const std::string help_state_background{ "assets/textures/help_state_background.png" };
+const std::string about_state_background{ "assets/textures/about_state_background.png" };
 }

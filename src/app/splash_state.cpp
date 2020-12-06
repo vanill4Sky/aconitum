@@ -1,9 +1,10 @@
 #include "splash_state.hpp"
 
 #include <memory>
+#include <SFML/Window/Event.hpp>
 
 #include "constants.hpp"
-#include "game_state.hpp"
+#include "main_menu_state.hpp"
 #include "../util/graphics.hpp"
 
 aco::splash_state::splash_state(aco::app_data& app_data)
@@ -39,7 +40,7 @@ void aco::splash_state::update(float dt)
 {
 	if (m_timer.getElapsedTime().asSeconds() > aco::splash_screen_display_time)
 	{
-		m_app_data.state_manager.replace_state(std::make_unique<aco::game_state>(m_app_data));
+		m_app_data.state_manager.replace_state(std::make_unique<aco::main_menu_state>(m_app_data));
 	}
 	m_logo.setScale(m_logo.getScale() * 1.01f);
 }
