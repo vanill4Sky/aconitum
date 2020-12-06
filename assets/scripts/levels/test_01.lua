@@ -28,3 +28,12 @@ ex_connect_torch(entities.lever_switch_0, entities.torch_1)
 ex_connect_torch(entities.lever_switch_0, entities.torch_2)
 ex_connect_torch(entities.lever_switch_1, entities.torch_0)
 ex_connect_torch(entities.lever_switch_1, entities.torch_3)
+ex_connect_torch(entities.lever_switch_2, entities.torch_0)
+
+function door_open()
+	return (ex_has_active_state(entities.torch_0) 
+		and ex_has_active_state(entities.torch_1)
+		and ex_has_active_state(entities.torch_2)
+		and ex_has_active_state(entities.torch_3)
+	)
+end

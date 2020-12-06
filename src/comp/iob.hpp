@@ -9,6 +9,7 @@ namespace aco::comp
 struct iob {};
 struct box {};
 struct pressure_plate {};
+struct door {};
 struct torch {};
 struct lever_switch 
 {

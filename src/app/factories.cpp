@@ -93,6 +93,10 @@ entt::id_type aco::create_entity(entt::registry& reg, resource_holder<sf::Textur
 		{
 			reg.emplace<lever_switch>(e, pair.second.as<lever_switch>());
 		}
+		else if (comp_name == "door")
+		{
+			reg.emplace<door>(e, pair.second.as<door>());
+		}
 		else
 		{
 			spdlog::warn("Unhandled component: {}", comp_name);

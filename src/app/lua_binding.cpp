@@ -9,6 +9,7 @@
 #include "../core/dir.hpp"
 #include "factories.hpp"
 #include "modifiers.hpp"
+#include "queries.hpp"
 
 void aco::register_user_types(sol::state& state)
 {
@@ -58,7 +59,8 @@ void aco::register_user_types(sol::state& state)
 		"is_ground_object", &sprite::is_ground_object);
 	state.new_usertype<iob>("ex_iob");
 	state.new_usertype<box>("ex_box");
-	state.new_usertype<box>("ex_pressure_plate");
+	state.new_usertype<door>("ex_door");
+	state.new_usertype<pressure_plate>("ex_pressure_plate");
 	state.new_usertype<torch>("ex_torch");
 	state.new_usertype<lever_switch>("ex_lever_switch",
 		sol::constructors<lever_switch(), lever_switch(float)>(),
@@ -87,5 +89,13 @@ void aco::register_modifiers(sol::state& state, entt::registry& reg)
 	state.set_function("ex_connect_torch",
 		[&](entt::entity self, entt::entity torch) {
 			return connect_torch(reg, self, torch);
+		});
+}
+
+void aco::register_queries(sol::state& state, entt::registry& reg)
+{
+	state.set_function("ex_has_active_state",
+		[&](entt::entity e) {
+			return has_active_state(reg, e);
 		});
 }

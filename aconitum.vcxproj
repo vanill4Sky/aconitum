@@ -176,6 +176,7 @@
     <ClCompile Include="src\app\lua_binding.cpp" />
     <ClCompile Include="src\app\main_menu_state.cpp" />
     <ClCompile Include="src\app\modifiers.cpp" />
+    <ClCompile Include="src\app\queries.cpp" />
     <ClCompile Include="src\app\splash_state.cpp" />
     <ClCompile Include="src\app\sprite_picker.cpp" />
     <ClCompile Include="src\app\tile_picker.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="src\core\tilemap.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sys\animation.cpp" />
+    <ClCompile Include="src\sys\doors.cpp" />
     <ClCompile Include="src\sys\level_init.cpp" />
     <ClCompile Include="src\sys\levers.cpp" />
     <ClCompile Include="src\sys\movement.cpp" />
@@ -207,6 +209,7 @@
     <ClInclude Include="src\app\lua_binding.hpp" />
     <ClInclude Include="src\app\main_menu_state.hpp" />
     <ClInclude Include="src\app\modifiers.hpp" />
+    <ClInclude Include="src\app\queries.hpp" />
     <ClInclude Include="src\app\splash_state.hpp" />
     <ClInclude Include="src\app\sprite_picker.hpp" />
     <ClInclude Include="src\app\tile_picker.hpp" />
@@ -228,6 +231,7 @@
     <ClInclude Include="src\core\state_manager.hpp" />
     <ClInclude Include="src\core\tilemap.hpp" />
     <ClInclude Include="src\sys\animation.hpp" />
+    <ClInclude Include="src\sys\doors.hpp" />
     <ClInclude Include="src\sys\level_init.hpp" />
     <ClInclude Include="src\sys\levers.hpp" />
     <ClInclude Include="src\sys\movement.hpp" />

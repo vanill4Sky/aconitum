@@ -12,5 +12,6 @@ namespace aco
 void register_user_types(sol::state& state);
 void register_factory(sol::state& state, entt::registry& reg, resource_holder<sf::Texture>& textures);
 void register_modifiers(sol::state& state, entt::registry& reg);
+void register_queries(sol::state& state, entt::registry& reg);
 
 }

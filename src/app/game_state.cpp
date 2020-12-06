@@ -12,6 +12,7 @@
 #include "../sys/animation.hpp"
 #include "../sys/triggers.hpp"
 #include "../sys/levers.hpp"
+#include "../sys/doors.hpp"
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
@@ -32,6 +33,7 @@ void aco::game_state::init()
 {
 	register_factory(m_app_data.lua, m_reg, m_app_data.textures);
 	register_modifiers(m_app_data.lua, m_reg);
+	register_queries(m_app_data.lua, m_reg);
 }
 
 
@@ -101,6 +103,7 @@ void aco::game_state::update(float dt)
 	submit_next_position(m_reg);
 	update_pressure_plates(m_reg);
 	activate_lever(m_reg);
+	open_doors(m_reg, m_app_data.lua);
 	center_view_on_player(m_reg, m_view);
 	sort_sprites(m_ordered_sprites);
 	animate_mob(m_reg, frame_cnt);

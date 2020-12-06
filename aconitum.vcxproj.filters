@@ -144,6 +144,12 @@
     <ClCompile Include="src\sys\levers.cpp">
       <Filter>Pliki źródłowe\app</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\queries.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\doors.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -270,6 +276,12 @@
       <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
     <ClInclude Include="src\sys\levers.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\queries.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\doors.hpp">
       <Filter>Pliki nagłówkowe\sys</Filter>
     </ClInclude>
   </ItemGroup>

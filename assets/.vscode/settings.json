@@ -19,6 +19,11 @@
         "ex_trigger",
         "ex_kinematic",
         "ex_idle_state",
-        "ex_pressure_plate"
+        "ex_pressure_plate",
+        "ex_connect_torch",
+        "ex_lever_switch",
+        "ex_torch",
+        "ex_has_active_state",
+        "ex_door"
     ]
 }
