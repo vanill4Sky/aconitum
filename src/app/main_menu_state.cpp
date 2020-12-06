@@ -29,11 +29,12 @@ void aco::main_menu_state::init()
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),
 		"New game", 30,
-		[&] { m_app_data.state_manager.push_state(std::make_unique<aco::game_state>(m_app_data)); });
+		[&] { m_app_data.state_manager.push_state(std::make_unique<aco::game_state>(m_app_data, true)); });
 	m_continue_button = aco::button(
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),
-		"Load game", 30);
+		"Load game", 30,
+		[&] { m_app_data.state_manager.push_state(std::make_unique<aco::game_state>(m_app_data, false)); });
 	m_help_button = aco::button(
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),

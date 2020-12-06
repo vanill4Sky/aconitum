@@ -153,6 +153,12 @@
     <ClCompile Include="src\sys\levers.cpp">
       <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
+    <ClCompile Include="src\app\game_pause_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\game_over_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\tilemap.hpp">
@@ -289,6 +295,12 @@
     </ClInclude>
     <ClInclude Include="src\sys\game_over.hpp">
       <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\game_pause_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\game_over_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

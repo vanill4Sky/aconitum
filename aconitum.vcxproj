@@ -171,6 +171,8 @@
     <ClCompile Include="src\app\button.cpp" />
     <ClCompile Include="src\app\editor_state.cpp" />
     <ClCompile Include="src\app\factories.cpp" />
+    <ClCompile Include="src\app\game_over_state.cpp" />
+    <ClCompile Include="src\app\game_pause_state.cpp" />
     <ClCompile Include="src\app\game_state.cpp" />
     <ClCompile Include="src\app\level.cpp" />
     <ClCompile Include="src\app\lua_binding.cpp" />
@@ -205,6 +207,8 @@
     <ClInclude Include="src\app\constants.hpp" />
     <ClInclude Include="src\app\editor_state.hpp" />
     <ClInclude Include="src\app\factories.hpp" />
+    <ClInclude Include="src\app\game_over_state.hpp" />
+    <ClInclude Include="src\app\game_pause_state.hpp" />
     <ClInclude Include="src\app\game_state.hpp" />
     <ClInclude Include="src\app\level.hpp" />
     <ClInclude Include="src\app\lua_binding.hpp" />

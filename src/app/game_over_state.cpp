@@ -1,52 +1,53 @@
-#include "game_pause_state.hpp"
+#include "game_over_state.hpp"
 
 #include <SFML/Window/Event.hpp>
 
 #include "constants.hpp"
 #include "../util/graphics.hpp"
+#include "game_state.hpp"
 
-aco::game_pause_state::game_pause_state(aco::app_data& app_data)
+aco::game_over_state::game_over_state(aco::app_data& app_data, bool has_win)
 	: m_app_data{ app_data }
+	, m_has_win{ has_win }
 {
 }
 
-void aco::game_pause_state::init()
+void aco::game_over_state::init()
 {
 	m_app_data.window.setView(m_app_data.window.getDefaultView());
 
 	m_app_data.textures.load(button_path);
-	m_app_data.textures.load(pause_menu_background);
-	m_background.setTexture(m_app_data.textures.get(pause_menu_background));
-	m_resume = aco::button{
+	m_retry = aco::button{
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),
-		"Resume game", 30,
-		[&] { m_app_data.state_manager.pop_state(); } };
-	m_restart = aco::button{
-		m_app_data.textures.get(button_path),
-		m_app_data.fonts.get(arial_path),
-		"Restart level", 30,
-		[&] {
-			m_app_data.restart_level = true;
-			m_app_data.state_manager.pop_state();
-	} };
+		"Try again", 30,
+		[&] { m_app_data.state_manager.replace_state(std::make_unique<game_state>(m_app_data)); } };
 	m_back_to_main_menu = aco::button{
 		m_app_data.textures.get(button_path),
 		m_app_data.fonts.get(arial_path),
 		"Main menu", 30,
 		[&] {
-			m_app_data.go_back_to_main_menu = true;
 			m_app_data.state_manager.pop_state(); 
 	}};
 
-	m_widgets.emplace_back(&m_resume);
-	m_widgets.emplace_back(&m_restart);
+	if (m_has_win)
+	{
+		m_app_data.textures.load(game_win_background);
+		m_background.setTexture(m_app_data.textures.get(game_win_background));
+	}
+	else
+	{
+		m_app_data.textures.load(game_lost_background);
+		m_background.setTexture(m_app_data.textures.get(game_lost_background));
+		m_widgets.emplace_back(&m_retry);
+	}
+
 	m_widgets.emplace_back(&m_back_to_main_menu);
 
 	set_layout();
 }
 
-void aco::game_pause_state::handle_input()
+void aco::game_over_state::handle_input()
 {
 	sf::Event event;
 	while (m_app_data.window.pollEvent(event))
@@ -77,11 +78,11 @@ void aco::game_pause_state::handle_input()
 	}
 }
 
-void aco::game_pause_state::update(float dt)
+void aco::game_over_state::update(float dt)
 {
 }
 
-void aco::game_pause_state::draw()
+void aco::game_over_state::draw()
 {
 	m_app_data.window.clear();
 	m_app_data.window.draw(m_background);
@@ -92,7 +93,7 @@ void aco::game_pause_state::draw()
 	m_app_data.window.display();
 }
 
-void aco::game_pause_state::set_layout()
+void aco::game_over_state::set_layout()
 {
 	sf::Vector2u size{ m_app_data.window.getSize() };
 	auto view = util::resize_view(m_app_data.window.getView(), size);

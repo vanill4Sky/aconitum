@@ -10,10 +10,10 @@
 namespace aco
 {
 
-class game_pause_state : public state
+class game_over_state : public state
 {
 public:
-	game_pause_state(aco::app_data& app_data);
+	game_over_state(aco::app_data& app_data, bool has_win);
 	void init();
 	void handle_input();
 	void update(float dt);
@@ -23,9 +23,9 @@ private:
 	void set_layout();
 
 	aco::app_data& m_app_data;
+	bool m_has_win;
 	sf::Sprite m_background;
-	aco::button m_resume;
-	aco::button m_restart;
+	aco::button m_retry;
 	aco::button m_back_to_main_menu;
 	std::vector<aco::button*> m_widgets;
 };

@@ -9,6 +9,7 @@ local stubs = {
 	player_0 = { idx = 4, name = "player", position = ex_vector2f:new(81.2729, 359.873) },
 	doors_0 = { idx = 5, name = "doors", position = ex_vector2f:new(79.5765, 527.206) },
 	box_1 = { idx = 6, name = "box", position = ex_vector2f:new(57.3469, 436.828) },
+	box_2 = { idx = 7, name = "box", position = ex_vector2f:new(139.945, 437.888) },
 }
 
 function get_stubs()

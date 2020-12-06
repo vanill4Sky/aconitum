@@ -23,6 +23,11 @@ const std::string manu_background_path{ "assets/textures/menu_background.png" };
 const std::string menu_header_path{ "assets/textures/menu_header.png" };
 
 constexpr float game_view_zoom{ 0.5f };
-constexpr float stalker_loss_distance{ 10.0f };
+constexpr float stalker_loss_distance{ 20.0f };
+const std::string save_path{ "save.txt" };
 
+const std::string pause_menu_background{ "assets/textures/game_paused_background.png" };
+
+const std::string game_win_background{ "assets/textures/game_win_background.png" };
+const std::string game_lost_background{ "assets/textures/game_lost_background.png" };
 }

@@ -14,20 +14,32 @@
 #include "../sys/levers.hpp"
 #include "../sys/doors.hpp"
 #include "../sys//game_over.hpp"
-#include "constants.hpp"
-#include "lua_binding.hpp"
 #include "../util/file.hpp"
 #include "../util/graphics.hpp"
+#include "constants.hpp"
+#include "lua_binding.hpp"
 
 #include "editor_state.hpp"
+#include "game_pause_state.hpp"
+#include "game_over_state.hpp"
 
-aco::game_state::game_state(aco::app_data& app_data)
+aco::game_state::game_state(aco::app_data& app_data, bool restart)
 	: m_app_data{ app_data }
 	, m_current_level{ 32.0f }
 	, m_view{ m_app_data.window.getDefaultView() }
 {
 	update_levels_list();
 	m_view.zoom(game_view_zoom);
+
+	if (!restart)
+	{
+		m_current_level_idx = util::read_from_file(save_path, 0);
+	}
+}
+
+aco::game_state::~game_state()
+{
+	util::write_to_file(m_current_level_idx, save_path);
 }
 
 void aco::game_state::init()
@@ -40,6 +52,9 @@ void aco::game_state::init()
 	m_level_info.setFont(m_app_data.fonts.get(arial_path));
 	m_level_info.setCharacterSize(20);
 	update_level_info();
+
+	load_level(m_level_files_list[m_current_level_idx]);
+	resize_view();
 }
 
 
@@ -56,7 +71,7 @@ void aco::game_state::handle_input()
 		{
 			if (event.key.code == sf::Keyboard::Escape)
 			{
-				m_app_data.state_manager.pop_state();
+				m_app_data.state_manager.push_state(std::make_unique<aco::game_pause_state>(m_app_data));
 			}
 
 			if (!m_level_files_list.empty())
@@ -114,11 +129,19 @@ void aco::game_state::update(float dt)
 
 	if (check_loss(m_reg))
 	{
+		m_app_data.state_manager.replace_state(std::make_unique<game_over_state>(m_app_data, false));
 	}
 	else if (check_win(m_reg))
 	{
-		load_level(m_level_files_list[++m_current_level_idx %= m_level_files_list.size()]);
-		update_level_info();
+		if (m_current_level_idx == (m_level_files_list.size() - 1))
+		{
+			m_app_data.state_manager.replace_state(std::make_unique<game_over_state>(m_app_data, true));
+		}
+		else
+		{
+			load_level(m_level_files_list[++m_current_level_idx]);
+			update_level_info();
+		}
 		return;
 	}
 
@@ -144,6 +167,22 @@ void aco::game_state::draw()
 	m_app_data.window.draw(m_level_info);
 
 	m_app_data.window.display();
+}
+
+void aco::game_state::resume()
+{
+	if (m_app_data.go_back_to_main_menu)
+	{
+		m_app_data.state_manager.pop_state();
+		m_app_data.go_back_to_main_menu = false;
+	}
+	else if (m_app_data.restart_level)
+	{
+		load_level(m_level_files_list[m_current_level_idx]);
+		m_app_data.restart_level = false;
+	}
+
+	resize_view();
 }
 
 void aco::game_state::update_levels_list()
@@ -183,4 +222,11 @@ void aco::game_state::update_level_info()
 {
 	m_level_info.setString(std::to_string(m_current_level_idx + 1) + 
 		"/" + std::to_string(m_level_files_list.size()));
+}
+
+void aco::game_state::resize_view()
+{
+	sf::Vector2u size{ m_app_data.window.getSize() };
+	m_view = util::resize_view(m_view, size);
+	m_view.zoom(game_view_zoom);
 }

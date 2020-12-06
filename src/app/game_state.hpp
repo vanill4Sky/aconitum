@@ -16,17 +16,20 @@ namespace aco
 class game_state : public state
 {
 public:
-	game_state(aco::app_data& app_data);
+	game_state(aco::app_data& app_data, bool restart = false);
+	~game_state();
 
 	void init();
 	void handle_input();
 	void update(float dt);
 	void draw();
+	void resume();
 
 private:
 	void update_levels_list();
 	void load_level(const std::string& level_name);
 	void update_level_info();
+	void resize_view();
 
 	app_data& m_app_data;
 	entt::registry m_reg;

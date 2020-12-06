@@ -24,6 +24,9 @@ public:
 	aco::resource_holder<sf::Texture> textures;
 	aco::resource_holder<sf::Font> fonts;
 	sol::state lua;
+	
+	bool restart_level{ false };
+	bool go_back_to_main_menu{ false };
 
 private:
 	app_data() {};
