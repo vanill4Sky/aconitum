@@ -26,6 +26,7 @@ public:
 private:
 	void update_levels_list();
 	void load_level(const std::string& level_name);
+	void update_level_info();
 
 	app_data& m_app_data;
 	entt::registry m_reg;
@@ -35,11 +36,8 @@ private:
 	std::vector<const aco::comp::sprite*> m_ordered_sprites;
 	std::vector<std::string> m_level_files_list;
 	size_t m_current_level_idx{ 0 };
+	sf::Text m_level_info;
 
-	sf::Texture player_tex;
-	sf::Texture stalker_tex;
-	sf::Texture box_tex;
-	aco::dir player_dir{ aco::dir::none };
 	unsigned int frame_cnt{ 0 };
 };
 

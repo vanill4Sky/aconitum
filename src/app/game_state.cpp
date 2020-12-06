@@ -13,6 +13,7 @@
 #include "../sys/triggers.hpp"
 #include "../sys/levers.hpp"
 #include "../sys/doors.hpp"
+#include "../sys//game_over.hpp"
 #include "constants.hpp"
 #include "lua_binding.hpp"
 #include "../util/file.hpp"
@@ -34,6 +35,11 @@ void aco::game_state::init()
 	register_factory(m_app_data.lua, m_reg, m_app_data.textures);
 	register_modifiers(m_app_data.lua, m_reg);
 	register_queries(m_app_data.lua, m_reg);
+
+	m_app_data.fonts.load(arial_path);
+	m_level_info.setFont(m_app_data.fonts.get(arial_path));
+	m_level_info.setCharacterSize(20);
+	update_level_info();
 }
 
 
@@ -64,6 +70,7 @@ void aco::game_state::handle_input()
 					load_level(m_level_files_list[--m_current_level_idx %= m_level_files_list.size()]);
 					break;
 				case sf::Keyboard::F8:
+					update_levels_list();
 					load_level(m_level_files_list[m_current_level_idx]);
 					break;
 				case sf::Keyboard::F9:
@@ -104,6 +111,17 @@ void aco::game_state::update(float dt)
 	update_pressure_plates(m_reg);
 	activate_lever(m_reg);
 	open_doors(m_reg, m_app_data.lua);
+
+	if (check_loss(m_reg))
+	{
+	}
+	else if (check_win(m_reg))
+	{
+		load_level(m_level_files_list[++m_current_level_idx %= m_level_files_list.size()]);
+		update_level_info();
+		return;
+	}
+
 	center_view_on_player(m_reg, m_view);
 	sort_sprites(m_ordered_sprites);
 	animate_mob(m_reg, frame_cnt);
@@ -112,6 +130,7 @@ void aco::game_state::update(float dt)
 	clear_triggers(m_reg);
 
 	m_app_data.window.setView(m_view);
+	m_level_info.setPosition(m_app_data.window.mapPixelToCoords({ 10, 10 }));
 
 	++frame_cnt;
 }
@@ -122,13 +141,24 @@ void aco::game_state::draw()
 
 	m_current_level.draw(m_app_data.window, false);
 	aco::sys::draw_entities(m_ordered_sprites, m_app_data.window);
+	m_app_data.window.draw(m_level_info);
 
 	m_app_data.window.display();
 }
 
 void aco::game_state::update_levels_list()
 {
-	m_level_files_list = util::list_filenames(levels_dir, "json");
+	m_level_files_list.clear();
+	m_app_data.lua.script_file(level_list_dir);
+	sol::optional<sol::table> list_opt = m_app_data.lua["level_list"];
+	assert(list_opt != sol::nullopt);
+
+	const auto list = list_opt.value();
+	for (size_t i = 0; i <= list.size(); ++i)
+	{
+		const std::string level_name = list[i];
+		m_level_files_list.emplace_back(level_name + ".json");
+	}
 }
 
 void aco::game_state::load_level(const std::string& level_name)
@@ -147,4 +177,10 @@ void aco::game_state::load_level(const std::string& level_name)
 	}
 
 	aco::sys::fill_orderd_sprites(m_reg, m_ordered_sprites);
+}
+
+void aco::game_state::update_level_info()
+{
+	m_level_info.setString(std::to_string(m_current_level_idx + 1) + 
+		"/" + std::to_string(m_level_files_list.size()));
 }

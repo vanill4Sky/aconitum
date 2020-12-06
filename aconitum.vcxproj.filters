@@ -141,13 +141,16 @@
     <ClCompile Include="src\app\main_menu_state.cpp">
       <Filter>Pliki źródłowe\app</Filter>
     </ClCompile>
-    <ClCompile Include="src\sys\levers.cpp">
-      <Filter>Pliki źródłowe\app</Filter>
-    </ClCompile>
     <ClCompile Include="src\app\queries.cpp">
       <Filter>Pliki źródłowe\app</Filter>
     </ClCompile>
     <ClCompile Include="src\sys\doors.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\game_over.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\levers.cpp">
       <Filter>Pliki źródłowe\sys</Filter>
     </ClCompile>
   </ItemGroup>
@@ -282,6 +285,9 @@
       <Filter>Pliki nagłówkowe\app</Filter>
     </ClInclude>
     <ClInclude Include="src\sys\doors.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\game_over.hpp">
       <Filter>Pliki nagłówkowe\sys</Filter>
     </ClInclude>
   </ItemGroup>

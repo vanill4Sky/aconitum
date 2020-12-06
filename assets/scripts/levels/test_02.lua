@@ -22,3 +22,10 @@ for id, stub in pairs(stubs) do
 	
 	entities[id] = entity
 end
+
+function door_open()
+	return (ex_has_active_state(entities.pressure_plate_0)
+		and ex_has_active_state(entities.pressure_plate_1)
+		and ex_has_active_state(entities.pressure_plate_2)
+	)
+end

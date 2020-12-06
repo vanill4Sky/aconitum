@@ -187,6 +187,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\sys\animation.cpp" />
     <ClCompile Include="src\sys\doors.cpp" />
+    <ClCompile Include="src\sys\game_over.cpp" />
     <ClCompile Include="src\sys\level_init.cpp" />
     <ClCompile Include="src\sys\levers.cpp" />
     <ClCompile Include="src\sys\movement.cpp" />
@@ -232,6 +233,7 @@
     <ClInclude Include="src\core\tilemap.hpp" />
     <ClInclude Include="src\sys\animation.hpp" />
     <ClInclude Include="src\sys\doors.hpp" />
+    <ClInclude Include="src\sys\game_over.hpp" />
     <ClInclude Include="src\sys\level_init.hpp" />
     <ClInclude Include="src\sys\levers.hpp" />
     <ClInclude Include="src\sys\movement.hpp" />

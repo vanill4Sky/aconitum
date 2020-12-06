@@ -85,6 +85,11 @@ inline void on_trigger_collision(
 	if (mob_bbox.intersects(iob_bbox))
 	{
 		reg.emplace_or_replace<active_state>(iob);
+
+		if (reg.has<door>(iob))
+		{
+			reg.emplace_or_replace<player_at_door>(iob);
+		}
 	}
 }
 
