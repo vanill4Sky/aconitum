@@ -18,7 +18,7 @@ local stubs = {
 	doors_0 = { idx = 13, name = "doors", position = ex_vector2f:new(479.911, 95.4689) },
 	pressure_plate_0 = { idx = 14, name = "pressure_plate", position = ex_vector2f:new(172.282, 103.44) },
 	pressure_plate_1 = { idx = 15, name = "pressure_plate", position = ex_vector2f:new(348.003, 333.801) },
-	pressure_plate_2 = { idx = 16, name = "pressure_plate", position = ex_vector2f:new(422.513, 335.664) },
+	pressure_plate_2 = { idx = 16, name = "pressure_plate", position = ex_vector2f:new(387.121, 480.96) },
 	torch_0 = { idx = 17, name = "torch", position = ex_vector2f:new(400.653, 159.425) },
 	lever_switch_0 = { idx = 18, name = "lever_switch", position = ex_vector2f:new(391.73, 204.319) },
 	lever_switch_1 = { idx = 19, name = "lever_switch", position = ex_vector2f:new(455.456, 203.044) },
@@ -26,8 +26,8 @@ local stubs = {
 	torch_1 = { idx = 21, name = "torch", position = ex_vector2f:new(359.485, 157.838) },
 	torch_2 = { idx = 22, name = "torch", position = ex_vector2f:new(381.042, 158.354) },
 	torch_3 = { idx = 23, name = "torch", position = ex_vector2f:new(445.464, 157.802) },
-	box_7 = { idx = 24, name = "box", position = ex_vector2f:new(459.825, 326.525) },
-	box_8 = { idx = 25, name = "box", position = ex_vector2f:new(175.256, 132.458) },
+	box_7 = { idx = 24, name = "box", position = ex_vector2f:new(387.798, 433.323) },
+	box_8 = { idx = 25, name = "box", position = ex_vector2f:new(176.282, 84.2211) },
 }
 
 function get_stubs()

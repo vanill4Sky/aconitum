@@ -103,7 +103,7 @@ void aco::game_over_state::set_layout()
 	util::center_sprite(m_background, size);
 
 	constexpr float space{ 30.0f };
-	auto offset = m_background.getPosition().y - 2 * space;
+	auto offset = m_background.getPosition().y - space * (m_widgets.size() - 1);
 	for (auto* widget : m_widgets)
 	{
 		util::column_layout(*widget, size.x, offset);

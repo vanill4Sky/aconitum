@@ -102,7 +102,7 @@ void aco::editor_state::update(float dt)
 {
 	ImGui::SFML::Update(m_app_data.window, sf::seconds(dt));
 
-	ImGui::ShowTestWindow();
+	//ImGui::ShowTestWindow();
 
 	ImGui::SetNextWindowPos({ m_app_data.window.getSize().x - editor_width, 0.0f });
 	ImGui::SetNextWindowSize({ editor_width,  static_cast<float>(m_app_data.window.getSize().y) });

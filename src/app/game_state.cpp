@@ -29,7 +29,6 @@ aco::game_state::game_state(aco::app_data& app_data, bool restart)
 	, m_view{ m_app_data.window.getDefaultView() }
 {
 	update_levels_list();
-	m_view.zoom(game_view_zoom);
 
 	if (!restart)
 	{

@@ -16,7 +16,7 @@ aco::app::app(std::string_view window_title)
 	m_app_data.lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::table);
 	register_user_types(m_app_data.lua);
 
-	m_app_data.window.create(sf::VideoMode{ 1500, 1000 }, window_title.data());
+	m_app_data.window.create(sf::VideoMode{ 1200, 900 }, window_title.data());
 	//m_app_data.window.setFramerateLimit(60);
 	m_app_data.state_manager.push_state(std::make_unique<aco::splash_state>(m_app_data));
 

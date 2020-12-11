@@ -6,7 +6,7 @@ namespace aco
 {
 
 const std::string levels_dir{ "assets/levels/" };
-const std::string tileset_dir{ "assets/textures/" };
+const std::string tileset_dir{ "assets/textures/tilesets/" };
 const std::string entities_dir{ "assets/scripts/entities/" };
 const std::string scripts_dir{ "assets/scripts/" };
 const std::string level_scripts_dir{ scripts_dir + "levels/" };
