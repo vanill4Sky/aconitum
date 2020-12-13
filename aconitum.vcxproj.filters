@@ -16,6 +16,33 @@
     <Filter Include="Pliki źródłowe\imgui">
       <UniqueIdentifier>{9e5bd1e7-e539-45bc-a027-dc4791f5e155}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pliki źródłowe\core">
+      <UniqueIdentifier>{f4faf2c9-76c8-4017-95c5-e13f690ac5dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\core">
+      <UniqueIdentifier>{bcfbc5ee-1e80-40e7-8691-692e99d9c50f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\app">
+      <UniqueIdentifier>{65bd18e1-d472-42bc-b011-bb070663b36f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\app">
+      <UniqueIdentifier>{0825d623-1863-498e-a7e1-3beb2a6b4e19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\util">
+      <UniqueIdentifier>{91790322-ad3a-402b-9257-e3fb77c9be8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\util">
+      <UniqueIdentifier>{18134e2b-9644-49ac-82b2-34b43980b7c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\sys">
+      <UniqueIdentifier>{c3fab77a-c482-4240-8bd1-6cd85c394019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki źródłowe\sys">
+      <UniqueIdentifier>{39da6313-1702-4bc9-bc16-9ac8b6b1a7a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pliki nagłówkowe\comp">
+      <UniqueIdentifier>{65d64da0-144b-43b3-a2bc-b091136b064d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -36,5 +63,250 @@
     <ClCompile Include="deps\src\imgui\imgui-SFML.cpp">
       <Filter>Pliki źródłowe\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\tilemap.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\grid.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\state_manager.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\app.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\app_data.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\editor_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\level.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\tile_picker.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\file.cpp">
+      <Filter>Pliki źródłowe\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\dir.cpp">
+      <Filter>Pliki źródłowe\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\game_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\sprite_picker.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\player_input.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\movement.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\render.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\factories.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\target_following.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\lua_binding.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\animation.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\modifiers.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\level_init.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\splash_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\triggers.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\util\graphics.cpp">
+      <Filter>Pliki źródłowe\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\button.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\main_menu_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\queries.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\doors.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\game_over.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sys\levers.cpp">
+      <Filter>Pliki źródłowe\sys</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\game_pause_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\game_over_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\info_state.cpp">
+      <Filter>Pliki źródłowe\app</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\core\tilemap.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\grid.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\state.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\state_manager.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\app.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\app_data.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\editor_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\level.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\tile_picker.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\file.hpp">
+      <Filter>Pliki nagłówkowe\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\dir.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\game_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\sprite_picker.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\player_input.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\player.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\direction.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\entity_state.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\movement.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\position.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\render.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\sprite.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\factories.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\target.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\target_following.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\mob.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\collider.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\animation.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\iob.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\vec_math.hpp">
+      <Filter>Pliki nagłówkowe\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\constants.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\resource_holder.hpp">
+      <Filter>Pliki nagłówkowe\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\lua_binding.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\comp\components.hpp">
+      <Filter>Pliki nagłówkowe\comp</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\modifiers.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\level_init.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\animation.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\triggers.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\splash_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\graphics.hpp">
+      <Filter>Pliki nagłówkowe\util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\button.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\main_menu_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\levers.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\queries.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\doors.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sys\game_over.hpp">
+      <Filter>Pliki nagłówkowe\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\game_pause_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\game_over_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\info_state.hpp">
+      <Filter>Pliki nagłówkowe\app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

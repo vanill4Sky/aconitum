@@ -1,0 +1,29 @@
+{
+    "Lua.diagnostics.globals": [
+        "ex_iob",
+        "ex_box",
+        "ex_position",
+        "ex_next_position",
+        "ex_collider",
+        "ex_sprite",
+        "ex_player",
+        "ex_animation",
+        "ex_velocity",
+        "ex_dir",
+        "ex_mob",
+        "ex_stalker",
+        "ex_target",
+        "ex_vector2f",
+        "ex_create_entity",
+        "ex_set_target",
+        "ex_trigger",
+        "ex_kinematic",
+        "ex_idle_state",
+        "ex_pressure_plate",
+        "ex_connect_torch",
+        "ex_lever_switch",
+        "ex_torch",
+        "ex_has_active_state",
+        "ex_door"
+    ]
+}
