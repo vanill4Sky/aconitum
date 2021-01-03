@@ -1,0 +1,42 @@
+1. Doors texture 
+	filename: assets/textures/doors_01.png
+	link: https://opengameart.org/content/lpc-windows-doors
+	Copyright/Attribution Notice: "LPC Windows & Doors" by bluecarrot16, Lanea Zimmerman (Sharm) and Daniel Armstrong (HughSpectrum), Casper Nilsson, Anamaris, Krusmira, Keith Karnage, Guido Bos, and Talosaurus. 
+	License: CC-BY-SA 3.0 / GPL 3.0+
+	
+2. Box texture
+	filename: assets/textures/box_01.png
+	link: https://opengameart.org/content/pixel-box-1
+	
+3. Torch texture
+	filename: assets/textures/torch.png
+	link: https://opengameart.org/content/animated-torch
+	Copyright/Attribution Notice: Created by Jordan Irwin (AntumDeluge).
+	License: CC-BY 3.0 / OGA-BY 3.0
+	
+4. Lever swith texture
+	filename: assets/textures/lever_switch_52x29.png
+	link: https://opengameart.org/content/magerage-2d-resources
+	Copyright/Attribution Notice: Created by drummyfish.
+	License: CC0
+	
+5. Icons
+	Copyright/Attribution Notice: Created by https://pl.freepik.com/
+	
+6. Dungeon 32x32 tileset
+	filename: assets/textures/tileset_dungeon_02.png
+	link: https://opengameart.org/content/32x32-dungeon-tileset
+	Copyright/Attribution Notice: Created by stealthix.
+	License: CC0
+	
+7. Player texture
+	filename: player_thief_01.png
+	link: https://opengameart.org/content/lpc-medieval-fantasy-character-sprites
+	Copyright/Attribution Notice: wulax.
+	License: CC-BY-SA 3.0 / GPL 3.0.
+	
+8. Stalker texture
+	filename: stalker_01.png
+	link: https://opengameart.org/content/lpc-skeleton
+	Copyright/Attribution Notice: wulax.
+	
